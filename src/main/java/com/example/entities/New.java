@@ -1,9 +1,11 @@
 package com.example.entities;
 
+import java.sql.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,20 +22,27 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "user_role")
-public class UserRole {
-
+@Table(name = "new")
+public class New {
 	@Id
-	@GeneratedValue
-	@Column(name = "id", nullable = false)
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "new_id")
+	private Long newId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@Column(name = "new_image")
+	private String newImage;
+
+	@Column(name = "new_descriptions")
+	private String newDescriptions;
+
+	@Column(name = "new_date")
+	private Date newDate;
+
+	@Column(name = "new_title")
+	private String newTitle;
+
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id", nullable = false)
-	private Role role;
 
 }

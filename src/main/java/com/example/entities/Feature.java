@@ -2,14 +2,14 @@ package com.example.entities;
 
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,29 +23,19 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "feature")
+public class Feature {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
-	private Long roleId;
+	@Column(name = "feature_id")
+	private Long featureId;
 
-	@Column(name = "role_name", nullable = false)
-	private String roleName;
+	@Column(name = "url", nullable = false)
+	private String url;
 
-	@Column(name = "status", nullable = false)
-	private Boolean status;
-
-	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-	private Set<UserRole> userRoles;
-
-//	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+	@ManyToMany
+	@JoinTable(name = "Role_Feature", joinColumns = @JoinColumn(name = "feature_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles;
+//	@OneToMany(mappedBy = "feature", cascade = CascadeType.ALL)
 //	private Set<RoleFeature> roleFeatures;
-
-	@ManyToMany(mappedBy = "roles")
-	private Set<Feature> features;
-
-//	@ManyToMany(mappedBy = "users")
-//	private Set<User> users;
-
 }

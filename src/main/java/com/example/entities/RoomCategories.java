@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,29 +22,29 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "room_categories")
+public class RoomCategories {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
-	private Long roleId;
+	@Column(name = "room_category_id")
+	private Long roomCategoryId;
 
-	@Column(name = "role_name", nullable = false)
-	private String roleName;
+	@Column(name = "room_category_name", nullable = false)
+	private String roomCategoryName;
 
-	@Column(name = "status", nullable = false)
-	private Boolean status;
+	@Column(name = "price", nullable = false)
+	private double price;
 
-	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-	private Set<UserRole> userRoles;
+	@Column(name = "description")
+	private String description;
 
-//	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-//	private Set<RoleFeature> roleFeatures;
+	@Column(name = "square", nullable = false)
+	private Double square;
 
-	@ManyToMany(mappedBy = "roles")
-	private Set<Feature> features;
+	@Column(name = "number_person", nullable = false)
+	private Integer numberPerson;
 
-//	@ManyToMany(mappedBy = "users")
-//	private Set<User> users;
+	@OneToMany(mappedBy = "roomCategory", cascade = CascadeType.ALL)
+	private Set<Room> rooms;
 
 }

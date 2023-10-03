@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,29 +22,24 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "device")
+
+public class Device {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
-	private Long roleId;
+	@Column(name = "device_id")
+	private Long deviceId;
 
-	@Column(name = "role_name", nullable = false)
-	private String roleName;
+	@Column(name = "device_name", nullable = false)
+	private String deviceName;
 
-	@Column(name = "status", nullable = false)
+	@Column(name = "device_price", nullable = false)
+	private double devicePrice;
+
+	@Column(name = "status")
 	private Boolean status;
 
-	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-	private Set<UserRole> userRoles;
-
-//	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-//	private Set<RoleFeature> roleFeatures;
-
-	@ManyToMany(mappedBy = "roles")
-	private Set<Feature> features;
-
-//	@ManyToMany(mappedBy = "users")
-//	private Set<User> users;
+	@OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
+	private Set<RoomDevice> roomDevices;
 
 }

@@ -1,9 +1,9 @@
 package com.example.entities;
 
+import java.sql.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,20 +20,24 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "user_role")
-public class UserRole {
-
+@Table(name = "room_feedback")
+public class RoomFeedback {
 	@Id
-	@GeneratedValue
-	@Column(name = "id", nullable = false)
-	private Long id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id", nullable = false)
-	private Role role;
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "room_id")
+	private Room room;
 
+	@Column(name = "comment")
+	private String comment;
+
+	@Column(name = "create_date")
+	private Date createDate;
+
+	@Column(name = "status")
+	private Boolean status;
 }
