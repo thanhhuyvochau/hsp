@@ -20,19 +20,20 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "User_Role")
+@Table(name = "user_role")
 public class UserRole {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "ID", nullable = false)
+	@Column(name = "id", nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ROLE_ID", nullable = false)
+	@JoinColumn(name = "role_id", nullable = false)
 	private Role role;
+
 }
