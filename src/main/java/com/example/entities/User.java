@@ -11,13 +11,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
-
+@Data
 @Getter
 @Setter
 @ToString
@@ -30,33 +31,29 @@ public class User {
 	@Column(name = "user_id")
 	private Long userId;
 
-	@Column(name = "user_name", nullable = false)
-	private String userName;
+	@Column(name = "name", nullable = false)
+	private String name;
 
-	@Column(name = "user_dob", nullable = false)
-	private Date userDob;
+	@Column(name = "dob", nullable = false)
+	private Date dob;
 
-	@Column(name = "user_email", unique = true, nullable = false)
-	private String userEmail;
+	@Column(name = "email", unique = true, nullable = false)
+	private String email;
 
-	@Column(name = "user_password", nullable = false)
-	private String userPassword;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-	@Column(name = "user_address", nullable = false)
-	private String userAddress;
+	@Column(name = "address", nullable = false)
+	private String address;
 
-	@Column(name = "user_phone", unique = true, nullable = false)
-	private String userPhone;
+	@Column(name = "phone", unique = true, nullable = false)
+	private String phone;
 
 	@Column(name = "status", nullable = false)
 	private Boolean status;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<UserRole> userRoles;
-
-//	@ManyToMany
-//	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-//	private Set<User> users;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<ServiceFeedback> serviceFeedbacks;
@@ -75,5 +72,4 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<Invoice> invoices;
-
 }

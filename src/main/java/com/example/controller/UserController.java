@@ -14,6 +14,16 @@ public class UserController {
 		return "authentication/login";
 	}
 
+	@GetMapping("/user")
+	public String index() {
+		return "user-index";
+	}
+
+	@GetMapping("/accessDenied")
+	public String accessDenied() {
+		return "accessDenied";
+	}
+
 	@GetMapping("/register")
 	public String registerForm() {
 		return "authentication/register";
