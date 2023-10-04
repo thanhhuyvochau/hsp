@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
+@Data
 @ToString
 @Entity
 @Table(name = "role")
@@ -39,13 +41,7 @@ public class Role {
 	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
 	private Set<UserRole> userRoles;
 
-//	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-//	private Set<RoleFeature> roleFeatures;
-
 	@ManyToMany(mappedBy = "roles")
 	private Set<Feature> features;
-
-//	@ManyToMany(mappedBy = "users")
-//	private Set<User> users;
 
 }
