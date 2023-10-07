@@ -24,9 +24,9 @@ public class UserController {
 		return "accessDenied";
 	}
 
-	@GetMapping("/register")
+	@GetMapping("/registration")
 	public String registerForm() {
-		return "authentication/register";
+		return "authentication/registration";
 	}
 
 }
