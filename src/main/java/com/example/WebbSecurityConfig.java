@@ -42,7 +42,7 @@ public class WebbSecurityConfig {
 
 		// Cấu hình cho Login Form.
 		http.formLogin(auth -> auth.loginPage("/login").usernameParameter("email").loginProcessingUrl("/loginProcess")
-				.defaultSuccessUrl("/user").failureUrl("/login?error"));
+				.defaultSuccessUrl("/accessDenied").failureUrl("/login?error"));
 		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
 
 		// Authorization
