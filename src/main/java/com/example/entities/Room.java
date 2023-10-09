@@ -58,4 +58,7 @@ public class Room {
 	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
 	private Set<Reservation> reservations;
 
+	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+	private Set<DateRoom> dateRooms;
+
 }

@@ -14,14 +14,14 @@ public class UserController {
 		return "authentication/login";
 	}
 
-	@GetMapping("/user")
-	public String index() {
-		return "user-index";
-	}
+//	@GetMapping("/user")
+//	public String index() {
+//		return "user-index";
+//	}
 
 	@GetMapping("/accessDenied")
 	public String accessDenied() {
-		return "accessDenied";
+		return "authentication/accessDenied";
 	}
 
 	@GetMapping("/registration")
