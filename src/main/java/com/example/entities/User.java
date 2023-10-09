@@ -31,7 +31,7 @@ public class User {
 	@Column(name = "user_id")
 	private Long userId;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
 	@Column(name = "dob", nullable = true)
