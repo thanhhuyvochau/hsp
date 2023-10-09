@@ -36,6 +36,5 @@ public class Feature {
 	@ManyToMany
 	@JoinTable(name = "Role_Feature", joinColumns = @JoinColumn(name = "feature_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles;
-//	@OneToMany(mappedBy = "feature", cascade = CascadeType.ALL)
-//	private Set<RoleFeature> roleFeatures;
+
 }
