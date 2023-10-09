@@ -27,6 +27,7 @@ public class WebbSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+    
 	public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
 		System.out.println("Authentication manager!");
 		managerBuilder.userDetailsService(customizeUserDetailsService).passwordEncoder(passwordEncoder());
@@ -57,6 +58,8 @@ public class WebbSecurityConfig {
 		// Exception Handling
 		http.exceptionHandling(auth -> auth.accessDeniedPage("/accessDenied"));
 
+		//
+		
 		return http.build();
 	}
 }

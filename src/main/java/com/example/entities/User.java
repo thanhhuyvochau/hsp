@@ -34,7 +34,7 @@ public class User {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "dob")
+	@Column(name = "dob", nullable = true)
 	private Date dob;
 
 	@Column(name = "email", unique = true, nullable = false)
@@ -43,13 +43,13 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(name = "address")
+	@Column(name = "address", nullable = true)
 	private String address;
 
-	@Column(name = "phone", unique = true)
+	@Column(name = "phone", unique = true, nullable = true)
 	private String phone;
 
-	@Column(name = "status")
+	@Column(name = "status", nullable = true)
 	private Boolean status;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

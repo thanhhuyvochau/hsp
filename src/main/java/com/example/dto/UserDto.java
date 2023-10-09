@@ -24,5 +24,16 @@ public class UserDto {
 	private String userPassword;
 	private String userAddress;
 	private String userPhone;
+	private String CheckPass;
+
+
+
+	public UserDto(String userName, String userEmail, String userPassword) {
+		super();
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+	}
+
 
 }
