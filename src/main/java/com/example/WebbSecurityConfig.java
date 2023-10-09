@@ -27,6 +27,7 @@ public class WebbSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+    
 	public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
 		System.out.println("Authentication manager!");
 		managerBuilder.userDetailsService(customizeUserDetailsService).passwordEncoder(passwordEncoder());
@@ -42,7 +43,7 @@ public class WebbSecurityConfig {
 
 		// Cấu hình cho Login Form.
 		http.formLogin(auth -> auth.loginPage("/login").usernameParameter("email").loginProcessingUrl("/loginProcess")
-				.defaultSuccessUrl("/user").failureUrl("/login?error"));
+				.defaultSuccessUrl("/accessDenied").failureUrl("/login?error"));
 		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
 
 		// Authorization
@@ -57,6 +58,8 @@ public class WebbSecurityConfig {
 		// Exception Handling
 		http.exceptionHandling(auth -> auth.accessDeniedPage("/accessDenied"));
 
+		//
+		
 		return http.build();
 	}
 }
