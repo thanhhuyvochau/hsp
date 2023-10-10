@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 04/10/2023    1.0        HieuLBM          First Deploy
+ * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 
+ */
+
 package com.example.entities;
 
 import jakarta.persistence.Column;
@@ -25,19 +38,9 @@ public class Contact {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "contact_id")
 	private Long contactId;
-
-	@Column(name = "title", nullable = false)
 	private String title;
-
-	@Column(name = "email", nullable = false)
 	private String email;
-
-	@Column(name = "content", nullable = false)
 	private String content;
-
-	@Column(name = "is_read")
 	private Boolean isRead;
-
-	@Column(name = "status", nullable = false)
 	private Boolean status;
 }

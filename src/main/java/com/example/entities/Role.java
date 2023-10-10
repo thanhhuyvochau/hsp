@@ -1,15 +1,23 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 04/10/2023    1.0        HieuLBM          First Deploy
+ * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 
+ */
+
 package com.example.entities;
 
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,17 +39,7 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "role_id")
 	private Long roleId;
-
-	@Column(name = "role_name", nullable = false)
 	private String roleName;
-
-	@Column(name = "status", nullable = false)
-	private Boolean status;
-
-	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-	private Set<UserRole> userRoles;
-
-	@ManyToMany(mappedBy = "roles")
-	private Set<Feature> features;
+	private boolean status;
 
 }
