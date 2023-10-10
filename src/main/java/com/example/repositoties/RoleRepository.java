@@ -23,7 +23,7 @@ import com.example.entities.Role;
 @Repository("roleReposity")
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-	@Query(value = "SELECT r.*  FROM backup_hotel.role r JOIN backup_hotel.user_role ur"
+	@Query(value = "SELECT r.*  FROM hotelsystem.role r JOIN hotelsystem.user_role ur"
 			+ " on r.role_id = ur.role_id where ur.user_id=?1", nativeQuery = true)
 	List<Role> findRole(Long id);
 }
