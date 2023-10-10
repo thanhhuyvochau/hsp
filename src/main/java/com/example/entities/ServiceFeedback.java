@@ -1,3 +1,15 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 04/10/2023    1.0        HieuLBM          First Deploy
+ * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 
+ */
 package com.example.entities;
 
 import java.sql.Date;
@@ -7,8 +19,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,21 +38,9 @@ public class ServiceFeedback {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-
-	@Column(name = "comment")
+	private Long userId;
+	private Long serviceId;
 	private String comment;
-
-	@Column(name = "create_date")
 	private Date createDate;
-
-	@Column(name = "status")
 	private Boolean status;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
-	@ManyToOne
-	@JoinColumn(name = "service_id")
-	private Service service;
 }

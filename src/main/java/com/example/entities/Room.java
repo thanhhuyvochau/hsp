@@ -1,16 +1,23 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 04/10/2023    1.0        HieuLBM          First Deploy
+ * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 
+ */
+
 package com.example.entities;
 
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,35 +37,10 @@ public class Room {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "room_id")
 	private Long roomId;
-
-	@ManyToOne
-	@JoinColumn(name = "room_image_id", nullable = false)
-	private RoomImage roomImage;
-
-	@ManyToOne
-	@JoinColumn(name = "room_category_id", nullable = false)
-	private RoomCategories roomCategory;
-
-	@Column(name = "description")
+	private Long roomImageId;
+	private Long roomCategoryId;
 	private String description;
-
-	@ManyToOne
-	@JoinColumn(name = "status_id", nullable = false)
-	private RoomStatus status;
-
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-	private Set<RoomDevice> roomDevices;
-
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-	private Set<RoomService> roomServices;
-
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-	private Set<RoomFeedback> roomFeedbacks;
-
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-	private Set<Reservation> reservations;
-
-	@OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-	private Set<DateRoom> dateRooms;
+	private Long statusId;
+	private Long serviceId;
 
 }

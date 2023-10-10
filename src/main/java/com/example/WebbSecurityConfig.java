@@ -1,3 +1,15 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 04/10/2023    1.0        HieuLBM          First Deploy
+ *  * 
+ */
+
 package com.example;
 
 import org.springframework.context.annotation.Bean;
@@ -27,7 +39,6 @@ public class WebbSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-    
 	public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
 		System.out.println("Authentication manager!");
 		managerBuilder.userDetailsService(customizeUserDetailsService).passwordEncoder(passwordEncoder());
@@ -43,7 +54,7 @@ public class WebbSecurityConfig {
 
 		// Cấu hình cho Login Form.
 		http.formLogin(auth -> auth.loginPage("/login").usernameParameter("email").loginProcessingUrl("/loginProcess")
-				.defaultSuccessUrl("/accessDenied").failureUrl("/login?error"));
+				.defaultSuccessUrl("/homepage").failureUrl("/login?error"));
 		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
 
 		// Authorization
@@ -59,7 +70,7 @@ public class WebbSecurityConfig {
 		http.exceptionHandling(auth -> auth.accessDeniedPage("/accessDenied"));
 
 		//
-		
+
 		return http.build();
 	}
 }
