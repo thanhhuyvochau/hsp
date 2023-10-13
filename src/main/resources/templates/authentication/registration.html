@@ -34,9 +34,12 @@
 						<div class="alert alert-danger">Registration failed. Please check your information and try
 							again.</div>
 					</div>
+							<p th:text="${accountDetail}"></p>
 
 					<div class="card">
 						<div class="card-header">Register</div>
+						
+
 						<form th:action="@{/registration}" method="post" th:object="${userdto}">
 							<div class="card-body">
 								<form action="login.html" method="" id="formLogin" style="margin-bottom: 0em;">

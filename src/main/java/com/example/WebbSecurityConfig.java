@@ -54,17 +54,17 @@ public class WebbSecurityConfig {
 
 		// Cấu hình cho Login Form.
 		http.formLogin(auth -> auth.loginPage("/login").usernameParameter("email").loginProcessingUrl("/loginProcess")
-				.defaultSuccessUrl("/homepage").failureUrl("/login?error"));
+				.defaultSuccessUrl("/").failureUrl("/login?error"));
 		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
 
 		// Authorization
 
-		http.authorizeHttpRequests(auth -> auth.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration")
-				.permitAll().requestMatchers("/admin/**").hasAnyRole("Admin").requestMatchers("/user/**")
-				.hasAnyRole("Customer").requestMatchers("/management/**").hasAnyRole("Management")
-				.requestMatchers("/receptionist/**").hasAnyRole("Receptionists").requestMatchers("/housekeeping/**")
-				.hasAnyRole("Housekeeping").requestMatchers("/accounting/**").hasAnyRole("Accounting").anyRequest()
-				.authenticated());
+		http.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration").permitAll()
+				.requestMatchers("/admin/**").hasAnyRole("Admin").requestMatchers("/user/**").hasAnyRole("Customer")
+				.requestMatchers("/management/**").hasAnyRole("Management").requestMatchers("/receptionist/**")
+				.hasAnyRole("Receptionists").requestMatchers("/housekeeping/**").hasAnyRole("Housekeeping")
+				.requestMatchers("/accounting/**").hasAnyRole("Accounting").anyRequest().authenticated());
 
 		// Exception Handling
 		http.exceptionHandling(auth -> auth.accessDeniedPage("/accessDenied"));

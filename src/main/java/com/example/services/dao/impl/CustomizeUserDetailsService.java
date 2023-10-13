@@ -62,7 +62,7 @@ public class CustomizeUserDetailsService implements UserDetailsService {
 
 			User user = new org.springframework.security.core.userdetails.User(result.getEmail(), result.getPassword(),
 					true, true, true, true, authorities);
-			return (UserDetails) user;
+			return user;
 		} else {
 			throw new UsernameNotFoundException("Email or Password is invalid!");
 		}
