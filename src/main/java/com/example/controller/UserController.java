@@ -42,6 +42,10 @@ public class UserController {
 		return "authentication/accessDenied";
 	}
 
+	@GetMapping("/homepage")
+	public String homepage() {
+		return "/homepage";
+	}
 	@GetMapping("/registration")
 	public String registerForm() {
 		return "authentication/registration";
