@@ -32,20 +32,6 @@ public class UserController {
 		return new UserDto();
 	}
 
-	@GetMapping("/login")
-	public String loginForm() {
-		return "authentication/login";
-	}
-
-	@GetMapping("/accessDenied")
-	public String accessDenied() {
-		return "authentication/accessDenied";
-	}
-
-	@GetMapping("/homepage")
-	public String homepage() {
-		return "/homepage";
-	}
 	@GetMapping("/registration")
 	public String registerForm() {
 		return "authentication/registration";
