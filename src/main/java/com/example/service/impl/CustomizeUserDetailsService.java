@@ -10,7 +10,7 @@
  * 
  * 
  */
-package com.example.services.dao.impl;
+package com.example.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,7 @@
  * 
  * 
  */
-package com.example.services.dao;
+package com.example.service.dao;
 
 import com.example.dto.UserDto;
 import com.example.entities.User;
