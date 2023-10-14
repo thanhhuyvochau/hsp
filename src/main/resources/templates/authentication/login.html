@@ -51,8 +51,10 @@
 						<div th:if="${param.logout}">
 							<div class="alert alert-success">You have been logged out !!!</div>
 						</div>
+						
 							<div class="forgotpass">
-								<span><a href="#">Quên mật khẩu ?</a></span>
+								 <label> <input type="checkbox">Remember me </label>
+								<span><a th:href="@{/hbs/resetPassword}">Quên mật khẩu ?</a></span>
 							</div>
 							<div class="signin">
 								<span>Chưa có tài khoản ? <a th:href="@{/registration}">Đăng ký ở đây</a></span>

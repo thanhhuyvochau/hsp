@@ -1,4 +1,4 @@
-package com.example.services.dao.impl;
+package com.example.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.dto.UserDto;
 import com.example.entities.User;
 import com.example.repositoties.UserRepository;
-import com.example.services.dao.UserService;
+import com.example.service.dao.UserService;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {

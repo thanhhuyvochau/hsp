@@ -21,7 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.example.services.dao.impl.CustomizeUserDetailsService;
+import com.example.service.impl.CustomizeUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -60,7 +60,7 @@ public class WebbSecurityConfig {
 		// Authorization
 
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration").permitAll()
+				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**").permitAll()
 				.requestMatchers("/admin/**").hasAnyRole("Admin").requestMatchers("/user/**").hasAnyRole("Customer")
 				.requestMatchers("/management/**").hasAnyRole("Management").requestMatchers("/receptionist/**")
 				.hasAnyRole("Receptionists").requestMatchers("/housekeeping/**").hasAnyRole("Housekeeping")

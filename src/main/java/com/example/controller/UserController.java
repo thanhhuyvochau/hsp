@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.dto.UserDto;
-import com.example.services.dao.UserService;
-
-import lombok.AllArgsConstructor;
+import com.example.service.dao.UserService;
 
 @Controller
-@AllArgsConstructor
+
 public class UserController {
 	private UserService userService;
+
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
 	@ModelAttribute("userdto")
 	public UserDto userResgistrationDto() {
