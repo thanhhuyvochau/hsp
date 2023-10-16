@@ -47,7 +47,13 @@ public class UserController {
 		if (userDto.getUserPassword().equals(userDto.getCheckPass()) == false) {
 			return "redirect:/registration?checkpass";
 		}
-		userService.save(userDto);
+		userDto.setStatus(true);
+		//userService.save(userDto);
+
+        // Lưu thông tin người dùng
+        userService.save(userDto);
+
+
 		return "redirect:/registration?success";
 	}
 
