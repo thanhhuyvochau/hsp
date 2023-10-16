@@ -7,7 +7,7 @@
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 14/10/2023    1.0        HieuLBM          First Deploy
- *  * 
+ * 16/10/2023	 1.1		HieuLBM			 Add accessDenied 			
  */
 
 package com.example.controller;
@@ -23,10 +23,10 @@ public class InitController {
 		return "homepage";
 	}
 
-//	@GetMapping("/accessDenied")
-//	public String accessDenied() {
-//		return "authentication/accessDenied";
-//	}
+	@GetMapping("/accessDenied")
+	public String accessDenied() {
+		return "authentication/accessDenied";
+	}
 //
 //	@GetMapping("/error")
 //	public String error() {
