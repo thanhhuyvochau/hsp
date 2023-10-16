@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.dto.UserDto;
 import com.example.entities.User;
+import com.example.entities.UserRole;
 import com.example.repositoties.UserRepository;
+import com.example.repositoties.UserRoleRepository;
 import com.example.service.dao.UserService;
 
 @Service("userService")
@@ -26,21 +28,32 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
+	private UserRoleRepository userroleRepository;
+	@Autowired
 	// @Qualifier("passwordEncoder")
 	private PasswordEncoder passwordEncoder;
-
+	
 	@Override
 	public User save(UserDto userDto) {
+	    // Lưu thông tin người dùng
+	    User user = new User();
+	    user.setEmail(userDto.getUserEmail());
+	    user.setName(userDto.getUserName());
+	 // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+	    String encodedPassword = passwordEncoder.encode(userDto.getUserPassword());
+	    user.setPassword(encodedPassword);
+	    user.setStatus(true); 
+	    User savedUser = userRepository.save(user);
 
-		User user = new User();
-		user.setEmail(userDto.getUserEmail());
-		user.setName(userDto.getUserName());
-		// Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
-		String encodedPassword = passwordEncoder.encode(userDto.getUserPassword());
-		user.setPassword(encodedPassword);
+	    // Tạo UserRole và gán roleId là 2
+	    UserRole userRole = new UserRole();
+	    userRole.setUserId(savedUser.getUserId());
+	    userRole.setRoleId(5L); // 2 là roleId bạn muốn gán
+	    userroleRepository.save(userRole);
 
-		return userRepository.save(user);
+	    return savedUser;
 	}
+
 
 	@Override
 	public Boolean checkPasswordUser(String email, String password) {
@@ -62,5 +75,6 @@ public class UserServiceImpl implements UserService {
 	public User getUserbyEmail(String email) {
 		return userRepository.getUserByEmail(email);
 	}
+	
 
 }

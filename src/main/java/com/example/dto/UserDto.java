@@ -37,6 +37,7 @@ public class UserDto {
 	private String userAddress;
 	private String userPhone;
 	private String CheckPass;
+	private boolean Status;
 
 	public UserDto(String userName, String userEmail, String userPassword) {
 		super();

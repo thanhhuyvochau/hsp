@@ -1,132 +1,125 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
-	<link rel="stylesheet" href="style.css">
+
+
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./assets/css/login.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 	<!-- Fonts -->
 	<link rel="dns-prefetch" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
 
-	<link rel="stylesheet" href="css/style.css">
+
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<title>Login</title>
 </head>
 
 <body>
-	<div id="placeholder"></div>
-	<main class="login-form">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-6">
-					<div th:if="${param.success}">
-						<div class="alert alert-success">Registration successful! You can now log in.</div>
-					</div>
+	<div class="wrapper">
+		<div class="container main">
+			<div class="row">
+				<div class="col-md-6 side-image">
 
-					<div th:if="${param.error}">
-						<div class="alert alert-danger">Registration failed. Please check your information and try
-							again.</div>
-					</div>
-							<p th:text="${accountDetail}"></p>
 
-					<div class="card">
-						<div class="card-header">Register</div>
-						
+					<img src="./assets/img/login/hotelLogin.jpg" alt="">
 
+				</div>
+				<div class="col-md-6 right">
+
+					<div class="input-box">
+						<div th:if="${param.success}">
+							<div class="alert alert-success">Registration successful! You can now log in.</div>
+						</div>
+
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Registration failed. Please check your information and try
+								again.</div>
+						</div>
+						<p th:text="${accountDetail}"></p>
+
+						<header>Đăng ký nhanh chóng và dễ dàng</header>
 						<form th:action="@{/registration}" method="post" th:object="${userdto}">
-							<div class="card-body">
-								<form action="login.html" method="" id="formLogin" style="margin-bottom: 0em;">
-									<div class="form-group row">
-										<input type="text" id="user_name" class="input form-control" name="user-name"
-											minlength="3" maxlength="30" placeholder="User name" th:field="*{userName}"
-											required autofocus>
 
-									</div>
-									<div class="form-group row">
-										<input type="email" id="email" class="input form-control" minlength="5"
-											name="email" placeholder="E-mail" th:field="*{userEmail}" required>
+							<div class="input-field">
+								<input type="text" id="user_name" class="input" name="user-name" minlength="3"
+									maxlength="30" th:field="*{userName}" required autofocus>
+								<label for="email">Username</label>
+							</div>
+							<div class="input-field">
+								<input type="text" class="input" id="email" required="" name="email" maxlength="50"
+									minlength="5" th:field="*{userEmail}" autocomplete="off">
+								<label for="email">Email hoặc số điện thoại</label>
+							</div>
+							<div class="input-field">
+								<p id="email-error" style="color: red;"></p>
+							</div>
 
-									</div>
-									<div th:if="${param.emailexist}">
-										<div class="alert alert-info"> You email have exist please register other email
-										</div>
-									</div>
 
-									<div class="form-group row">
-										<input type="password" id="password" class="input form-control" name="password"
-											minlength="8" maxlength="30" placeholder="Password"
-											th:field="*{userPassword}" required>
+							<div class="input-field">
+								<input th:field="*{userPassword}" minlength="8" maxlength="30" name="password"
+									type="password" class="input" id="password" required="" autocomplete="off">
+								<label for="pass">Mật khẩu</label>
+							</div>
+							<div class="input-field">
+								<input type="password" class="input" id="password2" th:field="*{CheckPass}"
+									minlength="8" maxlength="30" name="password" required="">
+								<label for="pass"> Nhập lại mật khẩu</label>
+							</div>
+							<div class="input-field">
+								<p id="checkpass-error" style="color: red;"></p>
+							</div>
+							<div th:if="${param.Checkpass}">
+								<div class="alert alert-info"> You password and checkpass not same ! Please
+									checkout
+									it!</div>
+							</div>
 
-									</div>
-									<div class="form-group row">
-										<input type="password" id="password2" class="input form-control" name="password"
-											minlength="8" maxlength="30" placeholder="Re-Password"
-											th:field="*{CheckPass}" onkeyup="checkPass" required>
+							<div>
+								<p id="result2"></p>
+								<p id="message"></p>
+							</div>
+							<div class="input-field">
 
-									</div>
-									<div th:if="${param.Checkpass}">
-										<div class="alert alert-info"> You password and checkpass not same ! Please
-											checkout
-											it!</div>
-									</div>
-
-									<div>
-										<p id="result2"></p>
-										<p id="message"></p>
-									</div>
-									<button type="submit" class="input btn btn-success" id="submit">
-										Register
-									</button><br>
-									<div class="form-group" style="margin-bottom: 0em;">
-										<a th:href="@{/login}" class="btn btn-link">
-											Click here to Login
-										</a>
-									</div>
-
-								</form>
+								<input id="submit-button" type="submit" class="submit" disabled value="Đăng ký">
+							</div>
+							<div class="signin">
+								<span>Đã có tài khoản ? <a href="/login">Đăng nhập ở đây</a></span>
 							</div>
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-	</main>
+	<script crossorigin="anonymous" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
-		const validateEmail = (email) => {
-			return email.match(
-				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-			);
-		};
+		var submitButton = document.getElementById("submit-button");
+		document.getElementById("email").addEventListener("input", function () {
+			var email = this.value;
+			var pattern = /^[a-zA-Z0-9!#$%&'*+/=?^`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
-		$('#email').on('input', function () {
-			const $result = $('#result2');
-			const email = $('#email').val();
-			$result.text('');
-
-			if (validateEmail(email)) {
-				$result.text(email + ' is valid :)');
-				$result.css('color', 'green');
-				document.getElementById("submit").disabled = false;
+			if (!pattern.test(email)) {
+				document.getElementById("email-error").textContent = "Email không đúng định dạng.";
+				submitButton.disabled = true;
 			} else {
-				if (email === '') {
-					$result.text('');
-					$result.css('color', 'red');
-				} else {
-					$result.text(email + ' is not valid :(');
-					$result.css('color', 'red');
-				}
-				document.getElementById("submit").disabled = true;
+				document.getElementById("email-error").textContent = "";
+				submitButton.disabled = false;
 			}
-			return false;
 		});
+
 
 		$('#password, #password2').on('keyup', function () {
 			if ($('#password').val() === $('#password2').val()) {
