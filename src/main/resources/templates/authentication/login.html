@@ -35,25 +35,32 @@
 
 						<form class="form-horizontal" method="post" role="form" th:action="@{/loginProcess}">
 							<div class="input-field">
-								<input type="text" class="input" id="email" name="email" required="" autocomplete="off">
-								<label for="email">Email hoặc số điện thoại</label>
+								<input type="text" class="input" id="email" name="email" required=""
+								pattern=".{5,255}" title="Email phải dài từ 5 đến 255 ký tự"
+								 placeholder="Example@gmail.com" autocomplete="off">
+								<label for="email">Email</label>
+							</div>
+							<div class="input-field">
+								<p id="email-error" style="color: red;"></p>
 							</div>
 							<div class="input-field">
 								<input type="password" class="input" id="password" name="password" required="">
 								<label for="pass">Mật khẩu</label>
 							</div>
 							<div class="input-field">
-								<input type="submit" class="submit" value="Đăng nhập">
+								<input id="submit-button" type="submit" class="submit" disabled value="Đăng nhập">
 							</div>
-													<div th:if="${param.error}">
-							<div class="alert alert-danger">Invalid Email or Password !!!</div>
+							
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Không đúng Email hoặc mật khẩu !!!</div>
 						</div>
-						<div th:if="${param.logout}">
-							<div class="alert alert-success">You have been logged out !!!</div>
-						</div>
+					
+							<div class="input-field" th:if="${param.logout}">
+								<p class="alert alert-success">Bạn đã đăng xuất thành công!!</p>
+							</div>
 						
 							<div class="forgotpass">
-								 <label> <input type="checkbox">Remember me </label>
+								 <label> <input type="checkbox" name="remember-me">Remember me </label>
 								<span><a th:href="@{/hbs/resetPassword}">Quên mật khẩu ?</a></span>
 							</div>
 							<div class="signin">
@@ -68,6 +75,23 @@
 
 	<script crossorigin="anonymous" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+			var submitButton = document.getElementById("submit-button");
+
+			document.getElementById("email").addEventListener("input", function() {
+			var email = this.value;
+			var pattern = /^[a-zA-Z0-9!#$%&'*+/=?^`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+			if (!pattern.test(email)) {
+				document.getElementById("email-error").textContent = "Email không đúng định dạng.";
+				submitButton.disabled = true;
+		} else {
+				document.getElementById("email-error").textContent = "";
+				submitButton.disabled = false;
+		}
+		});
+		
+	</script>
+		
 </body>
 
 </html>

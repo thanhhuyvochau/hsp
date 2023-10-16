@@ -54,8 +54,13 @@ public class WebbSecurityConfig {
 
 		// Cấu hình cho Login Form.
 		http.formLogin(auth -> auth.loginPage("/login").usernameParameter("email").loginProcessingUrl("/loginProcess")
-				.defaultSuccessUrl("/").failureUrl("/login?error"));
-		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
+				.defaultSuccessUrl("/homepage").failureUrl("/login?error"));
+
+		http.logout(auth -> auth.logoutUrl("/logout").logoutSuccessUrl("/login?logout")
+				.deleteCookies("JSESSIONID", "remember-me").permitAll());
+
+		http.rememberMe(auth -> auth.key("$2a$12$AcViNz3G9VDHfEpIudFr/.kRoiR.blVJXzGzlcgQwp608WnQyuA7C")
+				.tokenValiditySeconds(604800));
 
 		// Authorization
 

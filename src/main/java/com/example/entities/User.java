@@ -8,6 +8,7 @@
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 16/10/2023    2.1        HieuLBM        	 Add Pattern
  * 
  */
 package com.example.entities;
@@ -23,6 +24,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +46,8 @@ public class User {
 	private Long userId;
 	private String name;
 	private Date dob;
+
+	@Pattern(message = "{email.invalid}", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
 	private String email;
 	private String password;
 	private String address;
