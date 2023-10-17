@@ -56,6 +56,7 @@ public class LoginController {
 					model.addAttribute("accountDetail", user);
 					return "redirect:homepage";
 				} else {
+					System.out.println("ok");
 					System.out.println("Customer");
 					model.addAttribute("accountDetail", user);
 					return "redirect:homepage";
