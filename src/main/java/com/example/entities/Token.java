@@ -7,7 +7,7 @@
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 14/10/2023    1.0        HieuLBM          First Deploy
- *  * 
+ * 18/10/2023	 2.0		HieuLBM			 Edit User
  */
 package com.example.entities;
 
@@ -17,8 +17,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -37,19 +35,17 @@ public class Token {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
+	private Long userId;
 	private String token;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date expirationDate;
 
 	public boolean isExpired() {
 		// Kiểm tra xem thời gian hiện tại có lớn hơn thời gian hết hạn không
-		return new Date().after(expirationDate);
+		if (new Date().after(expirationDate)) {
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -7,7 +7,8 @@
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 14/10/2023    1.0        HieuLBM          First Deploy
- *  * 
+ * 18/10/2023	 2.0		HieuLBM			 edit deleteToken 
+ * 18/10/2023	 2.0		HieuLBM			 edit findByUserId 
  */
 package com.example.service.impl;
 
@@ -22,35 +23,35 @@ import com.example.repositoties.TokenRepository;
 import com.example.service.dao.TokenService;
 
 @Service("tokenService")
-public class tokenServiceImpl implements TokenService {
+public class TokenServiceImpl implements TokenService {
 
 	private TokenRepository tokenRepository;
 
-	public tokenServiceImpl(TokenRepository tokenRepository) {
+	public TokenServiceImpl(TokenRepository tokenRepository) {
 		this.tokenRepository = tokenRepository;
 	}
 
 	@Override
 	public Token createToken(User user) {
-		Token existingToken = tokenRepository.findByUserEmail(user.getEmail());
+		Token existingToken = tokenRepository.findByUserId(user.getUserId());
 
 		// Nếu đã tồn tại mã token cho người dùng, hãy cập nhật mã token cũ
 		if (existingToken != null) {
 			existingToken.setToken(generateToken());
-			// Cập nhật thời gian hết hạn, ví dụ: 24 giờ sau thời điểm cập nhật
+			// Cập nhật thời gian hết hạn, ví dụ: 1 giờ sau thời điểm cập nhật
 			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.MINUTE, 2);
+			calendar.add(Calendar.HOUR, 1);
 			existingToken.setExpirationDate(calendar.getTime());
 			return tokenRepository.save(existingToken);
 		}
 
 		Token newToken = new Token();
-		newToken.setUser(user);
+		newToken.setUserId(user.getUserId());
 		newToken.setToken(generateToken());
 
-		// Thiết lập thời gian hết hạn cho token (ví dụ: 24 giờ sau thời điểm tạo)
+		// Thiết lập thời gian hết hạn cho token (ví dụ: 1 giờ sau thời điểm tạo)
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MINUTE, 2);
+		calendar.add(Calendar.HOUR, 1);
 		newToken.setExpirationDate(calendar.getTime());
 
 		return tokenRepository.save(newToken);
@@ -67,14 +68,14 @@ public class tokenServiceImpl implements TokenService {
 		return null; // Token không hợp lệ hoặc đã hết hạn
 	}
 
-	@Override
-	public void deleteToken(Token token) {
-		tokenRepository.delete(token);
-	}
-
 	private String generateToken() {
 		// Tạo mã token duy nhất
 		// (Ví dụ: sử dụng UUID)
 		return UUID.randomUUID().toString();
+	}
+
+	@Override
+	public void deleteToken(Long id) {
+		tokenRepository.deleteById(id);
 	}
 }

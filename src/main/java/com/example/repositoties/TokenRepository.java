@@ -7,7 +7,7 @@
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 14/10/2023    1.0        HieuLBM          First Deploy
- *  * 
+ * 18/10/2023	 2.0		HieuLBM			 Add findByUserId
  */
 package com.example.repositoties;
 
@@ -20,5 +20,6 @@ import com.example.entities.Token;
 public interface TokenRepository extends JpaRepository<Token, Long> {
 	Token findByToken(String token);
 
-	Token findByUserEmail(String email);
+	Token findByUserId(Long userId);
+
 }
