@@ -34,32 +34,37 @@ public class LoginController {
 	public String index(Authentication action, Model model) {
 		if (action != null) {
 			UserDetails user = (UserDetails) action.getPrincipal();
+			System.out.println(user);
 			for (GrantedAuthority authority : user.getAuthorities()) {
-				if (authority.getAuthority().equals("ADMIN")) {
+				if (authority.getAuthority().equalsIgnoreCase("ADMIN")) {
 					System.out.println("ADMIN");
 					model.addAttribute("accountDetail", user.getUsername());
 					return "homepage";
-				} else if (authority.getAuthority().equals("Management")) {
+				}
+				if (authority.getAuthority().equalsIgnoreCase("MANAGEMENT")) {
 					System.out.println("Management");
 					model.addAttribute("accountDetail", user);
-					return "redirect:homepage";
-				} else if (authority.getAuthority().equals("Receptionists")) {
+					return "homepage";
+				}
+				if (authority.getAuthority().equalsIgnoreCase("Receptionists")) {
 					System.out.println("Receptionists");
 					model.addAttribute("accountDetail", user);
-					return "redirect:homepage";
-				} else if (authority.getAuthority().equals("Housekeeping")) {
+					return "homepage";
+				}
+				if (authority.getAuthority().equalsIgnoreCase("HOUSEKEEPING")) {
 					System.out.println("Housekeeping");
 					model.addAttribute("accountDetail", user);
-					return "redirect:homepage";
-				} else if (authority.getAuthority().equals("Accounting")) {
+					return "homepage";
+				}
+				if (authority.getAuthority().equalsIgnoreCase("ACCOUNTING")) {
 					System.out.println("Accounting");
 					model.addAttribute("accountDetail", user);
-					return "redirect:homepage";
-				} else {
-					System.out.println("ok");
+					return "homepage";
+				}
+				if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
 					System.out.println("Customer");
 					model.addAttribute("accountDetail", user);
-					return "redirect:homepage";
+					return "homepage";
 				}
 			}
 
