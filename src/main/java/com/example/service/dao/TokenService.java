@@ -19,5 +19,5 @@ public interface TokenService {
 
 	Token findTokenByValue(String tokenValue);
 
-	void deleteToken(Token token);
+	void deleteToken(Long id);
 }

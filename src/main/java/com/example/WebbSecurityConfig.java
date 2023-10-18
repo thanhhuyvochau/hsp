@@ -65,11 +65,12 @@ public class WebbSecurityConfig {
 		// Authorization
 
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**").permitAll()
-				.requestMatchers("/admin/**").hasAnyRole("ADMIN").requestMatchers("/user/**").hasAnyRole("CUSTOMER")
-				.requestMatchers("/management/**").hasAnyRole("MANAGEMENT").requestMatchers("/receptionist/**")
-				.hasAnyRole("RECEPTIONISTS").requestMatchers("/housekeeping/**").hasAnyRole("HOUSEKEEPING")
-				.requestMatchers("/accounting/**").hasAnyRole("ACCOUNTING").anyRequest().authenticated());
+				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**", "/error")
+				.permitAll().requestMatchers("/admin/**").hasAnyRole("ADMIN").requestMatchers("/user/**")
+				.hasAnyRole("CUSTOMER").requestMatchers("/management/**").hasAnyRole("MANAGEMENT")
+				.requestMatchers("/receptionist/**").hasAnyRole("RECEPTIONISTS").requestMatchers("/housekeeping/**")
+				.hasAnyRole("HOUSEKEEPING").requestMatchers("/accounting/**").hasAnyRole("ACCOUNTING").anyRequest()
+				.authenticated());
 
 		// Exception Handling
 		http.exceptionHandling(auth -> auth.accessDeniedPage("/accessDenied"));
