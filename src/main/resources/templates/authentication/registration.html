@@ -22,7 +22,7 @@
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-	<title>Login</title>
+	<title>Đăng ký</title>
 </head>
 
 <body>
@@ -39,12 +39,12 @@
 
 					<div class="input-box">
 						<div th:if="${param.success}">
-							<div class="alert alert-success">Registration successful! You can now log in.</div>
+							<div class="alert alert-success">Đăng ký thành công! Giờ bạn có thể đăng nhập.</div>
 						</div>
 
 						<div th:if="${param.error}">
-							<div class="alert alert-danger">Registration failed. Please check your information and try
-								again.</div>
+							<div class="alert alert-danger">Đăng ký thất bại! Hãy kiểm tra lại thông tin và thử lại lần
+								nữa.</div>
 						</div>
 						<p th:text="${accountDetail}"></p>
 
@@ -52,14 +52,15 @@
 						<form th:action="@{/registration}" method="post" th:object="${userdto}">
 
 							<div class="input-field">
-								<input type="text" id="user_name" class="input" name="user-name" minlength="3"
-									maxlength="30" th:field="*{userName}" required autofocus>
-								<label for="email">Username</label>
+								<input type="text" id="user_name" placeholder="Tên người dùng" class="input"
+									name="user-name" minlength="3" maxlength="30" th:field="*{userName}" required
+									autofocus>
+
 							</div>
 							<div class="input-field">
-								<input type="text" class="input" id="email" required="" name="email" maxlength="50"
-									minlength="5" th:field="*{userEmail}" autocomplete="off">
-								<label for="email">Email hoặc số điện thoại</label>
+								<input type="text" class="input" id="email" placeholder="Email" required="" name="email"
+									maxlength="50" minlength="5" th:field="*{userEmail}" autocomplete="off">
+
 							</div>
 							<div class="input-field">
 								<p id="email-error" style="color: red;"></p>
@@ -68,22 +69,23 @@
 
 							<div class="input-field">
 								<input th:field="*{userPassword}" minlength="8" maxlength="30" name="password"
-									type="password" class="input" id="password" required="" autocomplete="off">
-								<label for="pass">Mật khẩu</label>
+									type="password" class="input" id="password" placeholder="Mật khẩu" required=""
+									autocomplete="off">
+
 							</div>
 							<div class="input-field">
-								<input type="password" class="input" id="password2" th:field="*{CheckPass}"
-									minlength="8" maxlength="30" name="password" required="">
-								<label for="pass"> Nhập lại mật khẩu</label>
+								<input type="password" class="input" id="password2" placeholder="Nhập lại mật khẩu"
+									th:field="*{CheckPass}" minlength="8" maxlength="30" name="password" required="">
+
 							</div>
 							<div class="input-field">
 								<p id="checkpass-error" style="color: red;"></p>
 							</div>
-							<div th:if="${param.Checkpass}">
-								<div class="alert alert-info"> You password and checkpass not same ! Please
-									checkout
-									it!</div>
+							<div th:if="${param.checkpass}">
+								<div class="alert alert-danger"> Mật khẩu không giống nhau! Hãy kiểm tra lại.</div>
 							</div>
+
+							<div>
 
 							<div>
 								<p id="result2"></p>
