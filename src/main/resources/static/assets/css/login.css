@@ -22,8 +22,8 @@
     position: relative;
 }
 .row{
-  width:  900px;
-  height:550px;
+  width:  1000px;
+  height:600px;
   border-radius: 10px;
   background: #fff;
   padding: 0px;
@@ -51,10 +51,10 @@ i{
   box-sizing: border-box;
 }
 img{
-    width: 470px;
+    width: 500px;
     position: absolute;
     top: 90px;
-    left: 25px;
+    left: 50px;
 }
 .input-box header{
     font-weight: 700;
@@ -134,8 +134,8 @@ img{
 }
 .container_swap{
 
-    width: 200px;
-    
+    width: 275px;
+    padding-left: 40px;
     }
     
     .div_left{
@@ -156,6 +156,7 @@ img{
     
     text-align: center;
     
+    padding-right:10px;
     }
 span a{
     text-decoration: none;
@@ -189,4 +190,8 @@ span a:hover{
         max-width:420px;
         width: 100%;
     }
+}
+.form-check-label{
+    text-align: center;
+    font-size: smaller; 
 }
