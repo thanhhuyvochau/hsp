@@ -1,17 +1,6 @@
-/*
- * Copyright (C) 2023, FPT University 
- * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
- *
- * Record of change:
- * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
- */
 package fu.hbs.entities;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -32,15 +21,15 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_feedback")
-public class RoomFeedback {
+@Table(name = "payment")
+public class Payment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_feedback_id")
-	private Long roomFeedbackId;
+	@Column(name = "payment_id")
+	private Long paymentId;
+	private Long vnpayId;
 	private Long userId;
-	private Long roomId;
-	private String comment;
-	private Date createDate;
-	private boolean status;
+	private BigDecimal totalAmount;
+	public Date createdDate;
+	public Date updatedDate;
 }

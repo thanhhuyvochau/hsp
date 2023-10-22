@@ -12,7 +12,12 @@
  */
 package fu.hbs.entities;
 
+import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,14 +32,14 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_service")
-public class RoomService {
+@Table(name = "room_furniture")
+public class RoomFurniture {
 	@Id
-	private Long serviceId;
-	@Id
-	private Long roomId;
-	private int quantity;
-	private String status;
-	private String note;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "furniture_id")
+	private Long furnitureId;
+	private String furnitureName;
+	private BigDecimal furniturePrice;
+	private boolean status;
 
 }

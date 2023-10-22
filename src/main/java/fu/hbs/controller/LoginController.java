@@ -46,7 +46,7 @@ public class LoginController {
 					model.addAttribute("accountDetail", user);
 					return "homepage";
 				}
-				if (authority.getAuthority().equalsIgnoreCase("Receptionists")) {
+				if (authority.getAuthority().equalsIgnoreCase("RECEPTIONISTS")) {
 					System.out.println("Receptionists");
 					model.addAttribute("accountDetail", user);
 					return "homepage";

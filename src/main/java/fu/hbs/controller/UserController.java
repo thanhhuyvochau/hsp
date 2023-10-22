@@ -73,14 +73,12 @@ public class UserController {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		User user = userService.getUserbyEmail(userDetails.getUsername());
 		model.addAttribute("user", user);
-		System.out.println(user);
 		return "userProfile";
 	}
 
 	@PostMapping("/customer/profile")
 	public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
 			@RequestParam("file") MultipartFile file) throws UserNotFoundException, UserIvalidException, IOException {
-		System.out.println(user);
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("user", user);
 			return "userProfile";

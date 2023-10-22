@@ -11,7 +11,6 @@
  */
 package fu.hbs.service.impl;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +81,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(User user) throws UserIvalidException {
-		if (userRepository.findById(user.getUserId()).isPresent()) {
-			List<User> users = userRepository.findByPhone(user.getPhone());
-			if ((users != null) && (!users.isEmpty())) {
-				throw new UserIvalidException("Phone đã tồn tại");
-			}
+
+		Optional<User> existingUser = userRepository.findByPhone(user.getPhone());
+		// Phone đã tồn tại và không thuộc về người dùng hiện tại
+		if (existingUser.isPresent() && !existingUser.get().getUserId().equals(user.getUserId())) {
+			throw new UserIvalidException("Phone đã tồn tại");
+
 		}
 		return userRepository.save(user);
 	}

@@ -6,13 +6,16 @@
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 22/10/2023    1.0        HieuLBM          First Deploy
+ *
  * 
  */
 package fu.hbs.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,14 +30,16 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_device")
-public class RoomDevice {
+@Table(name = "room_booking_services")
+public class RoomBookingServices {
 	@Id
-	private Long deviceId;
-	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "booking_services_id")
+	private Long bookingServicesId;
+	private Long serviceId;
 	private Long roomId;
 	private int quantity;
-	private String status;
+	private boolean status;
 	private String note;
 
 }

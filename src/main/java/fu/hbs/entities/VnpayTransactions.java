@@ -6,8 +6,8 @@
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 22/10/2023    1.0        HieuLBM          First Deploy
+ *
  * 
  */
 package fu.hbs.entities;
@@ -32,15 +32,17 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_feedback")
-public class RoomFeedback {
+@Table(name = "vnpay_transactions")
+public class VnpayTransactions {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_feedback_id")
-	private Long roomFeedbackId;
-	private Long userId;
-	private Long roomId;
-	private String comment;
-	private Date createDate;
-	private boolean status;
+	@Column(name = "vnpay_id")
+	private Long vnpayId;
+	private Long hotelBookingId;
+	private String status;
+	private String text;
+	private String paymentId;
+	private String transactionId;
+	private Date createdDate;
+	private Date updatedDate;
 }

@@ -1,18 +1,6 @@
-/*
- * Copyright (C) 2023, FPT University 
- * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
- *
- * Record of change:
- * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
- */
-
 package fu.hbs.entities;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -33,15 +21,15 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "date_room")
-
-public class DateRoom {
+@Table(name = "refund_receipts")
+public class RefundReceipts {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long Id;
-	private Long roomId;
-	private Date checkIn;
-	private Date checkOut;
-	private boolean status;
+	@Column(name = "receipt_id")
+	private Long receiptId;
+	private Long vnpayRefundId;
+	private Long userId;
+	private Date refund_date;
+	private BigDecimal refundAmount;
+	private int receiptNumber;
 }

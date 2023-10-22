@@ -1,16 +1,3 @@
-/*
- * Copyright (C) 2023, FPT University 
- * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
- *
- * Record of change:
- * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
- */
-
 package fu.hbs.entities;
 
 import jakarta.persistence.Column;
@@ -31,15 +18,15 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_categories")
-public class RoomCategories {
+@Table(name = "category_room_furniture")
+public class CategoryRoomFurniture {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_category_id")
+	@Column(name = "id")
+	private Long id;
+	private Long furnitureId;
 	private Long roomCategoryId;
-	private String roomCategoryName;
-	private String description;
-	private Double square;
-	private int numberPerson;
-
+	private int quantity;
+	private boolean status;
+	private String note;
 }

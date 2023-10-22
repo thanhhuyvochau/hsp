@@ -33,7 +33,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "new")
+@Table(name = "news")
 public class New {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -39,8 +39,11 @@ public class Room {
 	private Long roomId;
 	private Long roomImageId;
 	private Long roomCategoryId;
-	private String description;
 	private Long statusId;
 	private Long serviceId;
+	private String description;
+	private float discount;
+	private String viewCity;
+	private boolean activity;
 
 }

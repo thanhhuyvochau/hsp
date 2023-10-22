@@ -21,20 +21,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fu.hbs.entities.Token;
 import fu.hbs.exceptionHandler.ResetExceptionHandler;
+import fu.hbs.service.dao.ResetService;
 import fu.hbs.service.dao.TokenService;
 import fu.hbs.service.dao.UserService;
-import fu.hbs.service.impl.RestPasswordService;
 import fu.hbs.utils.StringDealer;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ResetPasswordController {
-	private RestPasswordService restPasswordService;
+	private ResetService restPasswordService;
 	private TokenService tokenService;
 	private StringDealer stringDealer;
 	private UserService userService;
 
-	public ResetPasswordController(RestPasswordService restPasswordService, TokenService tokenService,
+	public ResetPasswordController(ResetService restPasswordService, TokenService tokenService,
 			UserService userService) {
 		this.restPasswordService = restPasswordService;
 		this.tokenService = tokenService;
@@ -48,7 +48,7 @@ public class ResetPasswordController {
 	}
 
 	@PostMapping("/hbs/resetPassword")
-	public String handleResetPasswordRequest(@RequestParam String email, Model model) {
+	public String handleResetPasswordRequest(@RequestParam String email, Model model) throws ResetExceptionHandler {
 		String checkemail = stringDealer.trimMax(email);
 		if ((!checkemail.equals("")) && !stringDealer.checkEmailRegex(checkemail)) { /* Email is not valid */
 			model.addAttribute("email", "Email không đúng định dạng");
@@ -89,38 +89,35 @@ public class ResetPasswordController {
 		String resetToken = (String) session.getAttribute("token");
 
 		Token tokenEntity = tokenService.findTokenByValue(resetToken);
-		try {
-			if (tokenEntity == null || tokenEntity.isExpired()) {
-				System.out.println("full time");
-				model.addAttribute("errorMessage", "Hết hạn thời gian!!!");
-				return "resetPassword";
-			}
-			// Password
-			String password = stringDealer.trimMax(Password);
-			if (password.equals("")) { /* Password is empty */
-				model.addAttribute("pass", "Mật khẩu không được để trống");
-				return "resetPassword";
-			}
-			if (!stringDealer.checkPasswordRegex(password)) { /* Password is not valid */
-				model.addAttribute("pass", "Mật khẩu không hợp lệ");
-				return "resetPassword";
-			}
-			// Confirm password
-			String rePassword1 = stringDealer.trimMax(rePassword);
+		if (tokenEntity == null || tokenEntity.isExpired()) {
+			System.out.println("full time");
+			model.addAttribute("errorMessage", "Hết hạn thời gian!!!");
+			return "resetPassword";
+		}
+		// Password
+		String password = stringDealer.trimMax(Password);
+		if (password.equals("")) { /* Password is empty */
+			model.addAttribute("pass", "Mật khẩu không được để trống");
+			return "resetPassword";
+		}
+		if (!stringDealer.checkPasswordRegex(password)) { /* Password is not valid */
+			model.addAttribute("pass", "Mật khẩu không hợp lệ");
+			return "resetPassword";
+		}
+		// Confirm password
+		String rePassword1 = stringDealer.trimMax(rePassword);
 
-			if (!password.equals(rePassword)) { /* Password not match */
-				model.addAttribute("pass", "Mật khẩu không khớp");
+		if (!password.equals(rePassword)) { /* Password not match */
+			model.addAttribute("pass", "Mật khẩu không khớp");
+			return "resetPassword";
+		}
+		// Password match
+		if (password.equals(rePassword)) {
+			if (restPasswordService.resetPassword(tokenEntity, rePassword)) {
+				model.addAttribute("valid", "Đổi mật khẩu thành công");
+				session.removeAttribute("token");
+				return "resetPassword";
 			}
-			// Password match
-			if (password.equals(rePassword)) {
-				if (restPasswordService.resetPassword(tokenEntity, rePassword)) {
-					model.addAttribute("valid", "Đổi mật khẩu thành công");
-					session.removeAttribute("token");
-					return "resetPassword";
-				}
-			}
-		} catch (Exception e) {
-			throw new ResetExceptionHandler("Không thể thay đổi mật khẩu!");
 		}
 
 		return "resetPassword";

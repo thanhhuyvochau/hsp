@@ -12,7 +12,6 @@
  */
 package fu.hbs.repositoties;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +29,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findById(Long id);
 
-	List<User> findByPhone(String phone);
+	Optional<User> findByPhone(String phone);
 }

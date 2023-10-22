@@ -8,10 +8,12 @@
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
+ * 22/10/2023	 2.1		HieuLBM			 change name
  */
+
 package fu.hbs.entities;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -32,15 +34,22 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "room_feedback")
-public class RoomFeedback {
+@Table(name = "hotel_booking")
+public class HotelBooking {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_feedback_id")
-	private Long roomFeedbackId;
+	@Column(name = "hotel_booking_id")
+	private Long hotelBookingId;
 	private Long userId;
 	private Long roomId;
-	private String comment;
-	private Date createDate;
+	private Long bookingServicesId;
+	private String name;
+	private String email;
+	private String address;
+	private String phone;
+	private BigDecimal totalPrice;
+	private Date checkIn;
+	private Date checkOut;
 	private boolean status;
+
 }

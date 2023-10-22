@@ -23,14 +23,17 @@ import org.thymeleaf.context.Context;
 
 import fu.hbs.entities.Token;
 import fu.hbs.entities.User;
+import fu.hbs.exceptionHandler.MailExceptionHandler;
+import fu.hbs.exceptionHandler.ResetExceptionHandler;
 import fu.hbs.repositoties.TokenRepository;
 import fu.hbs.repositoties.UserRepository;
+import fu.hbs.service.dao.ResetService;
 import fu.hbs.service.dao.TokenService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 @Service
-public class RestPasswordService {
+public class RestPasswordImpl implements ResetService {
 
 	private UserRepository userRepository;
 
@@ -43,7 +46,7 @@ public class RestPasswordService {
 	@Autowired
 	TemplateEngine templateEngine;
 
-	public RestPasswordService(UserRepository userRepository, TokenService tokenServices, JavaMailSender javaMailSender,
+	public RestPasswordImpl(UserRepository userRepository, TokenService tokenServices, JavaMailSender javaMailSender,
 			TokenRepository tokenRepository) {
 		this.userRepository = userRepository;
 		this.tokenService = tokenServices;
@@ -51,7 +54,7 @@ public class RestPasswordService {
 		this.tokenRepository = tokenRepository;
 	}
 
-	public void resetPasswordRequest(String email) {
+	public void resetPasswordRequest(String email) throws ResetExceptionHandler {
 		User user = userRepository.findByEmail(email);
 		if (user != null) {
 			Token token = tokenService.createToken(user);
@@ -65,10 +68,13 @@ public class RestPasswordService {
 
 			// Gửi email
 			sendResetPasswordEmail(user.getEmail(), "Quên Mật Khẩu", emailContent);
+		} else {
+			throw new MailExceptionHandler("Lỗi gửi mail");
 		}
+
 	}
 
-	public boolean resetPassword(Token token, String newPassword) {
+	public boolean resetPassword(Token token, String newPassword) throws ResetExceptionHandler {
 		String encodedPassword = passwordEncoder.encode(newPassword);
 		Optional<User> userOptional = userRepository.findById(token.getUserId());
 		// Đặt lại mật khẩu cho người dùng
@@ -77,14 +83,16 @@ public class RestPasswordService {
 			user.setPassword(encodedPassword);
 			userRepository.save(user);
 			System.out.println(token.getToken());
-			System.out.println(token.getId());
 			tokenRepository.deleteById(token.getId());
 			return true;
+		} else {
+			throw new ResetExceptionHandler("Cập nhật thất bại");
 		}
-		return false;
+
 	}
 
-	public void sendResetPasswordEmail(String recipientEmail, String subject, String emailContent) {
+	public void sendResetPasswordEmail(String recipientEmail, String subject, String emailContent)
+			throws MailExceptionHandler {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -96,9 +104,7 @@ public class RestPasswordService {
 
 			javaMailSender.send(message);
 		} catch (MessagingException e) {
-			// Xử lý lỗi gửi email
-			e.printStackTrace();
-
+			throw new MailExceptionHandler("Lỗi gửi mail");
 		}
 	}
 }
