@@ -14,6 +14,8 @@ package fu.hbs.service.dao;
 
 import fu.hbs.dto.UserDto;
 import fu.hbs.entities.User;
+import fu.hbs.exceptionHandler.UserIvalidException;
+import fu.hbs.exceptionHandler.UserNotFoundException;
 
 public interface UserService {
 
@@ -24,5 +26,11 @@ public interface UserService {
 	Boolean checkUserbyEmail(String email);
 
 	User getUserbyEmail(String email);
+
+	User findById(Long id) throws UserNotFoundException;
+
+	User update(User user) throws UserIvalidException;
+
+	boolean findByPhone(String phone) throws UserNotFoundException;
 
 }

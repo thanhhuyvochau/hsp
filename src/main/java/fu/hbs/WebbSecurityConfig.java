@@ -66,10 +66,10 @@ public class WebbSecurityConfig {
 
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**", "/error")
-				.permitAll().requestMatchers("/admin/**").hasAnyRole("ADMIN").requestMatchers("/user/**")
-				.hasAnyRole("CUSTOMER").requestMatchers("/management/**").hasAnyRole("MANAGEMENT")
-				.requestMatchers("/receptionist/**").hasAnyRole("RECEPTIONISTS").requestMatchers("/housekeeping/**")
-				.hasAnyRole("HOUSEKEEPING").requestMatchers("/accounting/**").hasAnyRole("ACCOUNTING").anyRequest()
+				.permitAll().requestMatchers("/admin/**").hasAuthority("ADMIN").requestMatchers("/customer/**")
+				.hasAuthority("CUSTOMER").requestMatchers("/management/**").hasAuthority("MANAGEMENT")
+				.requestMatchers("/receptionist/**").hasAuthority("RECEPTIONISTS").requestMatchers("/housekeeping/**")
+				.hasAuthority("HOUSEKEEPING").requestMatchers("/accounting/**").hasAuthority("ACCOUNTING").anyRequest()
 				.authenticated());
 
 		// Exception Handling

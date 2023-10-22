@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="./css/userProfile.css">
     <link rel="stylesheet" href="./css/header-footer-style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+		.error{
+			color:red ;
+		}
+	</style>
 </head>
 
 <body data-bs-target=".navbar" data-bs-offset="100">
@@ -67,6 +72,8 @@
         <h4 class="font-weight-bold py-3 mb-4">
             Hồ sơ người dùng
         </h4>
+        <form method="post" th:object="${user}" th:action="@{/customer/profile}"  enctype="multipart/form-data">
+			 <input type="hidden" id="id" name="userId" th:field="*{userId}"  ><br>
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
                 <div class="col-md-3 pt-0">
@@ -86,27 +93,37 @@
                                 <div class="media-body ml-4">
                                     <label class="btn btn-outline-primary">
                                         Tải ảnh lên
-                                        <input type="file" class="account-settings-fileinput">
+                                        <input type="file" id="profileImage" name="file"  class="account-settings-fileinput">
                                     </label> &nbsp;
                                 </div>
                             </div>
                             <hr class="border-light m-0">
+                            	<div th:if="${param.changeSuccess}">
+												<div class="alert alert-success" style="margin-top: 15px;">
+													Cập nhật thành công
+												</div>
+											</div>
+										
+							
+											
+									
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-label">Tên tài khoản</label>
-                                    <input type="text" class="form-control mb-1" value="dthieuu">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tên người dùng</label>
-                                    <input type="text" class="form-control" value="Do Trung Hieu">
+                                    <input type="text" class="form-control mb-1" id="name" name="name" th:field="*{name}" required>
+                                     <br>
+                                    <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}"></div>           
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
-                                    <input type="text" class="form-control mb-1" value="dthieuu@gmail.com">
+                                    <input type="email" class="form-control mb-1"  id="email" name="email" th:field="*{email}"   readonly required>
+                                      <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" value="0388663366">
+                                    <input type="text" class="form-control"  id="phone" name="phone"   th:field="*{phone}">
+                                     <div th:if="${#fields.hasErrors('phone')}" class="error" th:errors="*{phone}"></div>
+                                     	<div  class="error" th:text="${errorMessage}"></div>
                                 </div>
                             </div>
                         </div>
@@ -115,14 +132,14 @@
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Ngày sinh</label>
-                                    <input type="date" class="form-control" placeholder="Date">
+                                    <input type="date" class="form-control" name="dob" th:field="*{dob}" placeholder="Date">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Giới tính</label>
-                                    <select class="custom-select">
-                                        <option>Nữ</option>
-                                        <option selected>Nam</option>
-                                        <option>Khác</option>
+                                    <select class="custom-select"   id="gender" name="gender" th:field="*{gender}">
+                                         <option value="Nam" th:selected="${gender == 'Name'}">Nam</option>
+   										 <option value="Nữ" th:selected="${gender == 'Nữ'}">Nữ</option>
+   										 <option value="Khác" th:selected="${gender == 'Khác'}">Khác</option>
                                     </select>
                                 </div>
                             </div>
@@ -131,7 +148,8 @@
                                 <h6 class="mb-4">Nơi ở</h6>
                                 <div class="form-group">
                                     <label class="form-label">Địa chỉ</label>
-                                    <input type="text" class="form-control" value="Thôn 3 - Thạch Hòa - Thạch Thất - Hà Nội">
+                                       <input type="text" class="form-control" id="address" name="address"  th:field="*{address}"><br>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -139,9 +157,14 @@
                 </div>
             </div>
         </div>
+        
         <div class="text-right mt-3">
-            <input type="submit" class="submit" value="Chỉnh sửa thông tin">&nbsp;
+			<button type="submit" class="btn btn-primary me-2">Lưu</button>
+			<button type="reset" class="btn btn-outline-secondary">Huỷ</button>
+         
         </div>
+        
+        </form>
     </div>
     <section id="contact" class="footer_wrapper mt-3 mt-md-3 pb-0">
         <div class="container pb-3">

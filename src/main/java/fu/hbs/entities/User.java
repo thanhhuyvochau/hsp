@@ -47,7 +47,10 @@ public class User {
 	private String email;
 	private String password;
 	private String address;
+	@Pattern(message = "{phone.invalid}", regexp = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")
 	private String phone;
+	private String gender;
+	private byte[] image;
 	private boolean status;
 
 }
