@@ -69,26 +69,39 @@
 							<a class="main-btn" th:href="@{/login}">Đăng nhập</a>
 						</li>
 						<li class="nav-item" th:if="${accountDetail != null}">
-							<a class="main-btn" th:href="@{/logout}">Đăng xuất</a></span>
-						</li>
+							<div class="action">
+								<div class="profile" onclick="menuToggle()">
+									<i style='font-size:30px' class='fas'>&#xf406;</i>
+								</div>
 
-						<!-- <div class="menu">
-                        <h3>Do Trung Hieu<br></h3>
-                        <ul>
-                            <li><img src="./assets/img/usermenu/user.png" alt=""><a href="#">Hồ sơ</a></li>
-                            <li><img src="./assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a></li>
-                            <li><img src="./assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a></li>
-                            <li><img src="./assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn tin</a></li>
-                            <li><img src="./assets/img/usermenu/question.png" alt=""><a href="#">Trợ giúp</a></li>
-                            <li><img src="./assets/img/usermenu/log-out.png" alt=""><a href="#">Đăng xuất</a></li>
-                        </ul>
-                    </div>
-                    <div class="action">
-                    <div class="profile" onclick="menuToggle()">
-                        <i style='font-size:30px' class='fas'>&#xf406;</i>
-                    </div>
-                    
-                </div>          -->
+								<div class="menu">
+									<h3>Do Trung Hieu<br></h3>
+									<ul>
+										<li><img src="./assets/img/usermenu/user.png" alt=""><a href="#">Hồ sơ</a></li>
+										<li><img src="./assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a>
+										</li>
+										<li><img src="./assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a>
+										</li>
+										<li><img src="./assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn
+												tin</a>
+										</li>
+										<li><img src="./assets/img/usermenu/question.png" alt=""><a href="#">Trợ
+												giúp</a>
+										</li>
+										<li><img src="./assets/img/usermenu/log-out.png" alt=""><a
+												th:href="@{/logout}">Đăng
+												xuất</a></li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						
+						<script>
+								function menuToggle() {
+									const toggleMenu = document.querySelector(".menu");
+									toggleMenu.classList.toggle('active')
+								}
+							</script>
 
 					</ul>
 				</div>
@@ -571,7 +584,5 @@
 				<!-- Custom Js Link -->
 				<script src="../assets/js/main.js"></script>
 </body>
-
-<html>
 
 </html>
