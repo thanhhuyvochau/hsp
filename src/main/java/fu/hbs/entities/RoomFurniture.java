@@ -6,8 +6,8 @@
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
- * 04/10/2023    1.0        HieuLBM          First Deploy
- * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
+ * 22/10/2023    1.0        HieuLBM          First Deploy
+ *
  * 
  */
 package fu.hbs.entities;
