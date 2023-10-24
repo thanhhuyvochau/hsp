@@ -8,6 +8,4 @@ import fu.hbs.entities.UserRole;
 @Repository("userroleReposity")
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 	UserRole save(UserRole userRole);
-	
-	UserRole findByUserId(Long userId);
 }
