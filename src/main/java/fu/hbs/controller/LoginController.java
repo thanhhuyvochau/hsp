@@ -12,6 +12,7 @@
  */
 package fu.hbs.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +20,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import fu.hbs.entities.User;
+import fu.hbs.service.dao.UserService;
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class LoginController {
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/login")
 	public String loginForm(Authentication action) {
@@ -31,7 +38,7 @@ public class LoginController {
 	}
 
 	@GetMapping("/homepage")
-	public String index(Authentication action, Model model) {
+	public String index(Authentication action, Model model, HttpSession session) {
 		if (action != null) {
 			UserDetails user = (UserDetails) action.getPrincipal();
 			System.out.println(user);
@@ -63,7 +70,10 @@ public class LoginController {
 				}
 				if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
 					System.out.println("Customer");
-					model.addAttribute("accountDetail", user);
+					User user1 = userService.getUserbyEmail(user.getUsername());
+					session.setAttribute("accountDetail", user);
+//					model.addAttribute("accountDetail", user);
+					model.addAttribute("name", user1.getName());
 					return "homepage";
 				}
 			}

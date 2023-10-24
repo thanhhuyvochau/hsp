@@ -32,10 +32,10 @@
 
 				<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 					<ul class="navbar-nav menu-navbar-nav">
-						<li class="nav-item" th:if="${accountDetail == null}">
+						<li class="nav-item" th:if="${session.accountDetail == null}">
 							<a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
 						</li>
-						<li class="nav-item" th:if="${accountDetail != null}">
+						<li class="nav-item" th:if="${session.accountDetail != null}">
 							<a class="nav-link active" aria-current="page" href="/homepage">Trang chủ</a>
 						</li>
 						<li class="nav-item">
@@ -57,10 +57,10 @@
 							<a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Liên
 								hệ</a>
 						</li>
-						<li class="nav-item" th:if="${accountDetail == null}">
+						<li class="nav-item" th:if="${session.accountDetail == null}">
 							<a class="main-btn" th:href="@{/login}">Đăng nhập</a>
 						</li>
-						<li class="nav-item" th:if="${accountDetail != null}">
+						<li class="nav-item" th:if="${session.accountDetail != null}">
 							<div class="action">
 								<div class="profile" onclick="menuToggle()">
 									<i style='font-size:30px' class='fas'>&#xf406;</i>
@@ -69,8 +69,8 @@
 								<div class="menu" >
 									<h3 th:text="${name}"><br></h3>
 									<ul>
-										<li><img src="/assets/img/usermenu/user.png" alt=""><a href="/customer/profile">Hồ sơ</a></li>
-										<li><img src="/assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a>
+										<li><img src="/assets/img/usermenu/user.png" alt=""><a th:href="@{/customer/viewProfile}">Hồ sơ</a></li>
+										<li><img src="/assets/img/usermenu/edit.png" alt=""><a th:href="@{/customer/updateprofile}">Chỉnh sửa</a>
 										</li>
 										<li><img src="/assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a>
 										</li>

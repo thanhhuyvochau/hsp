@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>View Room</title>
     <!-- FAVICON -->
     <link rel="icon" type="image/png" href="">
@@ -87,74 +87,21 @@
           <h3>Các loại phòng của chúng tôi</h3>
         </div>
       </div>
+      <p th:text="${NotFound}"></p>
       <div class="row">
+		  <tr th:each="category : ${categories}">
         <div class="col-md-6 col-lg-4 mb-5">
           <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room1.webp" alt="Image" class="img-fluid"></a>
+            <a href="#" class="d-block mb-0 thumbnail">   <img th:src="@{'/assets/img/rooms/' + ${category.image}}" alt="Room Image" class="img-fluid" /></a>
             <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Superior Double/Twin</a></h3>
-              <strong class="price">3,000,000VND/Đêm</strong>
-              <p>Phòng Superior 28m2 với tầm nhìn hướng về thành phố mang quý khách đến gần hơn với cuộc sống thành thị. Thiết kế tinh tế cùng tiện nghi hiện đại hứa hẹn là một điểm nhấn đặc biệt trong thời gian quý khách ở tại khách sạn 3HKT.</p>
+              <h3 class="heading mb-0"  th:text="${category.roomCategoryName}"><a href="#"></a></h3>
+              <strong class="price" th:text="${category.getCategoryRoomPrice().getPrice()}"></strong>
+              <p th:text="${category.description}"></p>
 															<p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room2.webp" alt="Image" class="img-fluid"></a>
-            <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Family Room</a></h3>
-              <strong class="price">5,000,000VND/Đêm</strong>
-              <p>Được thiết kế rộng rãi 36m2 với 1 giường đôi và 1 giường đơn, phòng Family Room thích hợp với những gia đình hay nhóm quý khách cùng nhau du lịch. Bên trong phòng bố trí đầy đủ tiền nghi cao cấp và đầy đủ cùng thiết kế nội thất được chăm chút đến từng chi tiết, Family Room giúp quý khách có được những khoảnh khắc vui vẻ bên quý khách bè cùng những người thân yêu.</p>
-															<p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room3.webp" alt="Image" class="img-fluid"></a>
-            <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Grand Suite</a></h3>
-              <strong class="price">10,000,000VND/Đêm</strong>
-              <p>Grand Suite là sự kết hợp tuyệt vời của nghệ thuật thiết kế nội thất ấn tượng cùng vẻ đẹp của toàn cảnh thủ đô Hà Nội năng động. Căn phòng rộng 62m2 được bố trí trên những tầng cao nhất của khách sạn sẽ mang đến cho quý khách sự sang trọng của không gian sống cùng sự hoàn hảo trong dịch vụ nghỉ dưỡng.</p>
-															<p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room5.jpeg" alt="Image" class="img-fluid"></a>
-            <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Deluxe Double/Twin</a></h3>
-              <strong class="price">3,500,000VND/Đêm</strong>
-              <p>Phòng Deluxe bao gồm 2 lựa chọn cho quý khách: hướng về thành phố với những tòa nhà mang kiến trúc hiện đại và nhịp sống tấp nập nơi thành thị; hoặc hướng ra dòng sông nên thơ cùng những cây cầu tuyệt mỹ. Được phân bố trên những tầng cao cùng diện tích 32m2, phòng Deluxe là sự lựa chọn lý tưởng cho du khách yêu thích không gian thoáng đãng, rộng mở.</p>
-															<p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room6.jpeg" alt="Image" class="img-fluid"></a>
-            <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Executive Room</a></h3>
-              <strong class="price">5,500,000VND/Đêm</strong>
-              <p>Đây là thiên đường của sự sang trọng và thư giãn trong thành phố nhộn nhịp này và bên trong tất cả đều được trang trí bằng gỗ thủ công với bảng màu châu Á trầm lắng. Với tác phẩm nghệ thuật trên tường mô tả những câu chuyện từ lịch sử lâu đời của khu vực, tuy nhiên đồ nội thất và đồ đạc đã khiến nơi đây trở nên hiện đại.</p>
-															<p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="hotel-room text-center">
-            <a href="#" class="d-block mb-0 thumbnail"><img src="./assets/img/rooms/room4.jpg" alt="Image" class="img-fluid"></a>
-            <div class="hotel-room-body">
-              <h3 class="heading mb-0"><a href="#">Single Room</a></h3>
-              <strong class="price">2,000,000VND/Đêm</strong>
-              <p> Phòng Single lấy cảm hứng từ di sản nghệ thuật và không khí của các lễ hội truyền thống. Đèn cảm ứng & chiếc giường êm ái là những chi tiết trang nhã, dù không có cửa sổ nhưng sự khéo léo trong việc tạo ra những căn phòng đẹp mắt về mặt thẩm mỹ là đủ bù đắp.</p>
-															<p1><a href="#" class="main-btn">Đặt ngay</a></p1>
-            </div>
-          </div>
-        </div>
+        </tr>
       </div>
     </div>
   </div>

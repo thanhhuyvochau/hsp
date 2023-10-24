@@ -41,5 +41,6 @@ public class RoomCategories {
 	private String description;
 	private Double square;
 	private int numberPerson;
+	private String image;
 
 }

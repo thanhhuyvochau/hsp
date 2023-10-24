@@ -68,20 +68,28 @@ public class UserController {
 		return "redirect:/registration?success";
 	}
 
-	@GetMapping("/customer/profile")
+	@GetMapping("/customer/viewProfile")
 	public String viewUserProfile(Model model, Authentication authentication) throws UserNotFoundException {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		User user = userService.getUserbyEmail(userDetails.getUsername());
 		model.addAttribute("user", user);
-		return "userProfile";
+		return "profile/viewProfile";
 	}
 
-	@PostMapping("/customer/profile")
+	@GetMapping("/customer/updateprofile")
+	public String viewEditUserProfile(Model model, Authentication authentication) throws UserNotFoundException {
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		User user = userService.getUserbyEmail(userDetails.getUsername());
+		model.addAttribute("user", user);
+		return "profile/updateProfile";
+	}
+
+	@PostMapping("/customer/updateprofile")
 	public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
 			@RequestParam("file") MultipartFile file) throws UserNotFoundException, UserIvalidException, IOException {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("user", user);
-			return "userProfile";
+			return "profile/updateProfile";
 		}
 		User user1 = userService.findById(user.getUserId());
 		if (user1 != null) {
@@ -93,8 +101,7 @@ public class UserController {
 			userService.update(user1);
 
 		}
-
-		return "redirect:/customer/profile?changeSuccess";
+		return "redirect:/customer/updateprofile?changeSuccess";
 
 	}
 }
