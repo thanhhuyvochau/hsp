@@ -65,8 +65,7 @@ public class WebbSecurityConfig {
 		// Authorization
 
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**", "/error",
-						"/room/**")
+				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**", "/error")
 				.permitAll().requestMatchers("/admin/**").hasAuthority("ADMIN").requestMatchers("/customer/**")
 				.hasAuthority("CUSTOMER").requestMatchers("/management/**").hasAuthority("MANAGEMENT")
 				.requestMatchers("/receptionist/**").hasAuthority("RECEPTIONISTS").requestMatchers("/housekeeping/**")
