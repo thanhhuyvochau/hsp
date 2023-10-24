@@ -12,6 +12,8 @@
  */
 package fu.hbs.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
@@ -98,10 +100,33 @@ public class UserController {
 			user1.setAddress(user.getAddress());
 			user1.setDob(user.getDob());
 			user1.setGender(user.getGender());
+			user1.setImage(file.getOriginalFilename());
 			userService.update(user1);
+			try {
+				uploadFile(file);
+			} catch (Exception e) {
+				return "redirect:/customer/updateprofile?FailsFile";
+			}
 
 		}
 		return "redirect:/customer/updateprofile?changeSuccess";
 
+	}
+
+	public void uploadFile(MultipartFile file) throws IOException {
+		// Đường dẫn đến thư mục trong dự án của bạn
+		String uploadDirectory = "src/main/resources/static/assets/img"; // Thay đổi thành đường dẫn thư mục của bạn
+
+		// Tạo đường dẫn đến tệp đích
+		String destinationPath = uploadDirectory + File.separator + file.getOriginalFilename();
+
+		// Tạo một tệp đích và ghi nội dung của tệp tải lên vào tệp đó
+		File destinationFile = new File(destinationPath);
+
+		try (FileOutputStream fileOutputStream = new FileOutputStream(destinationFile)) {
+			fileOutputStream.write(file.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
