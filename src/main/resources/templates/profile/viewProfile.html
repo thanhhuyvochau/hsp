@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile</title>
+    <title>View Profile</title>
     <!-- FAVICON -->
     <link rel="icon" type="image/png" href="">
 
@@ -48,7 +48,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="account-general">
                             <div class="card-body media align-items-center">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
+                               <img th:src="@{'/assets/img/' + ${user.image}}" width="200%" height="200%" alt
                                     class="d-block ui-w-80">
                                 <div class="media-body ml-4">
                                  <!--   <label class="btn btn-outline-primary">
@@ -107,7 +107,7 @@
             </div>
             <div class="container_swap">
                 <div class="div_left">
-                  <button><a th:href="@{/customer/updateprofile}">Chỉnh sửa</a></button>
+                  <a class="btn_fix" th:href="@{/customer/updateprofile}">Chỉnh sửa</a>
                 </div>
             </div>
         </div>

@@ -33,4 +33,6 @@ public interface UserService {
 
 	boolean findByPhone(String phone) throws UserNotFoundException;
 
+	User save(User user);
+
 }

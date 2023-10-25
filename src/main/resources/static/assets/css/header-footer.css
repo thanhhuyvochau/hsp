@@ -271,7 +271,13 @@ p{
     color: var(--secondary-text);
 }
 
-*user menu */
+/*user menu */
+.profile{
+	right: 110px;
+}
+.menu{
+	left: -130px;
+}
 .action {
     position: fixed;
     top: 40px;
