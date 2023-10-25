@@ -21,7 +21,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import fu.hbs.service.dao.ServiceService;
+
+
 import fu.hbs.service.impl.CustomizeUserDetailsService;
+import fu.hbs.service.impl.ServiceServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +42,12 @@ public class WebbSecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+    @Bean
+    public ServiceService serviceService() {
+        return new ServiceServiceImpl();
+    }
+
 
 	public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
 		System.out.println("Authentication manager!");

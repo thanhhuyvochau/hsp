@@ -8,7 +8,7 @@
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
+ * 23/10/2023	 3.0		HieuDT			 Update
  */
 package fu.hbs.entities;
 
@@ -43,5 +43,6 @@ public class Service {
 	private String serviceDes;
 	private String serviceNote;
 	private Boolean status;
+	private String serviceImage;
 
 }
