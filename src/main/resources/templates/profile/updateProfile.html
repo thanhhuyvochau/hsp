@@ -33,6 +33,18 @@
 		<h4 class="font-weight-bold py-3 mb-4">
 			Hồ sơ người dùng
 		</h4>
+		<div th:if="${param.changeSuccess}">
+			<div class="alert alert-success" style="margin-top: 15px;">
+				Cập nhật thành công
+			</div>
+		</div>
+
+
+		<div th:if="${param.FailsFile}">
+			<div class="alert alert-danger" style="margin-top: 15px;">
+				Cập nhật ảnh lỗi
+			</div>
+		</div>
 		<form method="post" th:object="${user}" th:action="@{/customer/updateprofile}" enctype="multipart/form-data">
 			<input type="hidden" id="id" name="userId" th:field="*{userId}"><br>
 			<div class="card overflow-hidden">
@@ -49,15 +61,30 @@
 					<div class="col-md-9">
 						<div class="tab-content">
 							<div class="tab-pane fade active show" id="account-general">
-								<div class="card-body media align-items-center">
-									<img th:src="@{'/assets/img/' + ${user.image}}" alt class="d-block ui-w-80">
-									<div class="media-body ml-4">
-										<!--<label class="btn btn-outline-primary">
-											Tải ảnh lên
-											<input type="file" id="profileImage" name="file"
-												class="account-settings-fileinput">
-										</label> &nbsp;-->
+								<div th:if=" ${user.image != null and user.image != ''}">
+									<div class="card-body media align-items-center">
+										<img th:src="@{'/assets/img/' + ${user.image}}" alt class="d-block ui-w-80">
+										<div class="media-body ml-4">
+											<label class="btn btn-outline-primary">
+												Tải ảnh lên
+												<input type="file" id="profileImage" name="file"
+													class="account-settings-fileinput">
+											</label> &nbsp;
+
+										</div>
 									</div>
+								</div>
+								<div th:if=" ${user.image == null || user.image == ''}">
+									<div class="card-body media align-items-center">
+										<img th:src="@{'/assets/img/Special.png'}" alt class="d-block ui-w-80">
+										<div class="media-body ml-4">
+											<label class="btn btn-outline-primary">
+												Tải ảnh lên
+												<input type="file" class="account-settings-fileinput">
+											</label> &nbsp;
+										</div>
+									</div>
+
 								</div>
 								<hr class="border-light ml-3">
 
@@ -113,17 +140,7 @@
 
 									</div>
 								</div>
-								<div th:if="${param.changeSuccess}">
-									<div class="alert alert-success" style="margin-top: 15px;">
-										Cập nhật thành công
-									</div>
-								</div>
 
-								<div th:if="${param.FailsFile}">
-									<div class="alert alert-danger" style="margin-top: 15px;">
-										Cập nhật ảnh lỗi
-									</div>
-								</div>
 							</div>
 
 						</div>
