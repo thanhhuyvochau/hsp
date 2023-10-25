@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>View Profile</title>
     <!-- FAVICON -->
     <link rel="icon" type="image/png" href="">
 
@@ -26,15 +26,14 @@
 </head>
 
 <body data-bs-target=".navbar" data-bs-offset="100">
-    <header th:replace = "header :: header">
+       <header th:replace = "~{header :: header}">
 		
 	</header>
     <div class="container light-style flex-grow-1 container-p-y">
         <h4 class="font-weight-bold py-3 mb-4">
             Hồ sơ người dùng
         </h4>
-        <form method="post" th:object="${user}" th:action="@{/customer/profile}"  enctype="multipart/form-data">
-			 <input type="hidden" id="id" name="userId" th:field="*{userId}"  ><br>
+      
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
                 <div class="col-md-3 pt-0">
@@ -43,50 +42,40 @@
                             href="#account-general">Chung</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
                             href="#account-info">Thông tin thêm</a>
-                         <a class="list-group-item list-group-item-action" data-toggle="list"
-                            href="#account-password">Đổi mật khẩu</a>
                     </div>
                 </div>
                 <div class="col-md-9">
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="account-general">
                             <div class="card-body media align-items-center">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
+                               <img th:src="@{'/assets/img/' + ${user.image}}" width="200%" height="200%" alt
                                     class="d-block ui-w-80">
                                 <div class="media-body ml-4">
-                                    <label class="btn btn-outline-primary">
+                                 <!--   <label class="btn btn-outline-primary">
                                         Tải ảnh lên
                                         <input type="file" id="profileImage" name="file"  class="account-settings-fileinput">
-                                    </label> &nbsp;
+                                    </label> &nbsp;-->
                                 </div>
                             </div>
                             <hr class="border-light m-0">
-                            	<div th:if="${param.changeSuccess}">
-												<div class="alert alert-success" style="margin-top: 15px;">
-													Cập nhật thành công
-												</div>
-											</div>
-										
+                       								
 							
 											
 									
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-label">Tên tài khoản</label>
-                                    <input type="text" class="form-control mb-1" id="name" name="name" th:field="*{name}" required>
+                                    <span type="text" class="form-control mb-1" id="name" name="name" th:text="${user.name}" readonly />
                                      <br>
-                                    <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}"></div>           
+                                     
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
-                                    <input type="email" class="form-control mb-1"  id="email" name="email" th:field="*{email}"   readonly required>
-                                      <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}" ></div>
+                                    <span type="email" class="form-control mb-1"  id="email" name="email" th:text="${user.email}"   readonly />
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control"  id="phone" name="phone"   th:field="*{phone}">
-                                     <div th:if="${#fields.hasErrors('phone')}" class="error" th:errors="*{phone}"></div>
-                                     	<div  class="error" th:text="${errorMessage}"></div>
+                                    <span type="text" class="form-control"  id="phone" name="phone" readonly   th:text="${user.phone}" />
                                 </div>
                             </div>
                         </div>
@@ -95,87 +84,34 @@
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Ngày sinh</label>
-                                    <input type="date" class="form-control" name="dob" th:field="*{dob}" placeholder="Date">
+                                    <span  class="form-control" name="dob" th:text="${user.dob}" readonly placeholder="Date" />
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Giới tính</label>
-                                    <select class="custom-select"   id="gender" name="gender" th:field="*{gender}">
-                                         <option value="Nam" th:selected="${gender == 'Name'}">Nam</option>
-   										 <option value="Nữ" th:selected="${gender == 'Nữ'}">Nữ</option>
-   										 <option value="Khác" th:selected="${gender == 'Khác'}">Khác</option>
-                                    </select>
+                                    <label class="form-label" >Giới tính</label>
+                                    <span class="form-control" id="gender" name="gender" readonly th:text="${user.gender}" />
+
+                                
                                 </div>
                             </div>
                             <hr class="border-light m-0">
                             <div class="card-body pb-2">
-                                <h6 class="mb-4">Nơi ở</h6>
-                                <div class="form-group">
+                                    <div class="form-group">
                                     <label class="form-label">Địa chỉ</label>
-                                       <input type="text" class="form-control" id="address" name="address"  th:field="*{address}"><br>
+                                       <span type="text" class="form-control" id="address" name="address" readonly  th:text="${user.address}"/><br>
                                    
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="account-password">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Mật khẩu cũ</label>
-                                    <div class="input-group">
-                                        <input name="password" type="password" class="input form-control" id="password1"
-                                            value="12345" required="true" aria-label="password"
-                                            aria-describedby="basic-addon1">
-                                        <div class="input-group-addon">
-                                            <span class="input-group-text" onclick="password_show_hide(1);">
-                                                <i class="fas fa-eye" id="show_eye1"></i>
-                                                <i class="fas fa-eye-slash d-none" id="hide_eye1"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Mật khẩu mới</label>
-                                    <div class="input-group">
-                                        <input name="password" type="password" class="input form-control" id="password2"
-                                            value="54321" required="true" aria-label="password"
-                                            aria-describedby="basic-addon1">
-                                        <div class="input-group-addon">
-                                            <span class="input-group-text" onclick="password_show_hide(2);">
-                                                <i class="fas fa-eye" id="show_eye2"></i>
-                                                <i class="fas fa-eye-slash d-none" id="hide_eye2"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nhập lại mật khẩu</label>
-                                    <div class="input-group">
-                                        <input name="password" type="password" class="input form-control" id="password3"
-                                            value="54321" required="true" aria-label="password"
-                                            aria-describedby="basic-addon1">
-                                        <div class="input-group-addon">
-                                            <span class="input-group-text" onclick="password_show_hide(3);">
-                                                <i class="fas fa-eye" id="show_eye3"></i>
-                                                <i class="fas fa-eye-slash d-none" id="hide_eye3"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </div>           
                     </div>
                 </div>
             </div>
             <div class="container_swap">
                 <div class="div_left">
-                    <input type="submit" class="submit_forgot" value=" Lưu lại ">
-                </div>
-                <div class="div_right">
-                    <input type="submit" class="submit_forgot" value=" Cài lại ">
+                  <a class="btn_fix" th:href="@{/customer/updateprofile}">Chỉnh sửa</a>
                 </div>
             </div>
         </div>
-        
-        </form>
+            
     </div>
     <section id="contact" class="footer_wrapper mt-3 mt-md-3 pb-0">
         <div class="container pb-3">

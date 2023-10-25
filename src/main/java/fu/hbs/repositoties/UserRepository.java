@@ -19,7 +19,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
 import fu.hbs.entities.User;
-import fu.hbs.entities.UserRole;
 
 @Repository("userRepository")
 @EnableJpaRepositories
@@ -27,7 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByEmail(String email);
 
 	User getUserByEmail(String email);
-	
 
 	Optional<User> findById(Long id);
 

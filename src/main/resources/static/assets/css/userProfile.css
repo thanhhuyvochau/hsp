@@ -172,6 +172,24 @@ section{
     transition: all 0.3s ease-out 0s;
 }
 
+.btn_fix{
+	font-size: medium;
+    font-weight: 400;
+    color:var(--primary-color);
+    background-color: transparent;
+    border: 0.0625rem solid var(--primary-color);
+    border-radius: 3.125rem;
+    line-height: 2rem;
+    display: inline-block;
+    transition: all 0.3s ease-out 0s;
+}
+
+.btn_fix:hover{
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-white);
+}
+
 .main-btn:hover{
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);

@@ -47,25 +47,13 @@ public class UserServiceImpl implements UserService {
 		String encodedPassword = passwordEncoder.encode(userDto.getUserPassword());
 		user.setPassword(encodedPassword);
 		user.setStatus(true);
-		//lưu ngời dùng
 		User savedUser = userRepository.save(user);
 
-//		// Tạo UserRole và gán roleId là 2
-//		UserRole userRole = new UserRole();
-//		userRole.setUserId(savedUser.getUserId());
-//		userRole.setRoleId(1L); // 2 là roleId bạn muốn gán
-//		userroleRepository.save(userRole);
-		// Tìm xem có tồn tại bản ghi với id trong bảng user_role hay không
-	    Long userIdToFind = savedUser.getUserId(); // Sử dụng id từ bảng user làm userId
-	    UserRole existingUserRole = userroleRepository.findByUserId(userIdToFind);
-
-	    // Nếu không tìm thấy, thêm một bản ghi mới với userId bằng id của user
-	    if (existingUserRole == null) {
-	        UserRole userRole = new UserRole();
-	        userRole.setUserId(userIdToFind);
-	        userRole.setRoleId(1L); // Đặt roleId của bạn ở đây
-	        userroleRepository.save(userRole);
-	    }
+		// Tạo UserRole và gán roleId là 2
+		UserRole userRole = new UserRole();
+		userRole.setUserId(savedUser.getUserId());
+		userRole.setRoleId(5L); // 2 là roleId bạn muốn gán
+		userroleRepository.save(userRole);
 
 		return savedUser;
 	}
@@ -117,6 +105,11 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 
+	}
+
+	@Override
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 
 }
