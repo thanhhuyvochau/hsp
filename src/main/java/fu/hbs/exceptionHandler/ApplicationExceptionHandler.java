@@ -28,7 +28,7 @@ public class ApplicationExceptionHandler {
 		System.err.println(exception.getMessage());
 		model.addAttribute("errorMessage", exception.getMessage());
 
-		return "404";
+		return "error";
 	}
 
 	@ExceptionHandler(value = { UserIvalidException.class })
@@ -40,4 +40,5 @@ public class ApplicationExceptionHandler {
 
 		return "userProfile";
 	}
+
 }

@@ -15,6 +15,8 @@ package fu.hbs.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -80,9 +82,15 @@ public class UserController {
 	}
 
 	@GetMapping("/customer/viewProfile")
-	public String viewUserProfile(Model model, Authentication authentication) throws UserNotFoundException {
+	public String viewUserProfile(Model model, Authentication authentication)
+			throws UserNotFoundException, UserIvalidException {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		User user = userService.getUserbyEmail(userDetails.getUsername());
+		if (user.getImage() == null || user.getImage().isEmpty()) {
+			// Sử dụng đường dẫn đến ảnh mặc định
+			user.setImage("Special.png");
+			userService.update(user);
+		}
 		model.addAttribute("user", user);
 		return "profile/viewProfile";
 	}
@@ -110,12 +118,29 @@ public class UserController {
 			user1.setDob(user.getDob());
 			user1.setGender(user.getGender());
 			user1.setImage(file.getOriginalFilename());
-			userService.update(user1);
 			try {
-				uploadFile(file);
+				if (!file.isEmpty()) {
+					// Lấy MIME type của tệp
+					String mimeType = file.getContentType();
+
+					// Danh sách các MIME type của hình ảnh phổ biến
+					List<String> imageMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/gif", "image/jpg",
+							"image/bmp");
+
+					if (imageMimeTypes.contains(mimeType)) {
+						// Đây là một tệp hình ảnh hợp lệ, thực hiện xử lý
+						uploadFile(file);
+					} else {
+						user.setImage("Special.png");
+						model.addAttribute("user", user);
+						return "redirect:/customer/updateprofile?FailsFile";
+					}
+				}
+
 			} catch (Exception e) {
 				return "redirect:/customer/updateprofile?FailsFile";
 			}
+			userService.update(user1);
 
 		}
 		return "redirect:/customer/updateprofile?changeSuccess";
@@ -191,7 +216,7 @@ public class UserController {
 
 		// Tạo đường dẫn đến tệp đích
 		String destinationPath = uploadDirectory + File.separator + file.getOriginalFilename();
-
+		System.out.println(destinationPath);
 		// Tạo một tệp đích và ghi nội dung của tệp tải lên vào tệp đó
 		File destinationFile = new File(destinationPath);
 
