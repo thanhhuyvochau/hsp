@@ -8,7 +8,7 @@
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 21/10/2023	 2.0		HieuLBM			 view, update profile
- * 
+ * 25/10/2023	 3.0		HieuLBM			 change password
  */
 package fu.hbs.controller;
 
@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,21 +28,28 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fu.hbs.dto.UserDto;
 import fu.hbs.entities.User;
 import fu.hbs.exceptionHandler.UserIvalidException;
 import fu.hbs.exceptionHandler.UserNotFoundException;
 import fu.hbs.service.dao.UserService;
+import fu.hbs.utils.StringDealer;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
 
 public class UserController {
 	private UserService userService;
+	private StringDealer stringDealer;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public UserController(UserService userService) {
 		this.userService = userService;
+		this.stringDealer = new StringDealer();
 	}
 
 	@ModelAttribute("userdto")
@@ -110,6 +119,69 @@ public class UserController {
 
 		}
 		return "redirect:/customer/updateprofile?changeSuccess";
+
+	}
+
+	@GetMapping("/customer/changepass")
+	public String viewChangePassword(Model model, Authentication authentication) throws UserNotFoundException {
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		User user = userService.getUserbyEmail(userDetails.getUsername());
+		model.addAttribute("user", user);
+		return "profile/changepassword";
+	}
+
+	@PostMapping("/customer/changepass")
+	public String UserChangePassword(@RequestParam("oldpassword") String oldpassword,
+			@RequestParam("newpassword") String newpassword, @RequestParam("confirmpassword") String confirmpassword,
+			Model model, final RedirectAttributes redirectAttributes, HttpSession session) {
+		UserDetails user = (UserDetails) session.getAttribute("accountDetail");
+		User user1 = userService.getUserbyEmail(user.getUsername());
+		System.out.println(user1);
+
+		if (!passwordEncoder.matches(oldpassword, user1.getPassword())) {
+			model.addAttribute("pass", "Mật khẩu cũ không đúng");
+			model.addAttribute("oldpassword", oldpassword);
+			return "profile/changepassword";
+		}
+		model.addAttribute("oldpassword", oldpassword);
+
+		if (!stringDealer.checkPasswordRegex(newpassword)) { /* Password is not valid */
+			model.addAttribute("pass1", "Mật khẩu mới không hợp lệ");
+			model.addAttribute("newpassword", newpassword);
+			return "profile/changepassword";
+		}
+		model.addAttribute("newpassword", newpassword);
+
+		if (passwordEncoder.matches(newpassword, user1.getPassword())) {// oldpassword != newPassword
+			model.addAttribute("pass4", "Mật khẩu nhập mới không được trùng với mật khẩu cũ");
+			model.addAttribute("oldpassword", oldpassword);
+			return "profile/changepassword";
+
+		}
+		model.addAttribute("oldpassword", oldpassword);
+
+		if (!stringDealer.checkPasswordRegex(confirmpassword)) {
+			model.addAttribute("pass3", "Mật khẩu nhập lại không hợp lệ");
+
+			model.addAttribute("confirmpassword", confirmpassword);
+			return "profile/changepassword";
+		}
+
+		model.addAttribute("confirmpassword", confirmpassword);
+
+		if (!newpassword.trim().equals(confirmpassword.trim())) { /* Password not match */
+			model.addAttribute("pass2", "Mật khẩu không khớp");
+			model.addAttribute("newpassword", newpassword);
+			model.addAttribute("confirmpassword", confirmpassword);
+			return "profile/changepassword";
+		}
+
+		// Password match
+
+		String encodedPassword = passwordEncoder.encode(confirmpassword);
+		user1.setPassword(encodedPassword);
+		userService.save(user1);
+		return "redirect:/customer/changepass?changeSuccess";
 
 	}
 
