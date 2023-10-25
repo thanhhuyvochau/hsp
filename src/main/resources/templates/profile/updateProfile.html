@@ -50,8 +50,7 @@
 						<div class="tab-content">
 							<div class="tab-pane fade active show" id="account-general">
 								<div class="card-body media align-items-center">
-									<img th:src="@{'/assets/img/' + ${user.image}}" alt
-										class="d-block ui-w-80">
+									<img th:src="@{'/assets/img/' + ${user.image}}" alt class="d-block ui-w-80">
 									<div class="media-body ml-4">
 										<!--<label class="btn btn-outline-primary">
 											Tải ảnh lên
@@ -61,20 +60,6 @@
 									</div>
 								</div>
 								<hr class="border-light ml-3">
-								<div th:if="${param.changeSuccess}">
-									<div class="alert alert-success" style="margin-top: 15px;">
-										Cập nhật thành công
-									</div>
-								</div>
-								
-									<div th:if="${param.FailsFile}">
-									<div class="alert alert-danger" style="margin-top: 15px;">
-										Cập nhật ảnh lỗi
-									</div>
-								</div>
-
-
-
 
 								<div class="card-body">
 									<div class="form-group">
@@ -126,6 +111,17 @@
 										<input type="text" class="form-control" id="address" name="address"
 											th:field="*{address}"><br>
 
+									</div>
+								</div>
+								<div th:if="${param.changeSuccess}">
+									<div class="alert alert-success" style="margin-top: 15px;">
+										Cập nhật thành công
+									</div>
+								</div>
+
+								<div th:if="${param.FailsFile}">
+									<div class="alert alert-danger" style="margin-top: 15px;">
+										Cập nhật ảnh lỗi
 									</div>
 								</div>
 							</div>
