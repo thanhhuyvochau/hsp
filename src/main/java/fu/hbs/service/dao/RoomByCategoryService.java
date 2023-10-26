@@ -6,14 +6,12 @@
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
- * 27/10/2023    1.0        HieuLBM          First Deploy	
+ * 27/10/2023	 2.0	    HieuLBM			 Firt Deploy		
  */
 package fu.hbs.service.dao;
 
-import java.util.List;
+import fu.hbs.dto.BookRoomByCategory;
 
-import fu.hbs.dto.RoomCategoryDTO;
-
-public interface RoomCategoryService {
-	List<RoomCategoryDTO> getAllRoom();
+public interface RoomByCategoryService {
+	BookRoomByCategory getRoom(Long categoryId);
 }

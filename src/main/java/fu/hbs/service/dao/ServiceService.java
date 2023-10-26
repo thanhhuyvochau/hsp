@@ -16,14 +16,14 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import fu.hbs.entities.Service;
+import fu.hbs.entities.RoomService;
 
 public interface ServiceService {
 //    List<com.example.entities.Service> getAllServices();
 
-	Page<Service> searchByName(String serviceName, Pageable pageable);
+	Page<RoomService> searchByName(String serviceName, Pageable pageable);
 
-	Page<Service> getAllServices(Pageable pageable);
+	Page<RoomService> getAllServices(Pageable pageable);
 
 
 //	List<com.example.entities.Service> searchByName(String serviceName);

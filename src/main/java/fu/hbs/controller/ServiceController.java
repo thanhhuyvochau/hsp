@@ -74,7 +74,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fu.hbs.entities.Service;
+import fu.hbs.entities.RoomService;
 import fu.hbs.service.dao.ServiceService;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class ServiceController {
 
     @GetMapping("/services")
     public String getAllServices(Model model, @RequestParam(required = false) String serviceName, @PageableDefault(size = 4) Pageable pageable) {
-        Page<Service> services;
+        Page<RoomService> services;
 
         if (serviceName != null && !serviceName.isEmpty()) {
             services = serviceService.searchByName(serviceName, pageable);

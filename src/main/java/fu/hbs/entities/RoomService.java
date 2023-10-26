@@ -9,6 +9,7 @@
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
  * 23/10/2023	 3.0		HieuDT			 Update
+ * 27/10/2023	 3.1		ieuLBM			 rename Class
  */
 package fu.hbs.entities;
 
@@ -33,7 +34,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "service")
-public class Service {
+public class RoomService {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "service_id")

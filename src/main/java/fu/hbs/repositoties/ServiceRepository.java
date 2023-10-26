@@ -13,12 +13,12 @@ package fu.hbs.repositoties;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import fu.hbs.entities.Service;
+import fu.hbs.entities.RoomService;
 
-public interface ServiceRepository extends JpaRepository<Service, Long> {
-	List<Service> findByServiceNameContaining(String serviceName);
+public interface ServiceRepository extends JpaRepository<RoomService, Long> {
+	List<RoomService> findByServiceNameContaining(String serviceName);
+
+	RoomService findByServiceId(Long serviceId);
 }

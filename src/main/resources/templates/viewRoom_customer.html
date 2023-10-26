@@ -58,7 +58,7 @@
               <h3 class="heading mb-0"  th:text="${category.roomCategoryName}"><a href="#"></a></h3>
               <strong class="price" th:text="${category.getCategoryRoomPrice().getPrice()+' '+'VND'}"></strong>
               <p th:text="${category.description}"></p>
-															<p1><a href="#" class="main-btn mt-2">Xem ngay</a></p1>
+		<p1><a th:href = "@{/room/category/}+${category.roomCategoryId}" class="main-btn mt-2">Xem ngay</a></p1>
             </div>
           </div>
         </div>

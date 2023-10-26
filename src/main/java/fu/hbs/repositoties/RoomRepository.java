@@ -8,12 +8,15 @@
  * DATE          Version    Author           DESCRIPTION
  * 27/10/2023    1.0        HieuLBM          First Deploy	
  */
-package fu.hbs.service.dao;
+package fu.hbs.repositoties;
 
 import java.util.List;
 
-import fu.hbs.dto.RoomCategoryDTO;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RoomCategoryService {
-	List<RoomCategoryDTO> getAllRoom();
+import fu.hbs.entities.Room;
+
+public interface RoomRepository extends JpaRepository<Room, Long> {
+
+	List<Room> findByRoomCategoryId(Long roomCategoryId);
 }
