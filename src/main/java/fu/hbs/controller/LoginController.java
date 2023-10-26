@@ -68,16 +68,16 @@ public class LoginController {
 					model.addAttribute("accountDetail", user);
 					return "homepage";
 				}
-				if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) { 
+				if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
 					System.out.println("Customer");
 					User user1 = userService.getUserbyEmail(user.getUsername());
 					session.setAttribute("accountDetail", user);
 //					model.addAttribute("accountDetail", user);
-					model.addAttribute("name", user1.getName());
+					session.setAttribute("name", user1.getName());
 					return "homepage";
 				}
 			}
- 
+
 		}
 		return "redirect:homepage";
 	}

@@ -42,7 +42,7 @@
 							<a class="nav-link" href="#about">Về chúng tôi</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#rooms">Phòng</a>
+							<a class="nav-link" href="/room/all">Phòng</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="#services">Dịch vụ</a>
@@ -67,7 +67,7 @@
 								</div>
 
 								<div class="menu" >
-									<h3 th:text="${name}"><br></h3>
+									<h3 th:text="${session.name}"><br></h3>
 									<ul>
 										<li><img src="/assets/img/usermenu/user.png" alt=""><a th:href="@{/customer/viewProfile}">Hồ sơ</a></li>
 										<li><img src="/assets/img/usermenu/edit.png" alt=""><a th:href="@{/customer/updateprofile}">Chỉnh sửa</a>
