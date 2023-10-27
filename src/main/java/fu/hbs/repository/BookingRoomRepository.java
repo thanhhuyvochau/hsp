@@ -11,12 +11,9 @@
  */
 package fu.hbs.repository;
 
+import fu.hbs.entities.BookingRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import fu.hbs.entities.UserRole;
+public interface BookingRoomRepository extends JpaRepository<BookingRoom, Long> {
 
-@Repository
-public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
-    UserRole save(UserRole userRole);
 }
