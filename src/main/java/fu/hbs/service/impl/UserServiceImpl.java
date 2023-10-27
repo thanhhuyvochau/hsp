@@ -22,8 +22,8 @@ import fu.hbs.entities.User;
 import fu.hbs.entities.UserRole;
 import fu.hbs.exceptionHandler.UserIvalidException;
 import fu.hbs.exceptionHandler.UserNotFoundException;
-import fu.hbs.repositoties.UserRepository;
-import fu.hbs.repositoties.UserRoleRepository;
+import fu.hbs.repository.UserRepository;
+import fu.hbs.repository.UserRoleRepository;
 import fu.hbs.service.dao.UserService;
 
 @Service("userService")
@@ -37,6 +37,12 @@ public class UserServiceImpl implements UserService {
 	// @Qualifier("passwordEncoder")
 	private PasswordEncoder passwordEncoder;
 
+	/**
+	 * Create and save a new user based on the provided UserDto object.
+	 *
+	 * @param userDto the user information to be saved
+	 * @return the saved user object
+	 */
 	@Override
 	public User save(UserDto userDto) {
 		// Lưu thông tin người dùng
@@ -58,6 +64,14 @@ public class UserServiceImpl implements UserService {
 		return savedUser;
 	}
 
+	/**
+	 * Check if the provided password matches the user's password for the given
+	 * email.
+	 *
+	 * @param email    the email address of the user
+	 * @param password the password to be checked
+	 * @return true if the password matches, false otherwise
+	 */
 	@Override
 	public Boolean checkPasswordUser(String email, String password) {
 		User user = userRepository.findByEmail(email);
@@ -66,6 +80,12 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
+	/**
+	 * Check if a user with the provided email exists.
+	 *
+	 * @param email the email address to be checked
+	 * @return true if a user with the email exists, false otherwise
+	 */
 	@Override
 	public Boolean checkUserbyEmail(String email) {
 		User user = userRepository.findByEmail(email);
@@ -73,12 +93,25 @@ public class UserServiceImpl implements UserService {
 			return false;
 		return true;
 	}
- 
+
+	/**
+	 * Get a user by their email address.
+	 *
+	 * @param email the email address of the user to retrieve
+	 * @return the user with the specified email
+	 */
 	@Override
 	public User getUserbyEmail(String email) {
 		return userRepository.getUserByEmail(email);
 	}
 
+	/**
+	 * Update the user information.
+	 *
+	 * @param user the updated user information
+	 * @return the updated user
+	 * @throws UserIvalidException if there is an issue with the update
+	 */
 	@Override
 	public User update(User user) throws UserIvalidException {
 
@@ -91,6 +124,13 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
+	/**
+	 * Mark: Phone number already exists.
+	 *
+	 * @param id the ID of the user to be updated
+	 * @return the updated user
+	 * @throws UserIvalidException if there is an issue with the update
+	 */
 	@Override
 	public User findById(Long id) throws UserNotFoundException {
 		Optional<User> optional = userRepository.findById(id);
@@ -98,6 +138,12 @@ public class UserServiceImpl implements UserService {
 		return optional.orElseThrow(() -> new UserNotFoundException("User " + id + "Không tìm thấy!"));
 	}
 
+	/**
+	 * Check if a user with the provided phone number exists.
+	 *
+	 * @param phone the phone number to be checked
+	 * @return true if a user with the phone number exists, false otherwise
+	 */
 	@Override
 	public boolean findByPhone(String phone) throws UserNotFoundException {
 		if (userRepository.findByPhone(phone) != null) {
@@ -107,6 +153,12 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/**
+	 * Save the user information.
+	 *
+	 * @param user the user information to be saved
+	 * @return the saved user
+	 */
 	@Override
 	public User save(User user) {
 		return userRepository.save(user);

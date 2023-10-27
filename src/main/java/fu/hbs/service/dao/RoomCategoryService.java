@@ -15,5 +15,10 @@ import java.util.List;
 import fu.hbs.dto.RoomCategoryDTO;
 
 public interface RoomCategoryService {
+	  /**
+     * Get a list of room categories with associated information.
+     *
+     * @return a list of RoomCategoryDTO objects containing details about room categories
+     */
 	List<RoomCategoryDTO> getAllRoom();
 }

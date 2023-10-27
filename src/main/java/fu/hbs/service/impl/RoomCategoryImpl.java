@@ -1,3 +1,15 @@
+/*
+ * Copyright (C) 2023, FPT University 
+ * SEP490 - SEP490_G77
+ * HBS 
+ * Hotel Booking System 
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 27/10/2023    1.0        HieuLBM          First Deploy
+ * 
+ * 
+ */
 package fu.hbs.service.impl;
 
 import java.util.ArrayList;
@@ -7,8 +19,8 @@ import org.springframework.stereotype.Service;
 
 import fu.hbs.dto.RoomCategoryDTO;
 import fu.hbs.entities.RoomCategories;
-import fu.hbs.repositoties.CategoryRoomPriceRepository;
-import fu.hbs.repositoties.RoomCategoriesRepository;
+import fu.hbs.repository.CategoryRoomPriceRepository;
+import fu.hbs.repository.RoomCategoriesRepository;
 import fu.hbs.service.dao.RoomCategoryService;
 
 @Service
@@ -22,6 +34,12 @@ public class RoomCategoryImpl implements RoomCategoryService {
 		this.categoryRoomPriceRepository = categoryRoomPriceRepository;
 		this.roomCategoriesRepository = roomCategoriesRepository;
 	}
+
+	/**
+	 * Get a list of all room categories along with their details.
+	 *
+	 * @return List of RoomCategoryDTO containing room category information
+	 */
 
 	@Override
 	public List<RoomCategoryDTO> getAllRoom() {

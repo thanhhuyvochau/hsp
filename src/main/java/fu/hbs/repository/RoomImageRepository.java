@@ -8,7 +8,7 @@
  * DATE          Version    Author           DESCRIPTION
  * 27/10/2023    1.0        HieuLBM          First Deploy	
  */
-package fu.hbs.repositoties;
+package fu.hbs.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

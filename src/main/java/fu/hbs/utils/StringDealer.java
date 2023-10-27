@@ -20,12 +20,24 @@ public class StringDealer {
 	public StringDealer() {
 	}
 
+	/**
+	 * Trim excessive whitespace in a string.
+	 *
+	 * @param str the input string
+	 * @return the trimmed string with normalized whitespace
+	 */
 	public String trimMax(String str) {
 		if (str == null)
 			return "";
 		return str.trim().replaceAll("\\s+", " ");
 	}
 
+	/**
+	 * Convert a date string to a SQL Date object with the "yyyy-MM-dd" format.
+	 *
+	 * @param str the date string to convert
+	 * @return the SQL Date object representing the date
+	 */
 	public Date convertToDateAndFormat(String str) {
 		Date date;
 		try {
@@ -36,22 +48,36 @@ public class StringDealer {
 		return date;
 	}
 
+	/**
+	 * Check if an email string matches a valid email address pattern.
+	 *
+	 * @param email the email string to check
+	 * @return true if the email is valid, false otherwise
+	 */
 	public boolean checkEmailRegex(String email) {
 		String regex = "^[a-zA-Z0-9!#$%&'*+/=?^`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
 		return email.matches(regex);
 	}
 
+	/**
+	 * Check if a phone number string matches a valid phone number pattern.
+	 *
+	 * @param phone the phone number string to check
+	 * @return true if the phone number is valid, false otherwise
+	 */
 	public boolean checkPhoneRegex(String phone) {
 		String regex = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$";
 		return phone.matches(regex);
 	}
 
 	/**
-	 * Check if password is valid or not. Ít nhất một chữ thường. Ít nhất một chữ
-	 * cái viết hoa. Ít nhất một chữ số. Ít nhất một ký tự đặc biệt từ !, @, #,
-	 * $hoặc %. Độ dài mật khẩu phải từ 8 đến 20 ký tự.
+	 * Check if a password string matches a valid password pattern. Passwords should
+	 * contain at least one lowercase letter, one uppercase letter, one digit, and
+	 * one special character from the set {!@#$%}. Password length should be between
+	 * 8 and 20 characters.
 	 *
-	 *
+	 * @param password the password string to check
+	 * @return true if the password is valid, false otherwise
 	 */
 
 	public boolean checkPasswordRegex(String password) {
@@ -59,6 +85,13 @@ public class StringDealer {
 		return password.matches(regex);
 	}
 
+	/**
+	 * Calculate the number of days between two dates.
+	 *
+	 * @param startDate the start date
+	 * @param endDate   the end date
+	 * @return the number of days between the two dates
+	 */
 	public long dateDiff(Date startDate, Date endDate) {
 		long daysDiff = 0L;
 		try {
@@ -72,14 +105,6 @@ public class StringDealer {
 			e.printStackTrace();
 		}
 		return daysDiff;
-	}
-
-	public boolean chechValidStreetString(String street) {
-//        Pattern p = Pattern.compile("/[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+/");
-//        String pattern = "/[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]/";
-//        // boolean b = m.matches();
-//        boolean check = pattern.matches(street);
-		return false;
 	}
 
 }

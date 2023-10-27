@@ -3,8 +3,9 @@ package fu.hbs.service.impl;
 import fu.hbs.entities.Role;
 import fu.hbs.entities.Token;
 import fu.hbs.entities.User;
-import fu.hbs.repositoties.RoleRepository;
-import fu.hbs.repositoties.UserRepository;
+import fu.hbs.repository.RoleRepository;
+import fu.hbs.repository.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

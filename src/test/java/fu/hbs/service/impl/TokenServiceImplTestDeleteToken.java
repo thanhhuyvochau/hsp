@@ -1,7 +1,8 @@
 package fu.hbs.service.impl;
 
 import fu.hbs.entities.Token;
-import fu.hbs.repositoties.TokenRepository;
+import fu.hbs.repository.TokenRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

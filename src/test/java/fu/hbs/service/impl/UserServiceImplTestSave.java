@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import fu.hbs.dto.UserDto;
 import fu.hbs.entities.User;
 import fu.hbs.entities.UserRole;
-import fu.hbs.repositoties.UserRepository;
-import fu.hbs.repositoties.UserRoleRepository;
+import fu.hbs.repository.UserRepository;
+import fu.hbs.repository.UserRoleRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTestSave {

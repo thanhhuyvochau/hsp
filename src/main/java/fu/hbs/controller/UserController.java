@@ -54,16 +54,32 @@ public class UserController {
 		this.stringDealer = new StringDealer();
 	}
 
+	/**
+	 * Prepare a new UserDto object as a model attribute for user registration.
+	 *
+	 * @return a UserDto object for registration.
+	 */
 	@ModelAttribute("userdto")
 	public UserDto userResgistrationDto() {
 		return new UserDto();
 	}
 
+	/**
+	 * Display the user registration form.
+	 *
+	 * @return the registration form view.
+	 */
 	@GetMapping("/registration")
 	public String registerForm() {
 		return "authentication/registration";
 	}
 
+	/**
+	 * Process user registration request and create a new user account.
+	 *
+	 * @param userDto The user data for registration.
+	 * @return a success or error view based on the registration result.
+	 */
 	@PostMapping("/registration")
 	public String registerUserAccount(@ModelAttribute("userdto") UserDto userDto) {
 		if (userService.checkUserbyEmail(userDto.getUserEmail())) {
@@ -81,6 +97,13 @@ public class UserController {
 		return "redirect:/registration?success";
 	}
 
+	/**
+	 * View the user's profile.
+	 *
+	 * @param model          The model for user profile data.
+	 * @param authentication The user's authentication information.
+	 * @return the user profile view.
+	 */
 	@GetMapping("/customer/viewProfile")
 	public String viewUserProfile(Model model, Authentication authentication)
 			throws UserNotFoundException, UserIvalidException {
@@ -95,6 +118,13 @@ public class UserController {
 		return "profile/viewProfile";
 	}
 
+	/**
+	 * Display the user profile update form.
+	 *
+	 * @param model          The model for user profile data.
+	 * @param authentication The user's authentication information.
+	 * @return the profile update form view.
+	 */
 	@GetMapping("/customer/updateprofile")
 	public String viewEditUserProfile(Model model, Authentication authentication) throws UserNotFoundException {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -103,6 +133,15 @@ public class UserController {
 		return "profile/updateProfile";
 	}
 
+	/**
+	 * Process user profile update request and update the user's information.
+	 *
+	 * @param user          The updated user data.
+	 * @param bindingResult The result of data binding and validation.
+	 * @param model         The model for the user profile view.
+	 * @param file          The user's profile image.
+	 * @return a success or error view based on the update result.
+	 */
 	@PostMapping("/customer/updateprofile")
 	public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
 			@RequestParam("file") MultipartFile file) throws UserNotFoundException, UserIvalidException, IOException {
@@ -147,6 +186,13 @@ public class UserController {
 
 	}
 
+	/**
+	 * Display the form for changing the user's password.
+	 *
+	 * @param model          The model for user profile data.
+	 * @param authentication The user's authentication information.
+	 * @return the change password form view.
+	 */
 	@GetMapping("/customer/changepass")
 	public String viewChangePassword(Model model, Authentication authentication) throws UserNotFoundException {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -155,6 +201,17 @@ public class UserController {
 		return "profile/changepassword";
 	}
 
+	/**
+	 * Process the user's password change request and update the user's password.
+	 *
+	 * @param oldpassword        The user's old password.
+	 * @param newpassword        The new password.
+	 * @param confirmpassword    The confirmation of the new password.
+	 * @param model              The model for the change password view.
+	 * @param redirectAttributes Redirect attributes for success or error messages.
+	 * @param session            The user's session data.
+	 * @return a success or error view based on the password change result.
+	 */
 	@PostMapping("/customer/changepass")
 	public String UserChangePassword(@RequestParam("oldpassword") String oldpassword,
 			@RequestParam("newpassword") String newpassword, @RequestParam("confirmpassword") String confirmpassword,
@@ -210,6 +267,12 @@ public class UserController {
 
 	}
 
+	/**
+	 * Handle file upload, which allows users to upload a profile image.
+	 *
+	 * @param file The user's profile image file.
+	 * @throws IOException If there is an issue with handling the file upload.
+	 */
 	public void uploadFile(MultipartFile file) throws IOException {
 		// Đường dẫn đến thư mục trong dự án của bạn
 		String uploadDirectory = "src/main/resources/static/assets/img"; // Thay đổi thành đường dẫn thư mục của bạn

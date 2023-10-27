@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import fu.hbs.entities.Token;
 import fu.hbs.entities.User;
-import fu.hbs.repositoties.TokenRepository;
+import fu.hbs.repository.TokenRepository;
 import fu.hbs.service.dao.TokenService;
 
 @Service("tokenService")
@@ -31,6 +31,13 @@ public class TokenServiceImpl implements TokenService {
 		this.tokenRepository = tokenRepository;
 	}
 
+	/**
+	 * Create a new token for a user or update an existing token if one already
+	 * exists.
+	 *
+	 * @param user the user for whom the token is created or updated
+	 * @return the created or updated token
+	 */
 	@Override
 	public Token createToken(User user) {
 		Token existingToken = tokenRepository.findByUserId(user.getUserId());
@@ -57,6 +64,14 @@ public class TokenServiceImpl implements TokenService {
 		return tokenRepository.save(newToken);
 	}
 
+	/**
+	 * Find a token by its value (token string) and check if it's valid and not
+	 * expired.
+	 *
+	 * @param tokenValue the token value to search for
+	 * @return the token if it's valid and not expired, or null if the token is
+	 *         invalid or expired
+	 */
 	@Override
 	public Token findTokenByValue(String tokenValue) {
 		Token token = tokenRepository.findByToken(tokenValue);
@@ -68,12 +83,22 @@ public class TokenServiceImpl implements TokenService {
 		return null; // Token không hợp lệ hoặc đã hết hạn
 	}
 
+	/**
+	 * Generate a new unique token using UUID.
+	 *
+	 * @return a new unique token string
+	 */
 	private String generateToken() {
 		// Tạo mã token duy nhất
 		// (Ví dụ: sử dụng UUID)
 		return UUID.randomUUID().toString();
 	}
 
+	/**
+	 * Delete a token by its ID.
+	 *
+	 * @param id the ID of the token to be deleted
+	 */
 	@Override
 	public void deleteToken(Long id) {
 		tokenRepository.deleteById(id);

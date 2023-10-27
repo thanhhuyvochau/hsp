@@ -23,13 +23,13 @@ import fu.hbs.entities.RoomCategories;
 import fu.hbs.entities.RoomFurniture;
 import fu.hbs.entities.RoomImage;
 import fu.hbs.entities.RoomService;
-import fu.hbs.repositoties.CategoryRoomFurnitureRepository;
-import fu.hbs.repositoties.RoomCategoriesRepository;
-import fu.hbs.repositoties.RoomFurnitureRepository;
-import fu.hbs.repositoties.RoomImageRepository;
-import fu.hbs.repositoties.RoomRepository;
-import fu.hbs.repositoties.RoomStatusRepository;
-import fu.hbs.repositoties.ServiceRepository;
+import fu.hbs.repository.CategoryRoomFurnitureRepository;
+import fu.hbs.repository.RoomCategoriesRepository;
+import fu.hbs.repository.RoomFurnitureRepository;
+import fu.hbs.repository.RoomImageRepository;
+import fu.hbs.repository.RoomRepository;
+import fu.hbs.repository.RoomStatusRepository;
+import fu.hbs.repository.ServiceRepository;
 import fu.hbs.service.dao.RoomByCategoryService;
 
 @Service
@@ -55,6 +55,12 @@ public class RoomImpl implements RoomByCategoryService {
 	@Autowired
 	CategoryRoomFurnitureRepository categoryRoomFurnitureRepository;
 
+	/**
+	 * Get information about rooms within a specific category.
+	 *
+	 * @param categoryId the category ID for which room information is requested
+	 * @return BookRoomByCategory object containing room details
+	 */
 	@Override
 	public BookRoomByCategory getRoom(Long categoryId) {
 		RoomCategories roomCategories = new RoomCategories();

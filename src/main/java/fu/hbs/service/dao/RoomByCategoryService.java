@@ -13,5 +13,11 @@ package fu.hbs.service.dao;
 import fu.hbs.dto.BookRoomByCategory;
 
 public interface RoomByCategoryService {
+	/**
+     * Get information about rooms within a specific category.
+     *
+     * @param categoryId the identifier of the room category
+     * @return a BookRoomByCategory object containing details about rooms and related information
+     */
 	BookRoomByCategory getRoom(Long categoryId);
 }

@@ -32,6 +32,12 @@ public class RoomController {
 	@Autowired
 	private RoomByCategoryService roomByCategoryService;
 
+	/**
+	 * Handles the request to display all room categories available.
+	 *
+	 * @param model The model used to pass data to the view.
+	 * @return The name of the view to render.
+	 */
 	@GetMapping("/room/all")
 	public String getRoomCate(Model model) {
 		List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
@@ -44,6 +50,13 @@ public class RoomController {
 
 	}
 
+	/**
+	 * Handles the request to display rooms of a specific category.
+	 *
+	 * @param model      The model used to pass data to the view.
+	 * @param categoryId The ID of the room category.
+	 * @return The name of the view to render.
+	 */
 	@GetMapping("/room/category/{categoryId}")
 	public String getRoomByCategory(Model model, @PathVariable Long categoryId) {
 		BookRoomByCategory bookRoomByCategories = roomByCategoryService.getRoom(categoryId);

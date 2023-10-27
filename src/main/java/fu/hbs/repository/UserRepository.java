@@ -10,7 +10,7 @@
  * 
  * 
  */
-package fu.hbs.repositoties;
+package fu.hbs.repository;
 
 import java.util.Optional;
 

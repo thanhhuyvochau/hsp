@@ -24,8 +24,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import fu.hbs.entities.Role;
-import fu.hbs.repositoties.RoleRepository;
-import fu.hbs.repositoties.UserRepository;
+import fu.hbs.repository.RoleRepository;
+import fu.hbs.repository.UserRepository;
 
 @Service("customizeUserDetailsService")
 public class CustomizeUserDetailsService implements UserDetailsService {
@@ -38,6 +38,14 @@ public class CustomizeUserDetailsService implements UserDetailsService {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 	}
+
+	/**
+	 * Load user details by email for authentication.
+	 *
+	 * @param email the email address of the user
+	 * @return UserDetails object containing user information
+	 * @throws UsernameNotFoundException if the email is not found
+	 */
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

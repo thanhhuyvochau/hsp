@@ -1,7 +1,7 @@
 package fu.hbs.service.impl;
 
 import fu.hbs.entities.User;
-import fu.hbs.repositoties.UserRepository;
+import fu.hbs.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

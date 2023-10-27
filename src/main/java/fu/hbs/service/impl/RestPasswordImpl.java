@@ -25,8 +25,8 @@ import fu.hbs.entities.Token;
 import fu.hbs.entities.User;
 import fu.hbs.exceptionHandler.MailExceptionHandler;
 import fu.hbs.exceptionHandler.ResetExceptionHandler;
-import fu.hbs.repositoties.TokenRepository;
-import fu.hbs.repositoties.UserRepository;
+import fu.hbs.repository.TokenRepository;
+import fu.hbs.repository.UserRepository;
 import fu.hbs.service.dao.ResetService;
 import fu.hbs.service.dao.TokenService;
 import jakarta.mail.MessagingException;
@@ -54,8 +54,14 @@ public class RestPasswordImpl implements ResetService {
 		this.tokenRepository = tokenRepository;
 	}
 
-
-
+	/**
+	 * Constructor for RestPasswordImpl.
+	 *
+	 * @param userRepository  the repository for user data
+	 * @param tokenService    the service for token operations
+	 * @param javaMailSender  the JavaMailSender for sending email
+	 * @param tokenRepository the repository for token data
+	 */
 
 	public void resetPasswordRequest(String email) throws ResetExceptionHandler {
 		User user = userRepository.findByEmail(email);
@@ -77,6 +83,13 @@ public class RestPasswordImpl implements ResetService {
 
 	}
 
+	/**
+	 * Request a password reset for a user based on their email.
+	 *
+	 * @param email the email address of the user
+	 * @throws ResetExceptionHandler if there is an issue with the reset request
+	 */
+
 	public boolean resetPassword(Token token, String newPassword) throws ResetExceptionHandler {
 		String encodedPassword = passwordEncoder.encode(newPassword);
 		Optional<User> userOptional = userRepository.findById(token.getUserId());
@@ -94,6 +107,14 @@ public class RestPasswordImpl implements ResetService {
 
 	}
 
+	/**
+	 * Send a reset password email to a recipient.
+	 *
+	 * @param recipientEmail the email address of the recipient
+	 * @param subject        the subject of the email
+	 * @param emailContent   the content of the email
+	 * @throws MailExceptionHandler if there is an issue with sending the email
+	 */
 	public void sendResetPasswordEmail(String recipientEmail, String subject, String emailContent)
 			throws MailExceptionHandler {
 		MimeMessage message = javaMailSender.createMimeMessage();

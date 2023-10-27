@@ -29,6 +29,12 @@ public class LoginController {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * Displays the login form if the user is not already authenticated.
+	 *
+	 * @param action The authentication object.
+	 * @return The login form view.
+	 */
 	@GetMapping("/login")
 	public String loginForm(Authentication action) {
 		if (action != null) {
@@ -37,6 +43,14 @@ public class LoginController {
 		return "authentication/login";
 	}
 
+	/**
+	 * Handles the rendering of the homepage based on the user's role.
+	 *
+	 * @param authentication The authentication object.
+	 * @param model          The model to add attributes.
+	 * @param session        The HTTP session for storing user-related attributes.
+	 * @return The view of the homepage based on the user's role.
+	 */
 	@GetMapping("/homepage")
 	public String index(Authentication action, Model model, HttpSession session) {
 		if (action != null) {

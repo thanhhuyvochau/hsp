@@ -9,7 +9,7 @@
  * 20/10/2023    1.0        HieuDT          First Deploy
  * 23/10/2023	 2.0		HieuDT			Update
  */
-package fu.hbs.repositoties;
+package fu.hbs.repository;
 
 import java.util.List;
 

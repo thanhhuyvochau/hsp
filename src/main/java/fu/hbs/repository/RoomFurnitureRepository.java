@@ -8,15 +8,12 @@
  * DATE          Version    Author           DESCRIPTION
  * 27/10/2023    1.0        HieuLBM          First Deploy	
  */
-package fu.hbs.repositoties;
-
-import java.util.List;
+package fu.hbs.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import fu.hbs.entities.Room;
+import fu.hbs.entities.RoomFurniture;
 
-public interface RoomRepository extends JpaRepository<Room, Long> {
-
-	List<Room> findByRoomCategoryId(Long roomCategoryId);
+public interface RoomFurnitureRepository extends JpaRepository<RoomFurniture, Long> {
+	RoomFurniture findByFurnitureId(Long furnitureId);
 }

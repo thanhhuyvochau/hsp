@@ -9,7 +9,7 @@
  * 14/10/2023    1.0        HieuLBM          First Deploy
  * 18/10/2023	 2.0		HieuLBM			 Add findByUserId
  */
-package fu.hbs.repositoties;
+package fu.hbs.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

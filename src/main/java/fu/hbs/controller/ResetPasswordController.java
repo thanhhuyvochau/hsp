@@ -42,11 +42,24 @@ public class ResetPasswordController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Displays the password reset request form.
+	 *
+	 * @return The name of the view to render.
+	 */
 	@GetMapping("/hbs/resetPassword")
 	public String showResetPasswordRequestForm() {
-		return "forgotPassword"; // Thay đổi thành tên giao diện của bạn
+		return "forgotPassword";
 	}
 
+	/**
+	 * Handles the password reset request.
+	 *
+	 * @param email The email address for the reset request.
+	 * @param model The model used to pass data to the view.
+	 * @return The name of the view to render.
+	 * @throws ResetExceptionHandler If there is an issue with the reset.
+	 */
 	@PostMapping("/hbs/resetPassword")
 	public String handleResetPasswordRequest(@RequestParam String email, Model model) throws ResetExceptionHandler {
 		String checkemail = stringDealer.trimMax(email);
@@ -67,6 +80,14 @@ public class ResetPasswordController {
 		}
 	}
 
+	/**
+	 * Displays the password reset form with a valid token.
+	 *
+	 * @param token   The reset password token.
+	 * @param model   The model used to pass data to the view.
+	 * @param session The HttpSession for maintaining session data.
+	 * @return The name of the view to render.
+	 */
 	@GetMapping("/hbs/reset-password")
 	public String showResetPasswordForm(@RequestParam("token") String token, Model model, HttpSession session) {
 		Token tokenEntity = tokenService.findTokenByValue(token);
@@ -81,6 +102,17 @@ public class ResetPasswordController {
 		return "error";
 	}
 
+	/**
+	 * Handles the password reset process.
+	 *
+	 * @param token      The reset password token.
+	 * @param password   The new password.
+	 * @param rePassword The confirmation of the new password.
+	 * @param model      The model used to pass data to the view.
+	 * @param session    The HttpSession for maintaining session data.
+	 * @return The name of the view to render.
+	 * @throws ResetExceptionHandler If there is an issue with the reset.
+	 */
 	@PostMapping("/hbs/reset-password")
 	public String handleResetPassword(@RequestParam("token") String token, @RequestParam("password") String Password,
 			@RequestParam("repassword") String rePassword, Model model, HttpSession session)

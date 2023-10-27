@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import fu.hbs.entities.RoomService;
-import fu.hbs.repositoties.ServiceRepository;
+import fu.hbs.repository.ServiceRepository;
 import fu.hbs.service.dao.ServiceService;
 
 import java.util.List;
