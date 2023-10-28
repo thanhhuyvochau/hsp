@@ -91,9 +91,12 @@
 									<li><img src="/assets/img/usermenu/user.png" alt=""><a href="#">Hồ sơ</a></li>
 									<li><img src="/assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a></li>
 									<li><img src="/assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a></li>
-									<li><img src="/assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn tin</a></li>
-									<li><img src="/assets/img/usermenu/question.png" alt=""><a href="#">Trợ giúp</a></li>
-									<li><img src="/assets/img/usermenu/log-out.png" alt=""><a href="#">Đăng xuất</a></li>
+									<li><img src="/assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn tin</a>
+									</li>
+									<li><img src="/assets/img/usermenu/question.png" alt=""><a href="#">Trợ giúp</a>
+									</li>
+									<li><img src="/assets/img/usermenu/log-out.png" alt=""><a href="#">Đăng xuất</a>
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -135,16 +138,6 @@
 				<button type="submit">Search</button>
 			</form>
 			<div class="container">
-				<!--<ul class="list-featured-box d-flex-wrap justify-content-center">
-					<li class="featured-box" th:each="service : ${services}">
-						<a href="#" class="post-thumb">
-							<img th:src="${service.serviceImageUrl}" th:alt="${service.serviceName}" width="510"
-								height="245">
-						</a>
-						<b th:text="${service.serviceName}">Service Name</b>
-						<a href="#" class="see-now">Xem ngay</a>
-					</li>
-				</ul>-->
 				<ul class="list-featured-box d-flex-wrap justify-content-center">
 					<li class="featured-box" th:each="service : ${services}">
 						<a href="#" class="post-thumb">
@@ -152,7 +145,8 @@
 								height="245" />
 						</a>
 						<b th:text="${service.serviceName}">Service Name</b>
-						<a href="#" class="see-now">Xem ngay</a>
+						<!--<a href="#" class="see-now">Xem ngay</a>-->
+						<a th:href="@{/service-details(serviceId=${service.serviceId})}" class="see-now">Xem ngay</a>
 					</li>
 				</ul>
 

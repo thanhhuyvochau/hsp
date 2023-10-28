@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+	<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 
 </html>
 
@@ -43,41 +43,14 @@
     <div id="content">
         <div class="box">
             <div class="box-head">
-                <h3>Hightea – Trà chiều tại Khách Sạn 5 Sao</h3>
+                <h3 th:text="${news.title}">News Title</h3>
             </div>
+     
             <div style="margin: 40px 120px">
-                <p class="h7">Hightea được xem là nét văn hóa tinh túy nhất ở nước Anh, được giới thiệu bởi nữ công tước
-                    thứ bảy
-                    của xứ Bedford, Anna trong những năm 1840.
-                    <br>
-                    Phong tục “trà chiều” phổ biến đến mức mà trong suốt những năm 80, những người phụ nữ tầng lớp
-                    thượng lưu và trong xã hội sẽ đeo gang tay và đội mũ để tham dự tiệc trà chiều vào khoảng lúc 4:00pm
-                    đến 5:00pm.
-                    <br>
-                    Trà chiều, được gọi là Low Tea, là bữa uống trà ăn bánh ngọt. Nó được phục vụ tại bàn thấp và thường
-                    được coi là mốt thời thượng của giới thượng lưu ở Anh xưa.
-                </p>
+                <p th:text="${news.descriptions}">Description</p>
             </div>
             <div class="container" style="margin-top: 20px ">
-                <img src="assets/img/news/news1.jpg" width="1000px" height="700px" alt="">
-            </div>
-            <br>
-            <div style="margin: 30px 120px">
-                <p class="h7">Hightea là sự kết hợp giữa trà chiều và Bữa tối, được phục vụ trên một chiếc bàn cao trong
-                    phòng ăn.
-                    Nó còn gọi là bữa bữa trà mặn (gồm cả thịt bò, bánh sandwich, trà đủ để ăn no như một bữa chính).
-                    <br>
-                    Khám phá nguồn gốc của bữa trà muộn giúp bạn thu nạp năng lượng, tăng khả năng tập trung, hiệu quả
-                    làm việc và yêu chiều thú vui ẩm thực một cách thông minh nhất.
-                </p>
-            </div>
-
-            <div class="container" style="margin-top: 20px;">
-                <img src="assets/img/news/news1_2.jpg" width="1000px" height="700px" alt="">
-            </div>
-            <br>
-            <div style="margin: 30px 120px">
-                <p class="h7">★ Thời gian phục vụ từ 14:00 – 20:00 tại The M Coffee ( Khu vực tiền sảnh Khách Sạn).</p>
+                <img th:src="@{'/assets/img/news/' + ${news.image}}" width="1000px" height="700px" />
             </div>
             <br>
         </div>

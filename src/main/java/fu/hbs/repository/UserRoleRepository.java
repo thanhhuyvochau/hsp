@@ -19,4 +19,5 @@ import fu.hbs.entities.UserRole;
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     UserRole save(UserRole userRole);
+    UserRole findByUserId(Long userId);
 }

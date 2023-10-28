@@ -41,7 +41,7 @@ public class New {
 	private Long newId;
 	private Long userId;
 	private String image;
-	private String description;
+	private String descriptions;
 	private Date date;
 	private String title;
 	private Boolean status;

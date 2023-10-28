@@ -60,7 +60,11 @@ public class ServiceServiceImpl implements ServiceService {
 
         return new PageImpl<>(pageList, pageable, list.size());
     }
-
+    @Override
+    public RoomService findById(Long serviceId) {
+        Optional<RoomService> service = serviceRepository.findById(serviceId);
+        return service.orElse(null);
+    }
 
 
 }

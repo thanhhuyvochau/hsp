@@ -21,8 +21,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import fu.hbs.service.dao.NewsService;
 import fu.hbs.service.dao.ServiceService;
 import fu.hbs.service.impl.CustomizeUserDetailsService;
+import fu.hbs.service.impl.NewsServiceImpl;
 import fu.hbs.service.impl.ServiceServiceImpl;
 
 @Configuration
@@ -45,7 +47,10 @@ public class WebbSecurityConfig {
 	public ServiceService serviceService() {
 		return new ServiceServiceImpl();
 	}
-
+    @Bean
+    public NewsService newsService() {
+        return new NewsServiceImpl();
+    }
 	public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
 		System.out.println("Authentication manager!");
 		managerBuilder.userDetailsService(customizeUserDetailsService).passwordEncoder(passwordEncoder());
@@ -72,7 +77,7 @@ public class WebbSecurityConfig {
 		// Authorization
 
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration", "/hbs/**", "room/**",
+				.requestMatchers("/assets/**", "/", "/homepage", "/login", "/registration","/services","/service-details","/news","/news-details", "/hbs/**", "room/**",
 						"/error")
 				.permitAll().requestMatchers("/admin/**").hasAuthority("ADMIN").requestMatchers("/customer/**")
 				.hasAuthority("CUSTOMER").requestMatchers("/management/**").hasAuthority("MANAGEMENT")

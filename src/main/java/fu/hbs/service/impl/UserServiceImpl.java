@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 		// Tạo UserRole và gán roleId là 2
 		UserRole userRole = new UserRole();
 		userRole.setUserId(savedUser.getUserId());
-		userRole.setRoleId(5L); // 2 là roleId bạn muốn gán
+		userRole.setRoleId(6L); // 2 là roleId bạn muốn gán
 		userroleRepository.save(userRole);
 
 		return savedUser;

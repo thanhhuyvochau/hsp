@@ -35,6 +35,8 @@ public interface ServiceService {
 	 * @return a paginated list of all room services
 	 */
 	Page<RoomService> getAllServices(Pageable pageable);
+	
+	RoomService findById(Long serviceId);
 
 //	List<com.example.entities.Service> searchByName(String serviceName);
 
