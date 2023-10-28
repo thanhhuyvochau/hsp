@@ -91,10 +91,8 @@ public class LoginController {
                 if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
                     List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
                     session.setAttribute("categories", categories);
-                    System.out.println("Customer");
                     User user1 = userService.getUserbyEmail(user.getUsername());
                     session.setAttribute("accountDetail", user);
-//					model.addAttribute("accountDetail", user);
                     session.setAttribute("name", user1.getName());
                     return "homepage";
                 }

@@ -41,7 +41,6 @@ public class InitController {
         // Lấy ngày hôm nay và định dạng thành chuỗi ngày-tháng-năm
         LocalDate today = LocalDate.now();
         String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
         // Đặt giá trị mặc định cho trường ngày
         session.setAttribute("defaultDate", todayString);
         return "homepage";
