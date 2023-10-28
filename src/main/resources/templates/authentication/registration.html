@@ -65,7 +65,9 @@
 							<div class="input-field">
 								<p id="email-error" style="color: red;"></p>
 							</div>
-
+							<div th:if="${param.emailexist}">
+								<div class="alert alert-danger"> Tài khoản đã tồn tại!</div>
+							</div>
 
 							<div class="input-field">
 								<input th:field="*{userPassword}" minlength="8" maxlength="30" name="password"
@@ -87,17 +89,17 @@
 
 							<div>
 
-							<div>
-								<p id="result2"></p>
-								<p id="message"></p>
-							</div>
-							<div class="input-field">
+								<div>
+									<p id="result2"></p>
+									<p id="message"></p>
+								</div>
+								<div class="input-field">
 
-								<input id="submit-button" type="submit" class="submit" disabled value="Đăng ký">
-							</div>
-							<div class="signin">
-								<span>Đã có tài khoản ? <a href="/login">Đăng nhập ở đây</a></span>
-							</div>
+									<input id="submit-button" type="submit" class="submit" disabled value="Đăng ký">
+								</div>
+								<div class="signin">
+									<span>Đã có tài khoản ? <a href="/login">Đăng nhập ở đây</a></span>
+								</div>
 						</form>
 					</div>
 				</div>
