@@ -11,7 +11,9 @@
  */
 package fu.hbs.repository;
 
+import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.entities.HotelBooking;
+import fu.hbs.entities.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,10 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface HotelBookingRepository extends JpaRepository<HotelBooking, Long> {
-
-
-    @Query(value = "SELECT * FROM hotel_booking WHERE check_in BETWEEN ?1 AND ?2 AND check_out BETWEEN ?1 AND ?2", nativeQuery = true)
-    List<HotelBooking> getAllRoom(Date checkIn, Date checkOut);
 
 
 }
