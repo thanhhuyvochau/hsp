@@ -12,6 +12,8 @@
 
 package fu.hbs.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import fu.hbs.dto.RoomCategoryDTO;
@@ -36,6 +38,12 @@ public class InitController {
     public String home(HttpSession session) {
         List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
         session.setAttribute("categories", categories);
+        // Lấy ngày hôm nay và định dạng thành chuỗi ngày-tháng-năm
+        LocalDate today = LocalDate.now();
+        String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        // Đặt giá trị mặc định cho trường ngày
+        session.setAttribute("defaultDate", todayString);
         return "homepage";
     }
 
