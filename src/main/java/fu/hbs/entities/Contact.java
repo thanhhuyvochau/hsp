@@ -43,4 +43,5 @@ public class Contact {
 	private String content;
 	private Boolean isRead;
 	private Boolean status;
+	private Long userId;
 }
