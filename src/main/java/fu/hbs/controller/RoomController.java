@@ -92,8 +92,6 @@ public class RoomController {
                               @RequestParam(value = "checkOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkOut,
                               @RequestParam(value = "numberOfPeople", required = false) Integer numberOfPeople,
                               Model model) {
-        // Lấy danh sách loại phòng phù hợp với số lượng người
-        System.out.println("ok" + numberOfPeople);
         HotelBookingAvailable conflictingBookings;
 //        List<RoomCategories> availableRoomCategories = roomCategoryService.findAvailableRoomCategories(numberOfPeople);
         if (numberOfPeople == null || "".equals(numberOfPeople)) {
