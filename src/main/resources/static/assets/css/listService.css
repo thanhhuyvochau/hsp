@@ -28,7 +28,18 @@ h2{
 h2 span{
   color: var(--secondary-color);
 }
-
+input {
+  border: none;
+  outline: none;
+}
+button {
+  background: #CC8C18;
+  color: white;
+  padding: 10px 20px;
+  outline: none;
+  border: none;
+  border-radius: 30px;
+}
 .featured-box{
     width: 390px;
     height: 345px;
