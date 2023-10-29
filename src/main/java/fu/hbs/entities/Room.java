@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2023, FPT University 
+ * Copyright (C) 2023, FPT University
  * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
+ * HBS
+ * Hotel Booking System
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
- * 
+ *
  */
 
 package fu.hbs.entities;
@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -33,17 +35,19 @@ import lombok.ToString;
 @Entity
 @Table(name = "room")
 public class Room {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_id")
-	private Long roomId;
-	private Long roomImageId;
-	private Long roomCategoryId;
-	private Long statusId;
-	private Long serviceId;
-	private String description;
-	private float discount;
-	private String viewCity;
-	private boolean activity;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
+    private Long roomId;
+    private Long roomImageId;
+    private Long roomCategoryId;
+    private Long statusId;
+    private Long serviceId;
+    private String description;
+    private float discount;
+    private String bedSize;
+    private BigDecimal price;
+    private String viewCity;
+    private boolean activity;
 
 }

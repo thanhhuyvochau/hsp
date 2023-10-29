@@ -14,6 +14,8 @@ package fu.hbs.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.entities.HotelBooking;
@@ -81,10 +83,17 @@ public class RoomController {
     @GetMapping("/room/category/{categoryId}")
     public String getRoomByCategory(Model model, @PathVariable Long categoryId) {
         BookRoomByCategory bookRoomByCategories = roomByCategoryService.getRoom(categoryId);
+
+        List<RoomCategoryDTO> distinctCategories = roomCategoryService.getAllRoom().stream()
+                .filter(roomCategory -> roomCategory.getRoomCategoryId() != 1)
+                .collect(Collectors.toList());
+        
+        model.addAttribute("distinctCategories", distinctCategories);
         model.addAttribute("bookRoomByCategories", bookRoomByCategories);
-        return "viewRoom";
+        return "detailRoom";
 
     }
+
 
     @GetMapping("/room/search")
 

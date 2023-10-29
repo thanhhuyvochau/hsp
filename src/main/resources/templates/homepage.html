@@ -129,7 +129,8 @@
                             <p class="text-white" th:text="${category.description}"></p>
                             <p class="text-white fw-bold mt-lg-4"
                                th:text="${category.getCategoryRoomPrice().getPrice()+' '+'VND'}"></p>
-                            <a class="main-btn border-white text-white mt-lg-5" href="#">Đặt ngay</a>
+                            <a class="main-btn border-white text-white mt-lg-5"
+                               th:href="@{/room/category/}+${category.roomCategoryId}">Xem ngay</a>
                         </div>
                     </div>
                 </div>

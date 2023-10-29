@@ -30,326 +30,220 @@
 
 
 <body data-bs-target=".navbar" data-bs-offset="100">
-    <header class="header-wrapper">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="/assets/img/Orilogo.png" alt="" width="180" height="80"
-                        class="d-inline-block align-text-top">
-                    <!-- <img src="./images/logo.png" class="img-fluid" alt="logo"> -->
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <!-- <span class="navbar-toggler-icon"></span> -->
-                    <i class="fas fa-stream navbar-toggler-icon"></i>
-                </button>
+<!-- Navbar section -->
+<header th:replace="~{header :: header}">
 
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav menu-navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#home">Trang chủ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#about">Về chúng tôi</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#rooms">Phòng ở</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#services">Dịch vụ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#gallery">Hình ảnh</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#blog">Tin tức</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Liên
-                                hệ</a>
-                        </li>
-                        <!--
-                  <li class="nav-item">
-                    <a class="main-btn" href="#">Đăng nhập</a>
-                  </li>
-                -->
+</header>
 
-                        <div class="action">
-                            <div class="profile" onclick="menuToggle()">
-                                <i style='font-size:30px' class='fas'>&#xf406;</i>
-                            </div>
-                            <div class="menu">
-                                <h3>Do Trung Hieu<br></h3>
-                                <ul>
-                                    <li><img src="/assets/img/usermenu/user.png" alt=""><a href="#">Hồ sơ</a></li>
-                                    <li><img src="/assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a></li>
-                                    <li><img src="/assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a></li>
-                                    <li><img src="/assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn tin</a></li>
-                                    <li><img src="/assets/img/usermenu/question.png" alt=""><a href="#">Trợ giúp</a></li>
-                                    <li><img src="/assets/img/usermenu/log-out.png" alt=""><a href="#">Đăng xuất</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-
-                        <script>
-                            function menuToggle() {
-                                const toggleMenu = document.querySelector(".menu");
-                                toggleMenu.classList.toggle('active')
-                            }
-                        </script>
-
-
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <div class="site-blocks-cover overlay" style="background-image: url(assets/img/news/background2.jpg);" data-aos="fade"
-        data-stellar-background-ratio="0.5">
-        <div class="container">
-            <div class="row align-items-center justify-content-center">
-                <div class="col-md-7 text-center" data-aos="fade">
-                    <h1 class="mb-4">Chi tiết phòng ở</h1>
-                </div>
+<div class="site-blocks-cover overlay" style="background-image: url(/assets/img/slider/hotel_slider1.jpg);"
+     data-aos="fade"
+     data-stellar-background-ratio="0.5">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-7 text-center" data-aos="fade">
+                <h1 class="mb-4">Chi tiết phòng ở</h1>
             </div>
         </div>
     </div>
+</div>
 
 
+<section class="ftco-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-md-12 room-single mt-4 mb-5 ftco-animate">
+                        <h2 class="mb-4" th:text="${bookRoomByCategories.roomCategories.getRoomCategoryName()}">
+                            <span>- (30 Available rooms)</span></h2>
+                        <div class="d-md-flex mt-5 mb-5 row">
+                            <ul class="list1 col">
+                                <b><u>Tiện ích</u></b>
+                                <p th:each="roomF :${bookRoomByCategories.roomFurnitures}">
+                                    <li><span th:text="${roomF.getFurnitureName()}"></span></li>
+                                </p>
+                            </ul>
+                            <ul class="list2 ms-5 col">
+                                <b><u>Dịch vụ</u></b>
+                                <p th:each="roomS :${bookRoomByCategories.services}">
+                                    <li><span th:text="${roomS.getServiceName}"></span></li>
+                                </p>
+                            </ul>
+                        </div>
 
-    <section class="ftco-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="row">
-                        <div class="col-md-12 room-single mt-4 mb-5 ftco-animate">
-                            <h2 class="mb-4">Luxury Room <span>- (30 Available rooms)</span></h2>
-
-                            <div class="d-md-flex mt-5 mb-5 row">
-                                <ul class="list1 col">
-                                    <b><u>Tiện ích</u></b>
-                                    <p></p>
-                                    <li><span>Wifi miễn phí</span></li>
-                                    <li><span>Satellite cable TV</span></li>
-                                    <li><span>Điện thoại IDD</span></li>
-                                    <li><span>Working desk/USB outlet</span></li>
-                                    <li><span>Quầy bar mini</span></li>
-                                    <li><span>Safety box</span></li>
-                                    <li><span>Shower & Bathtub</span></li>
-                                    <li><span>Áo choàng tắm (2 áo)</span></li>
-                                    <li><span>Miễn phí nước khoáng, trà và cà phê</span></li>
-                                    <li><span>Ấm đun nước</span></li>
-                                </ul>
-
-                                <ul class="list2 ms-5 col">
-                                    <b><u>Dịch vụ</u></b>
-                                    <p></p>
-                                    <li><span>Buffet breakfast</span></li>
-                                    <li><span>Welcome drinks</span></li>
-                                    <li><span>Gym</span></li>
-                                    <li><span>Swimming pool</span></li>
-                                    <li><span>Room service</span></li>
-                                </ul>
+                        <div class="row g-0 col-md-12">
+                            <div class="col-md-6 gallery-item">
+                                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
+                                <div class="gallery-item-content"></div>
                             </div>
-
-                            <div class="row g-0 col-md-12">
-                                <div class="col-md-6 gallery-item">
-                                    <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
-                                    <div class="gallery-item-content"> </div>
-                                </div>
-                                <div class="col-md-6 gallery-item">
-                                    <img decoding="async" src="/assets/img/rooms/room-5.jpg" class="img-fluid w-100">
-                                    <div class="gallery-item-content"> </div>
-                                </div>
-                                <div class="col-md-6 gallery-item">
-                                    <img decoding="async" src="/assets/img/rooms/room-6.jpg" class="img-fluid w-100">
-                                    <div class="gallery-item-content"> </div>
-                                </div>
-                                <div class="col-md-6 gallery-item">
-                                    <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
-                                    <div class="gallery-item-content"> </div>
-                                </div>
+                            <div class="col-md-6 gallery-item">
+                                <img decoding="async" src="/assets/img/rooms/room-5.jpg" class="img-fluid w-100">
+                                <div class="gallery-item-content"></div>
+                            </div>
+                            <div class="col-md-6 gallery-item">
+                                <img decoding="async" src="/assets/img/rooms/room-6.jpg" class="img-fluid w-100">
+                                <div class="gallery-item-content"></div>
+                            </div>
+                            <div class="col-md-6 gallery-item">
+                                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
+                                <div class="gallery-item-content"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-lg-4 sidebar ftco-animate pl-md-5">
-                    <div class="sidebar-box">
-                        <form action="#" class="search-form">
-                            <div class="form-group">
-                                <span class="icon ion-ios-search"></span>
-                                <input type="text" class="form-control" placeholder="Search...">
-                            </div>
-                        </form>
-                    </div>
-
-                    <br>
-
-                    <div class="sidebar-box ftco-animate border-start border-dark">
-                        <h3>Giá từ</h3>
-                        <h2>1,400,000 VNĐ</h2>
-                        <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
+            <div class="col-lg-4 sidebar ftco-animate pl-md-5">
+                <br>
+                <div class="sidebar-box ftco-animate border-start border-dark">
+                    <h3>Giá từ</h3>
+                    <h2>1,400,000 VNĐ</h2>
+                    <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
 
 
-                        <div class="sidebar-box ftco-animate">
-                            <div class="block-21 mb-4 d-flex">
-                                <a class="blog-img mr-4" style="background-image: url(assets/img/rooms/bed.png);"></a>
-                                <div class="text">
-                                    <h3 class="heading"><a href="#">Giường KingSize</a></h3>
-                                </div>
-                            </div>
-                            <div class="block-21 mb-4 d-flex">
-                                <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/people.png);"></a>
-                                <div class="text">
-                                    <h3 class="heading"><a href="#">2 người lớn 1 trẻ em</a></h3>
-                                </div>
-                            </div>
-                            <div class="block-21 mb-4 d-flex">
-                                <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/area.png);"></a>
-                                <div class="text">
-                                    <h3 class="heading"><a href="#">30m2</a></h3>
-                                </div>
-                            </div>
-                            <div class="block-21 mb-4 d-flex">
-                                <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/view.png);"></a>
-                                <div class="text">
-                                    <h3 class="heading"><a href="#">Hướng thành phố</a></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="sidebar-box ftco-animate">
-                        <h3>Chính sách trẻ em</h3>
-                        <p>- Dưới 6 tuổi: miễn phí</p>
-                        <p>- Từ 12 tuổi trở lên: tính phí như người lớn</p>
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="col-sm-12 section-title text-center mb-5">
-                <h6>Chúng tôi có thể giúp gì cho bạn?</h6>
-                <h3>Những loại phòng khác của chúng tôi</h3>
-            </div>
-
-            <div class="row m-0">
-                <div class="col-md-4 mb-4 mb-lg-0">
-                    <div class="room-item">
-                        <img decoding="async" src="/assets/img/rooms/room1.webp" class="img-fluid">
-                        <div class="room-item-wrap">
-                            <div class="room-content">
-                                <h5 class="text-white mb-lg-5 text-decoration-underline">Superior Double/Twin</h5>
-                                <a class="main-btn border-white text-white mt-lg-5" href="#">Chi tiết</a>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/bed.png);"></a>
+                            <div class="text">
+                                <h3 class="heading"><span
+                                        th:text="${bookRoomByCategories.getRooms().get(0).getBedSize()}">Giường KingSize</span>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/people.png);"></a>
+                            <div class="text">
+                                <h3 class="heading"><span
+                                        th:text="${bookRoomByCategories.getRoomCategories().numberPerson}"></span></h3>
+                            </div>
+                        </div>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/area.png);"></a>
+                            <div class="text">
+                                <h3 class="heading"><span
+                                        th:text="${bookRoomByCategories.getRoomCategories().getSquare()+'m2'}"></span>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/view.png);"></a>
+                            <div class="text">
+                                <h3 class="heading"><span
+                                        th:text="${bookRoomByCategories.getRooms().get(0).getViewCity()}">Hướng thành phố</span>
+                                </h3>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4 mb-lg-0">
-                    <div class="room-item">
-                        <img decoding="async" src="/assets/img/rooms/room2.webp" class="img-fluid">
-                        <div class="room-item-wrap">
-                            <div class="room-content">
-                                <h5 class="text-white mb-lg-5 text-decoration-underline">Family Junior Suite</h5>
-                                <a class="main-btn border-white text-white mt-lg-5" href="#">Chi tiết</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="sidebar-box ftco-animate">
+                    <h3>Chính sách trẻ em</h3>
+                    <p>- Dưới 6 tuổi: miễn phí</p>
+                    <p>- Từ 12 tuổi trở lên: tính phí như người lớn</p>
                 </div>
-                <div class="col-md-4 mb-4 mb-lg-0">
-                    <div class="room-item">
-                        <img decoding="async" src="/assets/img/rooms/room3.webp" class="img-fluid">
-                        <div class="room-item-wrap">
-                            <div class="room-content">
-                                <h5 class="text-white mb-lg-5 text-decoration-underline">Grand Suite</h5>
-                                <a class="main-btn border-white text-white mt-lg-5" href="#">Chi tiết</a>
-                            </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="col-sm-12 section-title text-center mb-5">
+            <h6>Chúng tôi có thể giúp gì cho bạn?</h6>
+            <h3>Những loại phòng khác của chúng tôi</h3>
+        </div>
+
+        <div class="row m-0">
+            <div class="col-md-4 mb-4 mb-lg-0" th:each="category, iteration : ${distinctCategories}">
+                <div class="room-item" th:if="${iteration.index < 3}">
+                    <img decoding="async" th:src="@{'/assets/img/rooms/' + ${category.image}}" class="img-fluid">
+                    <div class="room-item-wrap">
+                        <div class="room-content">
+                            <h5 class="text-white mb-lg-5 text-decoration-underline"
+                                th:text="${category.roomCategoryName}"></h5>
+                            <p class="text-white" th:text="${category.description}"></p>
+                            <p class="text-white fw-bold mt-lg-4"
+                               th:text="${category.getCategoryRoomPrice().getPrice()+' '+'VND'}"></p>
+                            <a class="main-btn border-white text-white mt-lg-5"
+                               th:href="@{/room/category/}+${category.roomCategoryId}">Xem ngay</a>
                         </div>
                     </div>
                 </div>
             </div>
 
         </div>
-    </section>
 
-    <section id="contact" class="footer_wrapper mt-3 mt-md-0 pb-0">
-        <div class="container pb-3">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <h5>3HKT Hotel</h5>
-                    <p class="ps-0">Để biết thêm chi tiết về khách sạn Hà Nội 3HKT hay góp ý với chúng tôi,
-                        quý khách vui lòng để lại thông tin, chúng tôi sẽ liên hệ với bạn trong thời gian sớm
-                        nhất.</p>
-                    <div class="contact-info">
-                        <ul class="list-unstyled">
-                            <li><a href="#"><i class="fa fa-home me-3"></i> 67 Phùng Khoang, Trung Văn, Từ Liêm, Hà
-                                    Nội</a></li>
-                            <li><a href="#"><i class="fa fa-phone me-3"></i>+84 388 663 366</a></li>
-                            <li><a href="#"><i class="fa fa-envelope me-3"></i>reservation@3hkthotel.com</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Liên kết khác</h5>
-                    <ul class="link-widget p-0">
-                        <li><a href="#">Văn phòng</a></li>
-                        <li><a href="#">Vận chuyển</a></li>
-                        <li><a href="#">Cửa hàng</a></li>
-                        <li><a href="#">Chính sách</a></li>
-                        <li><a href="#">Mua thẻ quà tặng</a></li>
-                        <li><a href="#">Tín dụng</a></li>
+    </div>
+</section>
 
+<section id="contact" class="footer_wrapper mt-3 mt-md-0 pb-0">
+    <div class="container pb-3">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <h5>3HKT Hotel</h5>
+                <p class="ps-0">Để biết thêm chi tiết về khách sạn Hà Nội 3HKT hay góp ý với chúng tôi,
+                    quý khách vui lòng để lại thông tin, chúng tôi sẽ liên hệ với bạn trong thời gian sớm
+                    nhất.</p>
+                <div class="contact-info">
+                    <ul class="list-unstyled">
+                        <li><a href="#"><i class="fa fa-home me-3"></i> 67 Phùng Khoang, Trung Văn, Từ Liêm, Hà
+                            Nội</a></li>
+                        <li><a href="#"><i class="fa fa-phone me-3"></i>+84 388 663 366</a></li>
+                        <li><a href="#"><i class="fa fa-envelope me-3"></i>reservation@3hkthotel.com</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Hợp tác</h5>
-                    <ul class="link-widget p-0">
-                        <li><a href="#">Nhà hàng</a></li>
-                        <li><a href="#">Spa</a></li>
-                        <li><a href="#">Bar</a></li>
-                        <li><a href="#">Quán Karaoke</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Cập nhật tin tức</h5>
-                    <div class="form-group mb-4">
-                        <input type="email" class="form-control bg-transparent"
-                            placeholder="Nhập email của bạn tại đây">
-                        <button type="submit" class="main-btn rounded-2 mt-3 border-white text-white">Gửi</button>
-                    </div>
-                    <h5>Kết nối với chúng tôi</h5>
-                    <ul class="social-network d-flex align-items-center p-0">
-                        <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
-                        <li><a href="#"><i class="fab fa-vimeo-v"></i></a></li>
-                    </ul>
-                </div>
-
             </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Liên kết khác</h5>
+                <ul class="link-widget p-0">
+                    <li><a href="#">Văn phòng</a></li>
+                    <li><a href="#">Vận chuyển</a></li>
+                    <li><a href="#">Cửa hàng</a></li>
+                    <li><a href="#">Chính sách</a></li>
+                    <li><a href="#">Mua thẻ quà tặng</a></li>
+                    <li><a href="#">Tín dụng</a></li>
+
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Hợp tác</h5>
+                <ul class="link-widget p-0">
+                    <li><a href="#">Nhà hàng</a></li>
+                    <li><a href="#">Spa</a></li>
+                    <li><a href="#">Bar</a></li>
+                    <li><a href="#">Quán Karaoke</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Cập nhật tin tức</h5>
+                <div class="form-group mb-4">
+                    <input type="email" class="form-control bg-transparent"
+                           placeholder="Nhập email của bạn tại đây">
+                    <button type="submit" class="main-btn rounded-2 mt-3 border-white text-white">Gửi</button>
+                </div>
+                <h5>Kết nối với chúng tôi</h5>
+                <ul class="social-network d-flex align-items-center p-0">
+                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
+                    <li><a href="#"><i class="fab fa-vimeo-v"></i></a></li>
+                </ul>
+            </div>
+
         </div>
-        <div class="container-fluid copyright-section">
-            <p>Copyright <a href="#">3HKT Hotel</a> All Rights Reserved</p>
-        </div>
-    </section>
+    </div>
+    <div class="container-fluid copyright-section">
+        <p>Copyright <a href="#">3HKT Hotel</a> All Rights Reserved</p>
+    </div>
+</section>
 
-    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
-            <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />
-            <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
-                stroke="#F96D00" />
-        </svg></div>
-    <!-- Bootstrap 5 JS CDN Links -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 JS CDN Links -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
 
-    <!-- Swiper JS -->
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-    <!-- Custom Js Link -->
-    <script src="/assets/js/main.js"></script>
-    <script src="/assets/js/aos.js"></script>"
+<!-- Custom Js Link -->
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/aos.js"></script>
+
 </body>
