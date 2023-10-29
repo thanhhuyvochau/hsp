@@ -114,14 +114,19 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User update(User user) throws UserIvalidException {
+        if (user.getPhone() == null || user.getPhone().isEmpty()) {
+            return userRepository.save(user);
+        } else {
+            Optional<User> existingUser = userRepository.findByPhone(user.getPhone());
+            // Phone đã tồn tại và không thuộc về người dùng hiện tại
+            if (existingUser.isPresent() && !existingUser.get().getUserId().equals(user.getUserId())) {
+                throw new UserIvalidException("Phone đã tồn tại");
 
-        Optional<User> existingUser = userRepository.findByPhone(user.getPhone());
-        // Phone đã tồn tại và không thuộc về người dùng hiện tại
-        if (existingUser.isPresent() && !existingUser.get().getUserId().equals(user.getUserId())) {
-            throw new UserIvalidException("Phone đã tồn tại");
-
+            }
+            return userRepository.save(user);
         }
-        return userRepository.save(user);
+
+
     }
 
     /**

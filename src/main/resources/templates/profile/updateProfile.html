@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
+                                    <input type="text" class="form-control" id="phone" name="phone" required
                                            th:field="*{phone}">
                                     <div th:if="${#fields.hasErrors('phone')}" class="error" th:errors="*{phone}">
                                     </div>

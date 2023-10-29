@@ -128,7 +128,10 @@ public class UserController {
     public String viewEditUserProfile(Model model, Authentication authentication) throws UserNotFoundException, UserIvalidException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
-        if (user.getImage() == null) {
+        User user1 = userService.findById(user.getUserId());
+        System.out.println(user1);
+        if (user1.getImage() == null) {
+            System.out.println("ok" + user.getImage());
             user.setImage("Special.png");
             userService.update(user);
         }
@@ -155,16 +158,13 @@ public class UserController {
 //            return "profile/updateProfile";
 //        }
         user1 = userService.findById(user.getUserId());
-        System.out.println(user1);
         if (file.isEmpty()) {
-
             user1.setName(user.getName());
             user1.setPhone(user.getPhone());
             user1.setAddress(user.getAddress());
             user1.setDob(user.getDob());
             user1.setGender(user.getGender());
-            user1.setImage(user.getImage());
-            System.out.println("ok con dê");
+            user1.setImage(user1.getImage());
         } else {
             user1.setName(user.getName());
             user1.setPhone(user.getPhone());
