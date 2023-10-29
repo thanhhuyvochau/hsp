@@ -133,10 +133,12 @@
 				<h2>Dịch vụ chính của chúng tôi</h2>
 			</div>
 			<hr>
-			<form style="margin-left: 1500px;" method="get" action="/services">
+			<div class="d-flex">
+			<form class="ms-auto" style="margin-right: 50px;" method="get" action="/services">
 				<input type="text" name="serviceName" th:value="${serviceName}" placeholder="Search by service name">
 				<button type="submit">Tìm kiếm</button>
 			</form>
+			</div>
 			<div class="container">
 				<ul class="list-featured-box d-flex-wrap justify-content-center">
 					<li class="featured-box" th:each="service : ${services}">
@@ -155,7 +157,7 @@
 
 		</div>
 	</div>
-	<nav aria-label="Page navigation" style="margin-left: 850px;">
+	<nav aria-label="Page navigation" class="d-flex justify-content-center">
 		<ul class="pagination">
 			<!-- Nút nhảy đến đầu trang -->
 			<li class="page-item">
