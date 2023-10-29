@@ -126,9 +126,9 @@
 					<p th:text="${service.serviceNote}">Service Note</p>
 					<p th:text="'Giá: ' + ${service.servicePrice} + ' VND' ">Service Price</p>
 					<p>
-						Status:
-						<span th:if="${service.Status}">Active</span>
-						<span th:unless="${service.Status}">Deactive</span>
+						Trạng thái:
+						<span th:if="${service.Status}">Còn hoạt động</span>
+						<span th:unless="${service.Status}">Đã dừng hoạt động</span>
 					</p>
 				</div>
 				<div class="container" style="margin-top: 20px ">
