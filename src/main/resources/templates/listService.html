@@ -37,83 +37,7 @@
 </style>
 
 <body data-bs-target=".navbar" data-bs-offset="100">
-	<header class="header-wrapper">
-		<nav class="navbar navbar-expand-lg">
-			<div class="container">
-				<a class="navbar-brand" href="#">
-					<img src="/assets/img/Orilogo.png" alt="" width="180" height="80"
-						class="d-inline-block align-text-top">
-					<!-- <img src="./images/logo.png" class="img-fluid" alt="logo"> -->
-				</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-					aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<!-- <span class="navbar-toggler-icon"></span> -->
-					<i class="fas fa-stream navbar-toggler-icon"></i>
-				</button>
-
-				<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-					<ul class="navbar-nav menu-navbar-nav">
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="#home">Trang chủ</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#about">Về chúng tôi</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#rooms">Phòng ở</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#services">Dịch vụ</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#gallery">Hình ảnh</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#blog">Tin tức</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Liên
-								hệ</a>
-						</li>
-						<!--
-                    <li class="nav-item">
-                      <a class="main-btn" href="#">Đăng nhập</a>
-                    </li>
-                  -->
-
-						<div class="action">
-							<div class="profile" onclick="menuToggle()">
-								<i style='font-size:30px' class='fas'>&#xf406;</i>
-							</div>
-							<div class="menu">
-								<h3>Do Trung Hieu<br></h3>
-								<ul>
-									<li><img src="/assets/img/usermenu/user.png" alt=""><a href="#">Hồ sơ</a></li>
-									<li><img src="/assets/img/usermenu/edit.png" alt=""><a href="#">Chỉnh sửa</a></li>
-									<li><img src="/assets/img/usermenu/settings.png" alt=""><a href="#">Cài đặt</a></li>
-									<li><img src="/assets/img/usermenu/envelope.png" alt=""><a href="#">Nhắn tin</a>
-									</li>
-									<li><img src="/assets/img/usermenu/question.png" alt=""><a href="#">Trợ giúp</a>
-									</li>
-									<li><img src="/assets/img/usermenu/log-out.png" alt=""><a href="#">Đăng xuất</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-
-
-						<script>
-							function menuToggle() {
-								const toggleMenu = document.querySelector(".menu");
-								toggleMenu.classList.toggle('active')
-							}
-						</script>
-
-
-					</ul>
-				</div>
-			</div>
-		</nav>
+	<header th:replace="~{header :: header}">
 	</header>
 
 	<div id="content">
@@ -134,10 +58,10 @@
 			</div>
 			<hr>
 			<div class="d-flex">
-			<form class="ms-auto" style="margin-right: 50px;" method="get" action="/services">
-				<input type="text" name="serviceName" th:value="${serviceName}" placeholder="Tìm kiếm tên dịch vụ">
-				<button type="submit">Tìm kiếm</button>
-			</form>
+				<form class="ms-auto" style="margin-right: 50px;" method="get" action="/services">
+					<input type="text" name="serviceName" th:value="${serviceName}" placeholder="Tìm kiếm tên dịch vụ">
+					<button type="submit">Tìm kiếm</button>
+				</form>
 			</div>
 			<div class="container">
 				<ul class="list-featured-box d-flex-wrap justify-content-center">
