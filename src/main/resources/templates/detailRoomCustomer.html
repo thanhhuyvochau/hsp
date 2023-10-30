@@ -41,12 +41,11 @@
     <div class="container">
         <div class="row align-items-center justify-content-center">
             <div class="col-md-7 text-center" data-aos="fade">
-                <h1 class="mb-4">Chi tiết phòng ở</h1>
+                <h1 class="mb-4" th:text="${bookRoomByCategories.roomCategories.getRoomCategoryName()}"></h1>
             </div>
         </div>
     </div>
 </div>
-
 
 <section class="ftco-section">
     <div class="container">
@@ -54,8 +53,7 @@
             <div class="col-lg-8">
                 <div class="row">
                     <div class="col-md-12 room-single mt-4 mb-5 ftco-animate">
-                        <h2 class="mb-4" th:text="${bookRoomByCategories.roomCategories.getRoomCategoryName()}">
-                            <span>- (30 Available rooms)</span></h2>
+
                         <div class="d-md-flex mt-5 mb-5 row">
                             <ul class="list1 col">
                                 <b><u>Tiện ích</u></b>
@@ -71,33 +69,19 @@
                             </ul>
                         </div>
 
-                        <div class="row g-0 col-md-12">
-                            <div class="col-md-6 gallery-item">
-                                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
-                                <div class="gallery-item-content"></div>
-                            </div>
-                            <div class="col-md-6 gallery-item">
-                                <img decoding="async" src="/assets/img/rooms/room-5.jpg" class="img-fluid w-100">
-                                <div class="gallery-item-content"></div>
-                            </div>
-                            <div class="col-md-6 gallery-item">
-                                <img decoding="async" src="/assets/img/rooms/room-6.jpg" class="img-fluid w-100">
-                                <div class="gallery-item-content"></div>
-                            </div>
-                            <div class="col-md-6 gallery-item">
-                                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
-                                <div class="gallery-item-content"></div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4 sidebar ftco-animate pl-md-5">
+
                 <br>
                 <div class="sidebar-box ftco-animate border-start border-dark">
                     <h3>Giá từ</h3>
-                    <h2>1,400,000 VNĐ</h2>
+                    <h2 th:text="${bookRoomByCategories.getCategoryRoomPrice().getPrice()+'VND'}"></h2>
+                    <p>Giá sản phẩm: <span th:text="${#numbers.formatDecimal(1000000, 0, 'NUMBER')}">0</span> VNĐ</p>
+
                     <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
 
 
@@ -134,15 +118,34 @@
                             </div>
                         </div>
                     </div>
+                    <div class="sidebar-box ftco-animate">
+                        <h3>Chính sách trẻ em</h3>
+                        <p>- Dưới 6 tuổi: miễn phí</p>
+                        <p>- Từ 12 tuổi trở lên: tính phí như người lớn</p>
+                    </div>
                 </div>
-                <div class="sidebar-box ftco-animate">
-                    <h3>Chính sách trẻ em</h3>
-                    <p>- Dưới 6 tuổi: miễn phí</p>
-                    <p>- Từ 12 tuổi trở lên: tính phí như người lớn</p>
-                </div>
+
             </div>
         </div>
-
+        <hr>
+        <div class="row g-0 col-md-12">
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
+                <div class="gallery-item-content"></div>
+            </div>
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="/assets/img/rooms/room-5.jpg" class="img-fluid w-100">
+                <div class="gallery-item-content"></div>
+            </div>
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="/assets/img/rooms/room-6.jpg" class="img-fluid w-100">
+                <div class="gallery-item-content"></div>
+            </div>
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="/assets/img/rooms/room-4.jpg" class="img-fluid w-100">
+                <div class="gallery-item-content"></div>
+            </div>
+        </div>
         <hr>
 
         <div class="col-sm-12 section-title text-center mb-5">

@@ -7,5 +7,7 @@ import fu.hbs.entities.CategoryRoomPrice;
 
 @Repository
 public interface CategoryRoomPriceRepository extends JpaRepository<CategoryRoomPrice, Long> {
-	CategoryRoomPrice findByRoomPriceId(Long id);
+    CategoryRoomPrice findByRoomCategoryId(Long id);
+
+    CategoryRoomPrice findByRoomPriceId(Long id);
 }

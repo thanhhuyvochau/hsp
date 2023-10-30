@@ -18,5 +18,6 @@ public class HotelBookingAvailable {
     private List<RoomImage> roomImages;
     private List<RoomFurniture> roomFurnitures;
     private List<RoomService> roomServices;
+    private CategoryRoomPrice categoryRoomPrice;
     private BigDecimal total;
 }

@@ -52,7 +52,7 @@ public class RoomCategoryImpl implements RoomCategoryService {
             roomCategoryDTO.setRoomCategoryName(roomCategory.getRoomCategoryName());
             roomCategoryDTO.setDescription(roomCategory.getDescription());
             roomCategoryDTO.setCategoryRoomPrice(
-                    categoryRoomPriceRepository.findByRoomPriceId(roomCategory.getRoomCategoryId()));
+                    categoryRoomPriceRepository.findByRoomCategoryId(roomCategory.getRoomCategoryId()));
             roomCategoryDTO.setImage(roomCategory.getImage());
             roomCategoryDTOS.add(roomCategoryDTO);
         }

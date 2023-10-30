@@ -87,7 +87,6 @@ h6,
 }
 
 
-
 .room-img {
     height: 400px;
     margin-bottom: 2em;
@@ -154,7 +153,7 @@ h6,
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin-right: -15px;
-    margin-left: -15px;
+    margin-left: 0px;
 }
 
 .owl-carousel {
@@ -474,7 +473,7 @@ h6,
     opacity: 1;
 }
 
-.site-block-half.site-block-video .image .play-button>span {
+.site-block-half.site-block-video .image .play-button > span {
     position: absolute;
     left: 55%;
     top: 50%;
@@ -587,8 +586,8 @@ h6,
     }
 }
 
-.slide-one-item.home-slider .owl-prev>span,
-.slide-one-item.home-slider .owl-next>span {
+.slide-one-item.home-slider .owl-prev > span,
+.slide-one-item.home-slider .owl-next > span {
     position: absolute;
     line-height: 0;
     top: 50%;
