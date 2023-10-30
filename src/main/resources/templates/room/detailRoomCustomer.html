@@ -80,8 +80,7 @@
                 <div class="sidebar-box ftco-animate border-start border-dark">
                     <h3>Giá từ</h3>
                     <h2 th:text="${bookRoomByCategories.getCategoryRoomPrice().getPrice()+'VND'}"></h2>
-                    <p>Giá sản phẩm: <span th:text="${#numbers.formatDecimal(1000000, 0, 'NUMBER')}">0</span> VNĐ</p>
-
+                 
                     <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
 
 
@@ -176,66 +175,7 @@
     </div>
 </section>
 
-<section id="contact" class="footer_wrapper mt-3 mt-md-0 pb-0">
-    <div class="container pb-3">
-        <div class="row">
-            <div class="col-lg-3 col-md-6">
-                <h5>3HKT Hotel</h5>
-                <p class="ps-0">Để biết thêm chi tiết về khách sạn Hà Nội 3HKT hay góp ý với chúng tôi,
-                    quý khách vui lòng để lại thông tin, chúng tôi sẽ liên hệ với bạn trong thời gian sớm
-                    nhất.</p>
-                <div class="contact-info">
-                    <ul class="list-unstyled">
-                        <li><a href="#"><i class="fa fa-home me-3"></i> 67 Phùng Khoang, Trung Văn, Từ Liêm, Hà
-                            Nội</a></li>
-                        <li><a href="#"><i class="fa fa-phone me-3"></i>+84 388 663 366</a></li>
-                        <li><a href="#"><i class="fa fa-envelope me-3"></i>reservation@3hkthotel.com</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <h5>Liên kết khác</h5>
-                <ul class="link-widget p-0">
-                    <li><a href="#">Văn phòng</a></li>
-                    <li><a href="#">Vận chuyển</a></li>
-                    <li><a href="#">Cửa hàng</a></li>
-                    <li><a href="#">Chính sách</a></li>
-                    <li><a href="#">Mua thẻ quà tặng</a></li>
-                    <li><a href="#">Tín dụng</a></li>
-
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <h5>Hợp tác</h5>
-                <ul class="link-widget p-0">
-                    <li><a href="#">Nhà hàng</a></li>
-                    <li><a href="#">Spa</a></li>
-                    <li><a href="#">Bar</a></li>
-                    <li><a href="#">Quán Karaoke</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <h5>Cập nhật tin tức</h5>
-                <div class="form-group mb-4">
-                    <input type="email" class="form-control bg-transparent"
-                           placeholder="Nhập email của bạn tại đây">
-                    <button type="submit" class="main-btn rounded-2 mt-3 border-white text-white">Gửi</button>
-                </div>
-                <h5>Kết nối với chúng tôi</h5>
-                <ul class="social-network d-flex align-items-center p-0">
-                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
-                    <li><a href="#"><i class="fab fa-vimeo-v"></i></a></li>
-                </ul>
-            </div>
-
-        </div>
-    </div>
-    <div class="container-fluid copyright-section">
-        <p>Copyright <a href="#">3HKT Hotel</a> All Rights Reserved</p>
-    </div>
-</section>
+<section th:replace="~{footer :: footer}"></section>
 
 <!-- Bootstrap 5 JS CDN Links -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>

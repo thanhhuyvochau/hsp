@@ -66,10 +66,10 @@ public class RoomController {
         if (categories != null) {
             model.addAttribute("categories", categories);
             session.setAttribute("categories", categories);
-            return "viewRoom_customer";
+            return "room/viewRoomCustomer";
         }
         model.addAttribute("NotFound", "Không có loại phòng mà bạn cần tìm");
-        return "viewRoom_customer";
+        return "room/viewRoomCustomer";
 
     }
 
@@ -87,10 +87,10 @@ public class RoomController {
         List<RoomCategoryDTO> distinctCategories = roomCategoryService.getAllRoom().stream()
                 .filter(roomCategory -> roomCategory.getRoomCategoryId() != 1)
                 .collect(Collectors.toList());
-        
+
         model.addAttribute("distinctCategories", distinctCategories);
         model.addAttribute("bookRoomByCategories", bookRoomByCategories);
-        return "detailRoom";
+        return "room/detailRoomCustomer";
 
     }
 
@@ -115,7 +115,7 @@ public class RoomController {
 //        model.addAttribute("availableRoomCategories", availableRoomCategories);
 
         model.addAttribute("conflictingBookings", conflictingBookings);
-        return "viewRoom";
+        return "room/searchRoomCustomer";
     }
 
 }

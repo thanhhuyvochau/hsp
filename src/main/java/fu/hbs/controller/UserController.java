@@ -114,7 +114,7 @@ public class UserController {
             userService.update(user);
         }
         model.addAttribute("user", user);
-        return "profile/viewProfile";
+        return "profile/viewProfileCustomer";
     }
 
     /**
@@ -136,7 +136,7 @@ public class UserController {
             userService.update(user);
         }
         model.addAttribute("user", user);
-        return "profile/updateProfile";
+        return "profile/updateProfileCustomer";
     }
 
     /**
@@ -208,7 +208,7 @@ public class UserController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
         model.addAttribute("user", user);
-        return "profile/changepassword";
+        return "profile/changePasswordCustomer";
     }
 
     /**
@@ -233,21 +233,21 @@ public class UserController {
         if (!passwordEncoder.matches(oldpassword, user1.getPassword())) {
             model.addAttribute("pass", "Mật khẩu cũ không đúng");
             model.addAttribute("oldpassword", oldpassword);
-            return "profile/changepassword";
+            return "profile/changePasswordCustomer";
         }
         model.addAttribute("oldpassword", oldpassword);
 
         if (!stringDealer.checkPasswordRegex(newpassword)) { /* Password is not valid */
             model.addAttribute("pass1", "Mật khẩu mới không hợp lệ");
             model.addAttribute("newpassword", newpassword);
-            return "profile/changepassword";
+            return "profile/changePasswordCustomer";
         }
         model.addAttribute("newpassword", newpassword);
 
         if (passwordEncoder.matches(newpassword, user1.getPassword())) {// oldpassword != newPassword
             model.addAttribute("pass4", "Mật khẩu nhập mới không được trùng với mật khẩu cũ");
             model.addAttribute("oldpassword", oldpassword);
-            return "profile/changepassword";
+            return "profile/changePasswordCustomer";
 
         }
         model.addAttribute("oldpassword", oldpassword);
@@ -256,7 +256,7 @@ public class UserController {
             model.addAttribute("pass3", "Mật khẩu nhập lại không hợp lệ");
 
             model.addAttribute("confirmpassword", confirmpassword);
-            return "profile/changepassword";
+            return "profile/changePasswordCustomer";
         }
 
         model.addAttribute("confirmpassword", confirmpassword);
@@ -265,7 +265,7 @@ public class UserController {
             model.addAttribute("pass2", "Mật khẩu không khớp");
             model.addAttribute("newpassword", newpassword);
             model.addAttribute("confirmpassword", confirmpassword);
-            return "profile/changepassword";
+            return "profile/changePasswordCustomer";
         }
 
         // Password match
