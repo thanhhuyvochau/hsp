@@ -115,7 +115,10 @@
 			var email = this.value;
 			var pattern = /^[a-zA-Z0-9!#$%&'*+/=?^`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
-			if (!pattern.test(email)) {
+			if (email.trim() === "") {
+				document.getElementById("email-error").textContent = "Email không được bỏ trống.";
+				submitButton.disabled = true;
+			} else if (!pattern.test(email)) {
 				document.getElementById("email-error").textContent = "Email không đúng định dạng.";
 				submitButton.disabled = true;
 			} else {
@@ -126,15 +129,26 @@
 
 
 		$('#password, #password2').on('keyup', function () {
-			if ($('#password').val() === $('#password2').val()) {
-				$('#message').html('Password Matching').css('color', 'green');
-				document.getElementById("submit").disabled = false;
-			} else {
-				$('#message').html('Password not Matching').css('color', 'red');
-				document.getElementById("submit").disabled = true;
-			}
+			var password1 = $('#password').val();
+			var password2 = $('#password2').val();
 
+			var hasUppercase = /[A-Z]/.test(password1);
+			var hasLowercase = /[a-z]/.test(password1);
+			var hasDigit = /\d/.test(password1);
+			var hasSpecialChar = /[!@#$%^&*]/.test(password1);
+
+			if (password1 !== password2) {
+				$('#message').html('Mật khẩu không trùng khớp').css('color', 'red');
+				submitButton.disabled = true;
+			} else if (!(hasUppercase && hasLowercase && hasDigit && hasSpecialChar)) {
+				$('#message').html('Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một chữ số và một ký tự đặc biệt').css('color', 'red');
+				submitButton.disabled = true;
+			} else {
+				$('#message').html('Mật khẩu hợp lệ').css('color', 'green');
+				submitButton.disabled = false;
+			}
 		});
+
 	</script>
 </body>
 
