@@ -107,6 +107,6 @@ public class ServiceController {
 		model.addAttribute("currentPage", services.getNumber());
 		model.addAttribute("totalPages", services.getTotalPages());
 
-		return "listService";
+		return "services/listService";
 	}
 }

@@ -28,7 +28,7 @@ public class ServiceDetailController {
         // Đưa dịch vụ vào model để hiển thị trong trang service-detail.html
         model.addAttribute("service", service);
 
-        return "serviceDetail";
+        return "services/serviceDetail";
     }
 
 }

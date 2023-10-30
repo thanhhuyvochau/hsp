@@ -24,6 +24,6 @@ public class NewsDetailController {
         // Đưa tin tức vào model để hiển thị trong trang news_detail.html
         model.addAttribute("news", news);
 
-        return "newsDetail";
+        return "news/newsDetail";
     }
 }
