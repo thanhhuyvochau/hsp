@@ -14,23 +14,12 @@ package fu.hbs.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fu.hbs.entities.*;
+import fu.hbs.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fu.hbs.dto.BookRoomByCategory;
-import fu.hbs.entities.CategoryRoomFurniture;
-import fu.hbs.entities.Room;
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.RoomFurniture;
-import fu.hbs.entities.RoomImage;
-import fu.hbs.entities.RoomService;
-import fu.hbs.repository.CategoryRoomFurnitureRepository;
-import fu.hbs.repository.RoomCategoriesRepository;
-import fu.hbs.repository.RoomFurnitureRepository;
-import fu.hbs.repository.RoomImageRepository;
-import fu.hbs.repository.RoomRepository;
-import fu.hbs.repository.RoomStatusRepository;
-import fu.hbs.repository.ServiceRepository;
 import fu.hbs.service.dao.RoomByCategoryService;
 
 @Service
@@ -53,6 +42,8 @@ public class RoomImpl implements RoomByCategoryService {
     CategoryRoomFurnitureRepository categoryRoomFurnitureRepository;
     @Autowired
     RoomCategoriesRepository roomCategoriesRepository;
+    @Autowired
+    CategoryRoomPriceRepository categoryRoomPriceRepository;
 
     /**
      * Get information about rooms within a specific category.
@@ -64,25 +55,30 @@ public class RoomImpl implements RoomByCategoryService {
     public BookRoomByCategory getRoom(Long categoryId) {
         RoomCategories roomCategories = new RoomCategories();
         List<Room> room = roomRepository.findByRoomCategoryId(categoryId);
+        List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
+        List<RoomImage> images = new ArrayList<>();
+        List<RoomFurniture> roomFurnitures = new ArrayList<>();
+        RoomImage roomImage = new RoomImage();
+        RoomFurniture roomFurniture = new RoomFurniture();
+
         List<CategoryRoomFurniture> categoryRoomFurnitures = categoryRoomFurnitureRepository
                 .findByRoomCategoryId(categoryId);
         List<RoomService> allService = serviceRepository.findAll();
-        RoomImage roomImage = new RoomImage();
-        List<RoomImage> images = new ArrayList<>();
 
         for (int i = 0; i < room.size(); i++) {
             roomImage = roomImageRepository.findByRoomImageId(room.get(i).getRoomImageId());
             images.add(roomImage);
         }
 
-        List<RoomFurniture> roomFurnitures = new ArrayList<>();
-        RoomFurniture roomFurniture = new RoomFurniture();
         for (int i = 0; i < categoryRoomFurnitures.size(); i++) {
             roomFurniture = roomFurnitureRepository.findByFurnitureId(categoryRoomFurnitures.get(i).getFurnitureId());
             roomFurnitures.add((roomFurniture));
         }
+
+
         BookRoomByCategory bookRoomByCategory = new BookRoomByCategory();
         bookRoomByCategory.setRoomCategories(roomCategoriesRepository.findByRoomCategoryId(categoryId));
+        bookRoomByCategory.setCategoryRoomPrice(categoryRoomPriceRepository.findByRoomCategoryId(categoryId));
         bookRoomByCategory.setCategoryRoomFurnitures(categoryRoomFurnitures);
         bookRoomByCategory.setImages(images);
         bookRoomByCategory.setServices(allService);

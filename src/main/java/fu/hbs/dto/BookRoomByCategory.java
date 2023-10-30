@@ -17,4 +17,5 @@ public class BookRoomByCategory {
     private List<RoomImage> images;
     private List<RoomFurniture> roomFurnitures;
     private RoomCategories roomCategories;
+    private CategoryRoomPrice categoryRoomPrice;
 }
