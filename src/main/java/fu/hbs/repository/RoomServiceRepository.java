@@ -14,10 +14,12 @@ package fu.hbs.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import fu.hbs.entities.RoomService;
 
-public interface ServiceRepository extends JpaRepository<RoomService, Long> {
+@Repository
+public interface RoomServiceRepository extends JpaRepository<RoomService, Long> {
 	List<RoomService> findByServiceNameContaining(String serviceName);
 
 	RoomService findByServiceId(Long serviceId);

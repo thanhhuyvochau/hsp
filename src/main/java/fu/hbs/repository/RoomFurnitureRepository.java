@@ -11,9 +11,11 @@
 package fu.hbs.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import fu.hbs.entities.RoomFurniture;
 
+@Repository
 public interface RoomFurnitureRepository extends JpaRepository<RoomFurniture, Long> {
 	RoomFurniture findByFurnitureId(Long furnitureId);
 }
