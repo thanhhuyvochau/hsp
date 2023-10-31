@@ -66,5 +66,10 @@ public class ServiceServiceImpl implements ServiceService {
 		Optional<RoomService> service = serviceRepository.findById(serviceId);
 		return service.orElse(null);
 	}
+	
+    @Override
+    public List<RoomService> getAllServices() {
+        return serviceRepository.findAll();
+    }
 
 }

@@ -46,10 +46,8 @@
             <h3 th:text="${news.title}">News Title</h3>
         </div>
 
-        <div style="margin: 40px 120px">
-            <p th:text="${news.descriptions}">Description</p>
-        </div>
         <div class="container" style="margin-top: 20px ">
+			 <p th:text="${news.descriptions}">Description</p>
             <img th:src="@{'/assets/img/news/' + ${news.image}}" width="1000px" height="700px"/>
         </div>
         <br>

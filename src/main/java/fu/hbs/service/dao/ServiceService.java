@@ -11,6 +11,8 @@
  */
 package fu.hbs.service.dao;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,6 +39,8 @@ public interface ServiceService {
 	Page<RoomService> getAllServices(Pageable pageable);
 	
 	RoomService findById(Long serviceId);
+	
+	List<RoomService> getAllServices();
 
 //	List<com.example.entities.Service> searchByName(String serviceName);
 

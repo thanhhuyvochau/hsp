@@ -20,16 +20,22 @@ public class ServiceDetailController {
         this.serviceService = serviceService;
     }
 
-    @GetMapping("/service-details")
-    public String getServiceDetail(@RequestParam("serviceId") Long serviceId, Model model) {
-        // Truy vấn dịch vụ dựa trên serviceId
-    	RoomService service = serviceService.findById(serviceId);
+	@GetMapping("/service-details")
+	public String getServiceDetail(@RequestParam("serviceId") Long serviceId, Model model) {
+		// Truy vấn dịch vụ dựa trên serviceId
+		RoomService service = serviceService.findById(serviceId);
 
-        // Đưa dịch vụ vào model để hiển thị trong trang service-detail.html
-        model.addAttribute("service", service);
+		// Lấy danh sách dịch vụ từ serviceService
+		List<RoomService> allServices = serviceService.getAllServices();
 
-        return "services/serviceDetail";
-    }
+		// Đưa dịch vụ vào model để hiển thị trong trang service-detail.html
+		model.addAttribute("service", service);
+
+		// Đưa danh sách dịch vụ vào model
+		model.addAttribute("allServices", allServices);
+
+		return "services/serviceDetailCustomer";
+	}
 
 }
 

@@ -48,6 +48,6 @@ public class NewsController {
         model.addAttribute("currentPage", news.getNumber());
         model.addAttribute("totalPages", news.getTotalPages());
 
-        return "news/listNews";
+        return "news/listNewsCustomer";
     }
 }
