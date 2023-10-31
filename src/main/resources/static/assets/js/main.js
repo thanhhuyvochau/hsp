@@ -105,3 +105,16 @@ function password_show_hide(number) {
         }
 
 }
+
+//Show hide calendar
+var div = document.getElementById("carouselExampleControls");
+var display = 0;
+function showCal() {
+    if (display == 1) {
+        div.style.display = 'block';
+        display = 0;
+    } else {
+        div.style.display = 'none';
+        display = 1;
+    }
+}

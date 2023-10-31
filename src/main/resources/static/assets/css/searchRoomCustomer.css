@@ -655,3 +655,21 @@ ol {
 .booking-area .row .col-lg .main-btn {
     margin-top: 30px;
 }
+
+.calendar-price p {
+    font-size: 13px;
+    line-height: 1rem;
+    text-align: start;
+}
+
+.carousel-inner {
+    background-color: #ece8d9;
+}
+
+.carousel-control-prev-icon {
+    margin-right: 8rem;
+}
+
+.carousel-control-next-icon {
+    margin-left: 8rem;
+}
