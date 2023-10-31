@@ -12,24 +12,13 @@
 
 package fu.hbs.controller;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingAvailable;
-import fu.hbs.entities.HotelBooking;
-import fu.hbs.entities.Room;
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.RoomService;
-import fu.hbs.service.impl.HotelBookingImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.service.impl.HotelBookingServiceImpl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,11 +26,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import fu.hbs.dto.BookRoomByCategory;
-import fu.hbs.dto.RoomCategoryDTO;
 import fu.hbs.service.dao.RoomByCategoryService;
 import fu.hbs.service.dao.RoomCategoryService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -52,9 +39,9 @@ public class RoomController {
     private RoomByCategoryService roomByCategoryService;
 
 
-    private HotelBookingImpl hotelBookingService;
+    private HotelBookingServiceImpl hotelBookingService;
 
-    public RoomController(RoomCategoryService roomCategoryService, RoomByCategoryService roomByCategoryService, HotelBookingImpl hotelBookingService) {
+    public RoomController(RoomCategoryService roomCategoryService, RoomByCategoryService roomByCategoryService, HotelBookingServiceImpl hotelBookingService) {
         this.roomCategoryService = roomCategoryService;
         this.roomByCategoryService = roomByCategoryService;
         this.hotelBookingService = hotelBookingService;
@@ -68,7 +55,7 @@ public class RoomController {
      */
     @GetMapping("/room/all")
     public String getRoomCate(Model model, HttpSession session) {
-        List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
+        List<ViewRoomCategoryDTO> categories = roomCategoryService.getAllRoom();
         if (categories != null) {
             model.addAttribute("categories", categories);
             session.setAttribute("categories", categories);
@@ -91,7 +78,7 @@ public class RoomController {
 
         BookRoomByCategory bookRoomByCategories = roomByCategoryService.getRoom(categoryId);
 
-        List<RoomCategoryDTO> distinctCategories = roomCategoryService.getAllRoom().stream()
+        List<ViewRoomCategoryDTO> distinctCategories = roomCategoryService.getAllRoom().stream()
                 .filter(roomCategory -> roomCategory.getRoomCategoryId() != categoryId)
                 .collect(Collectors.toList());
         model.addAttribute("distinctCategories", distinctCategories);

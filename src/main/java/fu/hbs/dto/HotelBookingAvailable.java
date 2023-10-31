@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +20,7 @@ public class HotelBookingAvailable {
     private List<RoomFurniture> roomFurnitures;
     private List<RoomService> roomServices;
     private CategoryRoomPrice categoryRoomPrice;
+    private List<CategoryRoomFurniture> categoryRoomFurnitures;
+    private Map<Long, List<Room>> totalRoom;
     private BigDecimal total;
 }

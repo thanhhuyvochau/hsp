@@ -16,7 +16,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import fu.hbs.dto.RoomCategoryDTO;
+
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import fu.hbs.service.dao.RoomCategoryService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class InitController {
      */
     @GetMapping("/")
     public String home(HttpSession session) {
-        List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
+        List<ViewRoomCategoryDTO> categories = roomCategoryService.getAllRoom();
         session.setAttribute("categories", categories);
         // Lấy ngày hôm nay và định dạng thành chuỗi ngày-tháng-năm
         LocalDate today = LocalDate.now();

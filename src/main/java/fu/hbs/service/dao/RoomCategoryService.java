@@ -12,7 +12,7 @@ package fu.hbs.service.dao;
 
 import java.util.List;
 
-import fu.hbs.dto.RoomCategoryDTO;
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import fu.hbs.entities.RoomCategories;
 
 public interface RoomCategoryService {
@@ -21,7 +21,7 @@ public interface RoomCategoryService {
      *
      * @return a list of RoomCategoryDTO objects containing details about room categories
      */
-    List<RoomCategoryDTO> getAllRoom();
+    List<ViewRoomCategoryDTO> getAllRoom();
 
     List<RoomCategories> findAvailableRoomCategories(int numberOfPeople);
 }

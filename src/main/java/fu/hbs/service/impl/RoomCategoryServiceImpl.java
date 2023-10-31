@@ -15,10 +15,10 @@ package fu.hbs.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fu.hbs.dto.RoomCategoryDTO;
 import fu.hbs.entities.RoomCategories;
 import fu.hbs.repository.CategoryRoomPriceRepository;
 import fu.hbs.repository.RoomCategoriesRepository;
@@ -38,12 +38,12 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
      */
 
     @Override
-    public List<RoomCategoryDTO> getAllRoom() {
+    public List<ViewRoomCategoryDTO> getAllRoom() {
         List<RoomCategories> roomCategories = roomCategoriesRepository.findAll();
-        List<RoomCategoryDTO> roomCategoryDTOS = new ArrayList<>();
+        List<ViewRoomCategoryDTO> roomCategoryDTOS = new ArrayList<>();
 
         for (RoomCategories roomCategory : roomCategories) {
-            RoomCategoryDTO roomCategoryDTO = new RoomCategoryDTO();
+            ViewRoomCategoryDTO roomCategoryDTO = new ViewRoomCategoryDTO();
             roomCategoryDTO.setRoomCategoryId(roomCategory.getRoomCategoryId());
             roomCategoryDTO.setRoomCategoryName(roomCategory.getRoomCategoryName());
             roomCategoryDTO.setDescription(roomCategory.getDescription());

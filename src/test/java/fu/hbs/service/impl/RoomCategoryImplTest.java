@@ -9,13 +9,14 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import fu.hbs.dto.RoomCategoryDTO;
+
 import fu.hbs.entities.CategoryRoomPrice;
 import fu.hbs.entities.RoomCategories;
 import fu.hbs.repository.CategoryRoomPriceRepository;
@@ -63,7 +64,7 @@ class RoomCategoryImplTest {
         categoryRoomPrice.setStartDate(mock(Date.class));
         categoryRoomPrice.setUpdatedDate(mock(Date.class));
 
-        List<RoomCategoryDTO> categoryDTOs = roomCategoryImpl.getAllRoom();
+        List<ViewRoomCategoryDTO> categoryDTOs = roomCategoryImpl.getAllRoom();
         assertEquals(1, categoryDTOs.size());
     }
 }

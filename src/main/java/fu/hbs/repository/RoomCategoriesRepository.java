@@ -10,8 +10,9 @@ import fu.hbs.entities.RoomCategories;
 @Repository
 public interface RoomCategoriesRepository extends JpaRepository<RoomCategories, Long> {
 
-	RoomCategories findByRoomCategoryId(Long id);
+    RoomCategories findByRoomCategoryId(Long id);
 
-	List<RoomCategories> findByNumberPersonGreaterThanEqual(int numberOfPeople);
+    List<RoomCategories> findByNumberPersonGreaterThanEqual(int numberOfPeople);
 
+    RoomCategories findDistinctByRoomCategoryId(Long id);
 }

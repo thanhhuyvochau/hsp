@@ -1,17 +1,19 @@
 package fu.hbs.service.impl;
 
 import fu.hbs.dto.HotelBookingAvailable;
+import fu.hbs.entities.CategoryRoomFurniture;
 import fu.hbs.entities.Room;
 import fu.hbs.entities.RoomCategories;
-import fu.hbs.repository.HotelBookingRepository;
-import fu.hbs.repository.RoomCategoriesRepository;
-import fu.hbs.repository.RoomRepository;
+import fu.hbs.entities.RoomFurniture;
+import fu.hbs.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelBookingServiceImpl {
@@ -21,35 +23,49 @@ public class HotelBookingServiceImpl {
     private RoomRepository roomRepository;
     @Autowired
     RoomCategoriesRepository roomCategoriesRepository;
+    @Autowired
+    CategoryRoomFurnitureRepository categoryRoomFurnitureRepository;
+    @Autowired
+    RoomFurnitureRepository roomFurnitureRepository;
+
 
     public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) {
         HotelBookingAvailable hotelBookingAvailable = new HotelBookingAvailable();
         List<Room> rooms = roomRepository.getAllRoom(checkIn, checkOut, numberPerson);
 
+
         List<RoomCategories> addedCategories = new ArrayList<>();
         RoomCategories categories = new RoomCategories();
 
-        for (int i = 0; i < rooms.size(); i++) {
-            Long roomCategoryId = rooms.get(i).getRoomCategoryId();
-            categories = roomCategoriesRepository.findByRoomCategoryId(roomCategoryId);
+        Map<Long, List<Room>> groupedRooms = rooms.stream()
+                .collect(Collectors.groupingBy(Room::getRoomCategoryId));
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
 
-            boolean categoryExists = false;
+            addedCategories.add(roomCategoriesRepository.findDistinctByRoomCategoryId(categoryId));
 
-            for (RoomCategories addedCategory : addedCategories) {
-                if (addedCategory.getRoomCategoryName().equals(categories.getRoomCategoryName())) {
-                    categoryExists = true;
-                    break;
-                }
-            }
 
-            if (!categoryExists) {
-                addedCategories.add(categories);
-            }
+        }
+        System.out.println(addedCategories);
+        List<CategoryRoomFurniture> categoryRoomFurnitures = new ArrayList<>();
+//        CategoryRoomFurniture categoryRoomFurniture = new CategoryRoomFurniture();
+        for (int i = 0; i < addedCategories.size(); i++) {
+            categoryRoomFurnitures = categoryRoomFurnitureRepository.findByRoomCategoryId(addedCategories.get(i).getRoomCategoryId());
         }
 
+        List<RoomFurniture> roomFurnitures = new ArrayList<>();
+        RoomFurniture roomFurniture = new RoomFurniture();
+        for (int i = 0; i < categoryRoomFurnitures.size(); i++) {
+            roomFurniture = roomFurnitureRepository.findByFurnitureId(categoryRoomFurnitures.get(i).getFurnitureId());
+            roomFurnitures.add(roomFurniture);
+        }
 
         hotelBookingAvailable.setRooms(rooms);
         hotelBookingAvailable.setRoomCategories(addedCategories);
+        hotelBookingAvailable.setCategoryRoomFurnitures(categoryRoomFurnitures);
+        hotelBookingAvailable.setRoomFurnitures(roomFurnitures);
+        hotelBookingAvailable.setTotalRoom(groupedRooms);
         return hotelBookingAvailable;
     }
 }

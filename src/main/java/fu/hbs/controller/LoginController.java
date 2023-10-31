@@ -12,7 +12,8 @@
  */
 package fu.hbs.controller;
 
-import fu.hbs.dto.RoomCategoryDTO;
+
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import fu.hbs.service.dao.RoomCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -89,7 +90,7 @@ public class LoginController {
                     return "homepage";
                 }
                 if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
-                    List<RoomCategoryDTO> categories = roomCategoryService.getAllRoom();
+                    List<ViewRoomCategoryDTO> categories = roomCategoryService.getAllRoom();
                     session.setAttribute("categories", categories);
                     User user1 = userService.getUserbyEmail(user.getUsername());
                     session.setAttribute("accountDetail", user);

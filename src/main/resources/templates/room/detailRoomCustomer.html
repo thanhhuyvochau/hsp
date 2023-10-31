@@ -82,6 +82,11 @@
                     <h3>Giá từ</h3>
 
                     <h2 th:text="${bookRoomByCategories.getCategoryRoomPrice().getPrice()}"></h2>
+                    <!--                    <span th:text="${#numbers.formatDecimal(bookRoomByCategories.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    <span th:with="price=${bookRoomByCategories.getCategoryRoomPrice().getPrice()}"> <span
+                            th:if="${price}"> <span th:text="${Math.round(price)}"></span> </span> <span
+                            th:unless="${price}"> Price unavailable </span> </span>
+
                     </span>
                     <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
 

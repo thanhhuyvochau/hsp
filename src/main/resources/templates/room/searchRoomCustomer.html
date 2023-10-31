@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 </html>
 
@@ -52,7 +53,8 @@
     <div class="col ps-5">
         <section class="room-section spad">
             <div class="container">
-                <div class="rooms-page-item">
+                <div class="rooms-page-item" th:each="addedCategories : ${conflictingBookings.getRoomCategories()}">
+
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="room-pic-slider owl-carousel">
@@ -64,14 +66,13 @@
                         <div class="col-lg-6">
                             <div class="room-text">
                                 <div class="room-title">
-                                    <h2>Standard Room</h2>
+                                    <h2 th:text="${addedCategories.getRoomCategoryName()}"></h2>
                                 </div>
                                 <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
+                                    <p th:text="${addedCategories.getDescription()}"></p>
                                 </div>
-                                <div class="room-features">
+                                <div class="room-features"
+                                     th:each="crf : ${conflictingBookings.getRoomFurnitures()}">
                                     <div class="room-info">
                                         <i class="flaticon-019-television"></i>
                                         <span>TV</span>
@@ -95,10 +96,10 @@
                                 </div>
                                 <div class="room-features">
                                     <div class="room-info">
-                                        <span>Kích thước giường:</span>
+                                        <span></span>
                                     </div>
                                     <div class="room-info">
-                                        <span>Kích thước phòng:</span>
+                                        <span th:text="${'Kích thước phòng:' +addedCategories.getSquare()}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -109,17 +110,17 @@
                         <div class="col-lg-3">
                             <div class="room-text">
                                 <div class="room-title">
-                                    <h4>Standard Room</h4>
+                                    <h4 th:text="${addedCategories.getRoomCategoryName()}"></h4>
                                     <div class="room-desc2">
                                         <p>ƯU ĐÃI KHÁCH SẠN</p>
                                         <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
+                                        <p>Bao gồm bữa sáng</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
+                            <p th:text="${addedCategories.getNumberPerson()}"><i class="far fa-user"> </i></p>
                         </div>
                         <div class="col-lg-3">
                             <div class="room-text">
@@ -132,13 +133,12 @@
                             </div>
                         </div>
                         <div class="col-lg-3">
-                            <select class="form-select w-75 ">
+                            <select class="form-select w-75 " th:each="entry : ${conflictingBookings.getTotalRoom()}">
                                 <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
+                                <option th:each="i : ${#numbers.sequence(1, entry.getValue().size())}"
+                                        th:value="${i}">[[${i}]]
+                                    phòng
+                                </option>
                             </select>
                             <br>
                             <button onclick="showCal()" class="main-btn" style="font-size:15px">Lịch giá phòng <i
@@ -407,461 +407,6 @@
 
                 </div>
 
-                <div class="rooms-page-item">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="room-pic-slider owl-carousel">
-                                <div class="single-room-pic">
-                                    <img src="/assets/img/rooms/rooms-2.jpg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h2>Standard Room</h2>
-                                </div>
-                                <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <i class="flaticon-019-television"></i>
-                                        <span>TV</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-029-wifi"></i>
-                                        <span>Wi-Fi</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-003-air-conditioner"></i>
-                                        <span>Điều hòa</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-036-parking"></i>
-                                        <span>Chỗ để xe</span>
-                                    </div>
-                                    <div class="room-info last">
-                                        <i class="flaticon-007-swimming-pool"></i>
-                                        <span>Bể bơi</span>
-                                    </div>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <span>Kích thước giường:</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <span>Kích thước phòng:</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h4>Standard Room</h4>
-                                    <div class="room-desc2">
-                                        <p>ƯU ĐÃI KHÁCH SẠN</p>
-                                        <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <div class="flex-container">
-                                        <p>Từ
-                                        <h2>1,000,000VND</h2><sub>/đêm</sub> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <select class="form-select w-75 ">
-                                <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rooms-page-item">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="room-pic-slider owl-carousel">
-                                <div class="single-room-pic">
-                                    <img src="/assets/img/rooms/rooms-3.jpg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h2>Standard Room</h2>
-                                </div>
-                                <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <i class="flaticon-019-television"></i>
-                                        <span>TV</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-029-wifi"></i>
-                                        <span>Wi-Fi</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-003-air-conditioner"></i>
-                                        <span>Điều hòa</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-036-parking"></i>
-                                        <span>Chỗ để xe</span>
-                                    </div>
-                                    <div class="room-info last">
-                                        <i class="flaticon-007-swimming-pool"></i>
-                                        <span>Bể bơi</span>
-                                    </div>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <span>Kích thước giường:</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <span>Kích thước phòng:</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h4>Standard Room</h4>
-                                    <div class="room-desc2">
-                                        <p>ƯU ĐÃI KHÁCH SẠN</p>
-                                        <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <div class="flex-container">
-                                        <p>Từ
-                                        <h2>1,000,000VND</h2><sub>/đêm</sub> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <select class="form-select w-75 ">
-                                <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rooms-page-item">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="room-pic-slider owl-carousel">
-                                <div class="single-room-pic">
-                                    <img src="/assets/img/rooms/room-4.jpg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h2>Standard Room</h2>
-                                </div>
-                                <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <i class="flaticon-019-television"></i>
-                                        <span>TV</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-029-wifi"></i>
-                                        <span>Wi-Fi</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-003-air-conditioner"></i>
-                                        <span>Điều hòa</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-036-parking"></i>
-                                        <span>Chỗ để xe</span>
-                                    </div>
-                                    <div class="room-info last">
-                                        <i class="flaticon-007-swimming-pool"></i>
-                                        <span>Bể bơi</span>
-                                    </div>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <span>Kích thước giường:</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <span>Kích thước phòng:</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h4>Standard Room</h4>
-                                    <div class="room-desc2">
-                                        <p>ƯU ĐÃI KHÁCH SẠN</p>
-                                        <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <div class="flex-container">
-                                        <p>Từ
-                                        <h2>1,000,000VND</h2><sub>/đêm</sub> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <select class="form-select w-75 ">
-                                <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rooms-page-item">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="room-pic-slider owl-carousel">
-                                <div class="single-room-pic">
-                                    <img src="/assets/img/rooms/room-5.jpg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h2>Standard Room</h2>
-                                </div>
-                                <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <i class="flaticon-019-television"></i>
-                                        <span>TV</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-029-wifi"></i>
-                                        <span>Wi-Fi</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-003-air-conditioner"></i>
-                                        <span>Điều hòa</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-036-parking"></i>
-                                        <span>Chỗ để xe</span>
-                                    </div>
-                                    <div class="room-info last">
-                                        <i class="flaticon-007-swimming-pool"></i>
-                                        <span>Bể bơi</span>
-                                    </div>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <span>Kích thước giường:</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <span>Kích thước phòng:</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h4>Standard Room</h4>
-                                    <div class="room-desc2">
-                                        <p>ƯU ĐÃI KHÁCH SẠN</p>
-                                        <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <div class="flex-container">
-                                        <p>Từ
-                                        <h2>1,000,000VND</h2><sub>/đêm</sub> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <select class="form-select w-75 ">
-                                <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rooms-page-item">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="room-pic-slider owl-carousel">
-                                <div class="single-room-pic">
-                                    <img src="/assets/img/rooms/room-6.jpg" alt="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h2>Standard Room</h2>
-                                </div>
-                                <div class="room-desc">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris,
-                                        bibendum
-                                        eget sapien ac, ultrices rhoncus ipsum.</p>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <i class="flaticon-019-television"></i>
-                                        <span>TV</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-029-wifi"></i>
-                                        <span>Wi-Fi</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-003-air-conditioner"></i>
-                                        <span>Điều hòa</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <i class="flaticon-036-parking"></i>
-                                        <span>Chỗ để xe</span>
-                                    </div>
-                                    <div class="room-info last">
-                                        <i class="flaticon-007-swimming-pool"></i>
-                                        <span>Bể bơi</span>
-                                    </div>
-                                </div>
-                                <div class="room-features">
-                                    <div class="room-info">
-                                        <span>Kích thước giường:</span>
-                                    </div>
-                                    <div class="room-info">
-                                        <span>Kích thước phòng:</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <h4>Standard Room</h4>
-                                    <div class="room-desc2">
-                                        <p>ƯU ĐÃI KHÁCH SẠN</p>
-                                        <p>Hủy phòng linh hoạt</p>
-                                        <p>Bao gồm bữa sáng </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <p>2 người lớn <i class="far fa-user"> </i></p>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="room-text">
-                                <div class="room-title">
-                                    <div class="flex-container">
-                                        <p>Từ
-                                        <h2>1,000,000VND</h2><sub>/đêm</sub> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <select class="form-select w-75 ">
-                                <option selected>0 phòng</option>
-                                <option value="1room">1 phòng</option>
-                                <option value="2room">2 phòng</option>
-                                <option value="3room">3 phòng</option>
-                                <option value="4room">4 phòng</option>
-                                <option value="5room">5 phòng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     </div>
@@ -891,5 +436,5 @@
 <!-- Custom Js Link -->
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/aos.js"></script>
-"
+
 </body>
