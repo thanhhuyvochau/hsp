@@ -673,3 +673,8 @@ ol {
 .carousel-control-next-icon {
     margin-left: 8rem;
 }
+
+.sticky-section {
+        position: sticky;
+        top: 100px;
+    }
