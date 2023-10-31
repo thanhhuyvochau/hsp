@@ -48,9 +48,8 @@
 				<div class="row" style="margin-left: 70px;">
 					<div class="col-md-8 mt-5 mb-5">
 						<div class="">
-							<b th:text="${service.serviceDes}">Service Description</b>
-							<br><br>
-							<p th:text="${service.serviceNote}">Service Note</p>
+							<p th:text="${service.serviceDes}">Service Description</p>
+
 							<p th:text="'Giá: ' + ${service.servicePrice} + ' VND' ">Service Price</p>
 							<p>
 								Trạng thái dịch vụ:
@@ -60,17 +59,19 @@
 						</div>
 						<div class="">
 							<img th:src="@{'/assets/img/services/' + ${service.serviceImage}}"
-								th:alt="${service.serviceName}" width="900" height="500" />
+								th:alt="${service.serviceName}" width="100%" height="100%" />
+								<br><br>
+							<p th:text="${service.serviceNote}">Service Note</p>
 						</div>
 					</div>
 					<div class="col-md-4 mt-5 mb-5">
 						<h2>Danh sách dịch vụ khác</h2>
 
-						<li type="none" th:each="otherService, iteration : ${allServices}">
-							<div class="room-item" th:if="${iteration.index < 6}">
+						<li type="none" th:each="otherService, iteration : ${distinctRoomservices}">
+							<div class="room-item" th:if="${iteration.index < 8}">
 								<a th:href="@{'/service-details?serviceId=' + ${otherService.serviceId}}">
-									<img class="mb-1" th:src="@{'/assets/img/services/' + ${otherService.serviceImage}}" width="200"
-										height="100" />
+									<img class="mb-1" th:src="@{'/assets/img/services/' + ${otherService.serviceImage}}"
+										width="200" height="100" />
 									<b th:text="${otherService.serviceName}"></b>
 								</a>
 							</div>

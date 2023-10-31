@@ -1,6 +1,7 @@
 package fu.hbs.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,11 @@ import fu.hbs.service.dao.ServiceService;
 @Controller
 public class ServiceDetailController {
 
-    private final ServiceService serviceService;
+	private final ServiceService serviceService;
 
-    public ServiceDetailController(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
+	public ServiceDetailController(ServiceService serviceService) {
+		this.serviceService = serviceService;
+	}
 
 	@GetMapping("/service-details")
 	public String getServiceDetail(@RequestParam("serviceId") Long serviceId, Model model) {
@@ -26,14 +27,16 @@ public class ServiceDetailController {
 		RoomService service = serviceService.findById(serviceId);
 
 		// Lấy danh sách dịch vụ từ serviceService
-		List<RoomService> allServices = serviceService.getAllServices();
+//		List<RoomService> allServices = serviceService.getAllServices();
 
+		List<RoomService> distinctRoomservices = serviceService.getAllServices().stream()
+				.filter(roomService -> roomService.getServiceId() != serviceId).collect(Collectors.toList());
 		// Đưa dịch vụ vào model để hiển thị trong trang service-detail.html
 		model.addAttribute("service", service);
 
 		// Đưa danh sách dịch vụ vào model
-		model.addAttribute("allServices", allServices);
-
+//		model.addAttribute("allServices", allServices);
+		model.addAttribute("distinctRoomservices", distinctRoomservices);
 		return "services/serviceDetailCustomer";
 	}
 
