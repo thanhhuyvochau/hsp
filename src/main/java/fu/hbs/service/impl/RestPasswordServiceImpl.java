@@ -33,7 +33,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 @Service
-public class RestPasswordImpl implements ResetService {
+public class RestPasswordServiceImpl implements ResetService {
 
     private UserRepository userRepository;
 
@@ -46,8 +46,8 @@ public class RestPasswordImpl implements ResetService {
     @Autowired
     TemplateEngine templateEngine;
 
-    public RestPasswordImpl(UserRepository userRepository, TokenService tokenServices, JavaMailSender javaMailSender,
-                            TokenRepository tokenRepository) {
+    public RestPasswordServiceImpl(UserRepository userRepository, TokenService tokenServices, JavaMailSender javaMailSender,
+                                   TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.tokenService = tokenServices;
         this.javaMailSender = javaMailSender;

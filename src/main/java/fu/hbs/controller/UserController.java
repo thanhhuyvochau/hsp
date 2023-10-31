@@ -15,7 +15,10 @@ package fu.hbs.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +165,29 @@ public class UserController {
             model.addAttribute("user", user);
             return "profile/updateProfileCustomer";
         }
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1900, 0, 1);
+
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.YEAR, -18);
+        Date eighteenYearsAgo = calendar.getTime();
+
+
+        if (user.getDob() != null) {
+            if (user.getDob().before(calendar.getTime())) {
+                bindingResult.rejectValue("dob", "dob", "Ngày sinh không thể trước năm 1900");
+                model.addAttribute("user", user);
+                return "profile/updateProfileCustomer";
+            }
+            if (user.getDob() != null && user.getDob().after(eighteenYearsAgo)) {
+                bindingResult.rejectValue("dob", "dob", "Bạn chưa đủ 18 tuổi");
+                model.addAttribute("user", user);
+                return "profile/updateProfileCustomer";
+            }
+        }
+
+
         User user1 = userService.findById(user.getUserId());
 //        if (file == null) {
 

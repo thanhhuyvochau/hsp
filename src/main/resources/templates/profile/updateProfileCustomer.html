@@ -122,6 +122,8 @@
                                     <label class="form-label">Ngày sinh</label>
                                     <input type="date" class="form-control" name="dob" th:field="*{dob}"
                                            placeholder="Date">
+                                    <div th:if="${#fields.hasErrors('dob')}" class="error" th:errors="*{dob}">
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Giới tính</label>
@@ -139,7 +141,8 @@
                                     <input type="text" class="form-control" id="address" name="address" min="10"
                                            maxlength="100"
                                            th:field="*{address}"><br>
-                                    <div th:if="${#fields.hasErrors('address')}" class="error" th:errors="*{address}">
+                                    <div th:if="${#fields.hasErrors('address')}" class="error"
+                                         th:errors="*{address}">
                                     </div>
                                 </div>
                             </div>

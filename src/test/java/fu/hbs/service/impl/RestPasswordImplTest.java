@@ -36,7 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.IContext;
 
-@ContextConfiguration(classes = {RestPasswordImpl.class})
+@ContextConfiguration(classes = {RestPasswordServiceImpl.class})
 @ExtendWith(SpringExtension.class)
 class RestPasswordImplTest {
     @MockBean
@@ -46,7 +46,7 @@ class RestPasswordImplTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RestPasswordImpl restPasswordImpl;
+    private RestPasswordServiceImpl restPasswordImpl;
 
     @MockBean
     private TemplateEngine templateEngine;
@@ -61,7 +61,7 @@ class RestPasswordImplTest {
     private UserRepository userRepository;
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPasswordRequest(String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPasswordRequest(String)}
      */
     @Test
     void testResetPasswordRequest() throws ResetExceptionHandler, MailException {
@@ -91,7 +91,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPasswordRequest(String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPasswordRequest(String)}
      */
     @Test
     void testResetPasswordRequest2() throws ResetExceptionHandler, MailException {
@@ -121,7 +121,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPasswordRequest(String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPasswordRequest(String)}
      */
     @Test
     void testResetPasswordRequest3() throws ResetExceptionHandler, MailException {
@@ -160,7 +160,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPasswordRequest(String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPasswordRequest(String)}
      */
     @Test
     void testResetPasswordRequest4() throws ResetExceptionHandler {
@@ -194,7 +194,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPassword(Token, String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPassword(Token, String)}
      */
     @Test
     void testResetPassword() throws ResetExceptionHandler {
@@ -241,7 +241,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPassword(Token, String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPassword(Token, String)}
      */
     @Test
     void testResetPassword2() throws ResetExceptionHandler {
@@ -258,7 +258,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#resetPassword(Token, String)}
+     * Method under test: {@link RestPasswordServiceImpl#resetPassword(Token, String)}
      */
     @Test
     void testResetPassword3() throws ResetExceptionHandler {
@@ -277,7 +277,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#sendResetPasswordEmail(String, String, String)}
+     * Method under test: {@link RestPasswordServiceImpl#sendResetPasswordEmail(String, String, String)}
      */
     @Test
     void testSendResetPasswordEmail() throws MailExceptionHandler, MailException {
@@ -290,7 +290,7 @@ class RestPasswordImplTest {
     }
 
     /**
-     * Method under test: {@link RestPasswordImpl#sendResetPasswordEmail(String, String, String)}
+     * Method under test: {@link RestPasswordServiceImpl#sendResetPasswordEmail(String, String, String)}
      */
     @Test
     void testSendResetPasswordEmail2() throws MailExceptionHandler, MailException {

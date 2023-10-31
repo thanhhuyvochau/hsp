@@ -23,47 +23,47 @@ import fu.hbs.repository.RoomCategoriesRepository;
 
 @ExtendWith(MockitoExtension.class)
 class RoomCategoryImplTest {
-	@Mock
-	private CategoryRoomPriceRepository categoryRoomPriceRepository;
+    @Mock
+    private CategoryRoomPriceRepository categoryRoomPriceRepository;
 
-	@Mock
-	private RoomCategoriesRepository roomCategoriesRepository;
+    @Mock
+    private RoomCategoriesRepository roomCategoriesRepository;
 
-	@InjectMocks
-	private RoomCategoryImpl roomCategoryImpl;
+    @InjectMocks
+    private RoomCategoryServiceImpl roomCategoryImpl;
 
-	/**
-	 * Get a list of all room categories along with their details.
-	 *
-	 * @return List of RoomCategoryDTO containing room category information
-	 */
+    /**
+     * Get a list of all room categories along with their details.
+     *
+     * @return List of RoomCategoryDTO containing room category information
+     */
 
-	/**
-	 * Method under test: {@link RoomCategoryImpl#getAllRoom()}
-	 */
-	/**
-	 * Method under test: {@link RoomCategoryImpl#getAllRoom()}
-	 */
-	@Test
-	void testGetAllRoom() {
-		RoomCategories roomCategories = new RoomCategories();
-		roomCategories.setDescription("The characteristics of someone or something");
-		roomCategories.setImage("Image");
+    /**
+     * Method under test: {@link RoomCategoryImpl#getAllRoom()}
+     */
+    /**
+     * Method under test: {@link RoomCategoryServiceImpl#getAllRoom()}
+     */
+    @Test
+    void testGetAllRoom() {
+        RoomCategories roomCategories = new RoomCategories();
+        roomCategories.setDescription("The characteristics of someone or something");
+        roomCategories.setImage("Image");
 
-		ArrayList<RoomCategories> roomCategoriesList = new ArrayList<>();
-		roomCategoriesList.add(roomCategories);
-		when(roomCategoriesRepository.findAll()).thenReturn(roomCategoriesList);
+        ArrayList<RoomCategories> roomCategoriesList = new ArrayList<>();
+        roomCategoriesList.add(roomCategories);
+        when(roomCategoriesRepository.findAll()).thenReturn(roomCategoriesList);
 
-		CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
-		categoryRoomPrice.setCreatedDate(mock(Date.class));
-		categoryRoomPrice.setEndDate(mock(Date.class));
-		categoryRoomPrice.setPrice(new BigDecimal("2.3"));
-		categoryRoomPrice.setRoomCategoryId(1L);
-		categoryRoomPrice.setRoomPriceId(1L);
-		categoryRoomPrice.setStartDate(mock(Date.class));
-		categoryRoomPrice.setUpdatedDate(mock(Date.class));
+        CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
+        categoryRoomPrice.setCreatedDate(mock(Date.class));
+        categoryRoomPrice.setEndDate(mock(Date.class));
+        categoryRoomPrice.setPrice(new BigDecimal("2.3"));
+        categoryRoomPrice.setRoomCategoryId(1L);
+        categoryRoomPrice.setRoomPriceId(1L);
+        categoryRoomPrice.setStartDate(mock(Date.class));
+        categoryRoomPrice.setUpdatedDate(mock(Date.class));
 
-		List<RoomCategoryDTO> categoryDTOs = roomCategoryImpl.getAllRoom();
-		assertEquals(1, categoryDTOs.size());
-	}
+        List<RoomCategoryDTO> categoryDTOs = roomCategoryImpl.getAllRoom();
+        assertEquals(1, categoryDTOs.size());
+    }
 }
