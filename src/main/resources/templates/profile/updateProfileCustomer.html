@@ -45,7 +45,7 @@
             Cập nhật ảnh lỗi
         </div>
     </div>
-    <form method="post" th:object="${user}" th:action="@{/customer/updateprofile}" enctype="multipart/form-data">
+    <form method="post" th:object="${user}" th:action="@{/customer/updateprofile}">
         <input type="hidden" id="id" name="userId" th:field="*{userId}"><br>
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
@@ -80,7 +80,8 @@
                                     <div class="media-body ml-4">
                                         <label class="btn btn-outline-primary">
                                             Tải ảnh lên
-                                            <input type="file" class="account-settings-fileinput">
+                                            <input type="file" class="account-settings-fileinput"
+                                                   style="display: none;">
                                         </label> &nbsp;
                                     </div>
                                 </div>
@@ -92,7 +93,7 @@
                                 <div class="form-group">
                                     <label class="form-label">Tên tài khoản</label>
                                     <input type="text" class="form-control mb-1" id="name" name="name"
-                                           th:field="*{name}" required>
+                                           th:field="*{name}" maxlength="50" required>
                                     <br>
                                     <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}">
                                     </div>
@@ -135,9 +136,11 @@
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Địa chỉ</label>
-                                    <input type="text" class="form-control" id="address" name="address"
+                                    <input type="text" class="form-control" id="address" name="address" min="10"
+                                           maxlength="100"
                                            th:field="*{address}"><br>
-
+                                    <div th:if="${#fields.hasErrors('address')}" class="error" th:errors="*{address}">
+                                    </div>
                                 </div>
                             </div>
 
@@ -232,6 +235,23 @@
 
 <!-- Custom Js Link -->
 <script src="/assets/js/main.js"></script>
+
+<script>
+    // Lắng nghe sự kiện khi nút "Tải ảnh lên" được nhấp
+    document.querySelector('.account-settings-fileinput').addEventListener('change', function () {
+        // Lựa chọn tệp đã chọn bởi người dùng
+        const fileInput = this;
+        if (fileInput.files.length > 0) {
+            // Đặt tên tệp đã chọn vào một thẻ div hoặc hiển thị trên giao diện người dùng theo ý của bạn
+            const selectedFileName = fileInput.files[0].name;
+            alert('Bạn đã chọn tệp: ' + selectedFileName);
+        }
+    });
+
+    document.getElementById('uploadButton').addEventListener('click', function () {
+        document.getElementById('profileImage').click(); // Kích hoạt hộp thoại chọn tệp
+    });
+</script>
 </body>
 
 </html>

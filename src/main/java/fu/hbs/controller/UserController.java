@@ -109,10 +109,10 @@ public class UserController {
             throws UserNotFoundException, UserIvalidException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
-        if (user.getImage() == null) {
-            user.setImage("Special.png");
-            userService.update(user);
-        }
+//        if (user.getImage() == null) {
+//            user.setImage("Special.png");
+//            userService.update(user);
+//        }
         model.addAttribute("user", user);
         return "profile/viewProfileCustomer";
     }
@@ -129,12 +129,6 @@ public class UserController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
         User user1 = userService.findById(user.getUserId());
-        System.out.println(user1);
-        if (user1.getImage() == null) {
-            System.out.println("ok" + user.getImage());
-            user.setImage("Special.png");
-            userService.update(user);
-        }
         model.addAttribute("user", user);
         return "profile/updateProfileCustomer";
     }
@@ -149,46 +143,60 @@ public class UserController {
      * @return a success or error view based on the update result.
      */
     @PostMapping("/customer/updateprofile")
-    public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model, @RequestParam("file") MultipartFile file) throws UserNotFoundException, UserIvalidException, IOException {
-        User user1;
+    public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) throws UserNotFoundException, UserIvalidException, IOException {
 
-//        if (bindingResult.hasErrors()) {
-//            user.setImage("Special.png");
-//            model.addAttribute("user", user);
-//            return "profile/updateProfile";
-//        }
-        user1 = userService.findById(user.getUserId());
-        if (file.isEmpty()) {
-            user1.setName(user.getName());
-            user1.setPhone(user.getPhone());
-            user1.setAddress(user.getAddress());
-            user1.setDob(user.getDob());
-            user1.setGender(user.getGender());
-            user1.setImage(user1.getImage());
-        } else {
-            user1.setName(user.getName());
-            user1.setPhone(user.getPhone());
-            user1.setAddress(user.getAddress());
-            user1.setDob(user.getDob());
-            user1.setGender(user.getGender());
-            user1.setImage(file.getOriginalFilename());
+        if (user.getName() != null && user.getName().length() > 32) {
+            bindingResult.rejectValue("name", "name", "Tên không thể dài hơn 32 kí tự");
+            model.addAttribute("user", user);
+            return "profile/updateProfileCustomer";
 
-            try {
-                String mimeType = file.getContentType();
-                List<String> imageMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/gif", "image/jpg", "image/bmp");
-
-                if (imageMimeTypes.contains(mimeType)) {
-                    uploadFile(file);
-                    System.out.println("File Size: " + file.getSize());
-                } else {
-                    user1.setImage("Special.png");
-                    model.addAttribute("user", user1);
-                    return "redirect:/customer/updateprofile?FailsFile";
-                }
-            } catch (Exception e) {
-                return "redirect:/customer/updateprofile?FailsFile";
-            }
         }
+        // Kiểm tra số điện thoại
+        if (user.getPhone() != null && !user.getPhone().matches("^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")) {
+            bindingResult.rejectValue("phone", "phone", "Điện thoại không đúng định dạng");
+            model.addAttribute("user", user);
+            return "profile/updateProfileCustomer";
+        }
+        if (user.getAddress() != null && user.getAddress().length() > 100) {
+            bindingResult.rejectValue("name", "name", "Địa thể dài hơn 100 kí tự");
+            model.addAttribute("user", user);
+            return "profile/updateProfileCustomer";
+        }
+        User user1 = userService.findById(user.getUserId());
+//        if (file == null) {
+
+        user1.setName(user.getName());
+        user1.setPhone(user.getPhone());
+        user1.setAddress(user.getAddress());
+        user1.setDob(user.getDob());
+        user1.setGender(user.getGender());
+        user1.setImage(user1.getImage());
+
+//
+//        } else {
+//            user1.setName(user.getName());
+//            user1.setPhone(user.getPhone());
+//            user1.setAddress(user.getAddress());
+//            user1.setDob(user.getDob());
+//            user1.setGender(user.getGender());
+//            user1.setImage(file.getOriginalFilename());
+//
+//            try {
+//                String mimeType = file.getContentType();
+//                List<String> imageMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/gif", "image/jpg", "image/bmp");
+//
+//                if (imageMimeTypes.contains(mimeType)) {
+//                    uploadFile(file);
+//                    System.out.println("File Size: " + file.getSize());
+//                } else {
+//                    user1.setImage("Special.png");
+//                    model.addAttribute("user", user1);
+//                    return "redirect:/customer/updateprofile?FailsFile";
+//                }
+//            } catch (Exception e) {
+//                return "redirect:/customer/updateprofile?FailsFile";
+//            }
+//        }
 
         userService.update(user1);
 
@@ -224,7 +232,8 @@ public class UserController {
      */
     @PostMapping("/customer/changepass")
     public String UserChangePassword(@RequestParam("oldpassword") String oldpassword,
-                                     @RequestParam("newpassword") String newpassword, @RequestParam("confirmpassword") String confirmpassword,
+                                     @RequestParam("newpassword") String newpassword, @RequestParam("confirmpassword") String
+                                             confirmpassword,
                                      Model model, final RedirectAttributes redirectAttributes, HttpSession session) {
         UserDetails user = (UserDetails) session.getAttribute("accountDetail");
         User user1 = userService.getUserbyEmail(user.getUsername());

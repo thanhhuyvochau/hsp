@@ -92,9 +92,8 @@ public class RoomController {
         BookRoomByCategory bookRoomByCategories = roomByCategoryService.getRoom(categoryId);
 
         List<RoomCategoryDTO> distinctCategories = roomCategoryService.getAllRoom().stream()
-                .filter(roomCategory -> roomCategory.getRoomCategoryId() != 1)
+                .filter(roomCategory -> roomCategory.getRoomCategoryId() != categoryId)
                 .collect(Collectors.toList());
-        System.out.println(bookRoomByCategories.getCategoryRoomPrice().getPrice());
         model.addAttribute("distinctCategories", distinctCategories);
         model.addAttribute("bookRoomByCategories", bookRoomByCategories);
         return "room/detailRoomCustomer";
@@ -123,29 +122,5 @@ public class RoomController {
 
         model.addAttribute("conflictingBookings", conflictingBookings);
         return "room/searchRoomCustomer";
-    }
-
-    public static void main(String[] args) {
-        String inputString = "1000000.00";
-        BigDecimal currencyBigDecimal = toCurrencyBigDecimal(inputString);
-
-        System.out.println(formatCurrency(currencyBigDecimal));
-    }
-
-    public static BigDecimal toCurrencyBigDecimal(String priceString) {
-        // Remove thousands separators and keep only digits and decimals
-        priceString = priceString.replaceAll("[,.]", "");
-
-        // Create a BigDecimal from the sanitized string
-        BigDecimal currencyBigDecimal = new BigDecimal(priceString);
-
-        return currencyBigDecimal;
-    }
-
-    public static String formatCurrency(BigDecimal currencyBigDecimal) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-        symbols.setGroupingSeparator('.');
-        DecimalFormat decimalFormat = new DecimalFormat("#,###", symbols);
-        return decimalFormat.format(currencyBigDecimal);
     }
 }

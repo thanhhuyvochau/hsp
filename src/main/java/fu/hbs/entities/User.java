@@ -43,11 +43,11 @@ public class User {
     private Long userId;
     private String name;
     private Date dob;
-    @Pattern(message = "{email.invalid}", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
+    //    @Pattern(message = "{email.invalid}", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
     private String email;
     private String password;
     private String address;
-    //	@Pattern(message = "{phone.invalid}", regexp = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")
+    //    @Pattern(message = "{phone.invalid}", regexp = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")
     private String phone;
     private String gender;
     private String image;
