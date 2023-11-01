@@ -1,0 +1,27 @@
+.btn {
+    background-color: #caa169;
+    border: #caa169;
+}
+
+.button2:hover {
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+.page-item {
+    color: #caa169;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #caa169;
+    border-color: #caa169;
+    color: #fff;
+}
+
+.pagination .page-link {
+    color: #caa169;
+}
+
+.pagination .page-link[aria-label="Previous"],
+.pagination .page-link[aria-label="Next"] {
+    color: #caa169;
+}
