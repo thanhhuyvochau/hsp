@@ -113,6 +113,6 @@ public class RoomController {
 
     @GetMapping("/room/booking")
     public String booking(Model model) {
-        return "customer/create-booking";
+        return "customer/booking-history";
     }
 }
