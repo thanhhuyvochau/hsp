@@ -15,5 +15,7 @@ public interface NewsService {
     New findById(Long newsId);
     
     List<New> findByUserId(Long UserId);
+    
+    List<New> getAllNews();
 }
 

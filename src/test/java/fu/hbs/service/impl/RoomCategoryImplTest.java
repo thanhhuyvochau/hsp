@@ -56,12 +56,9 @@ class RoomCategoryImplTest {
         when(roomCategoriesRepository.findAll()).thenReturn(roomCategoriesList);
 
         CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
-        categoryRoomPrice.setCreatedDate(mock(Date.class));
-        categoryRoomPrice.setEndDate(mock(Date.class));
         categoryRoomPrice.setPrice(new BigDecimal("2.3"));
         categoryRoomPrice.setRoomCategoryId(1L);
         categoryRoomPrice.setRoomPriceId(1L);
-        categoryRoomPrice.setStartDate(mock(Date.class));
         categoryRoomPrice.setUpdatedDate(mock(Date.class));
 
         List<ViewRoomCategoryDTO> categoryDTOs = roomCategoryImpl.getAllRoom();

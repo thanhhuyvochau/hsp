@@ -110,4 +110,9 @@ public class RoomController {
         model.addAttribute("conflictingBookings", conflictingBookings);
         return "room/searchRoomCustomer";
     }
+
+    @GetMapping("/room/booking")
+    public String booking(Model model) {
+        return "customer/booking-history";
+    }
 }

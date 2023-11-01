@@ -37,7 +37,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             // Nếu không tìm thấy email, thêm liên hệ mới
             feedback.setIsRead(false);
             feedback.setStatus(true);
-            feedback.setUserId(6L); // Đặt user_id là 6
+//            feedback.setUserId(6L); // Đặt user_id là 6
             contactRepository.save(feedback);
         }
     }

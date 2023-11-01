@@ -81,14 +81,7 @@
                 <div class="sidebar-box ftco-animate border-start border-dark">
                     <h3>Giá từ</h3>
 
-                    <h2 th:text="${bookRoomByCategories.getCategoryRoomPrice().getPrice()}"></h2>
-                    <!--                    <span th:text="${#numbers.formatDecimal(bookRoomByCategories.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 2, 'POINT')}"></span>-->
-                    <span th:with="price=${bookRoomByCategories.getCategoryRoomPrice().getPrice()}"> <span
-                            th:if="${price}"> <span th:text="${Math.round(price)}"></span> </span> <span
-                            th:unless="${price}"> Price unavailable </span> </span>
-
-                    </span>
-                    <p1><a href="#" class="main-btn mt-2">Đặt ngay</a></p1>
+                    <h2 th:text="${#numbers.formatDecimal(bookRoomByCategories.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"></h2>
 
 
                     <div class="sidebar-box ftco-animate">
@@ -169,9 +162,9 @@
                                 th:text="${category.roomCategoryName}"></h5>
                             <p class="text-white" th:text="${category.description}"></p>
                             <p class="text-white fw-bold mt-lg-4"
-                               th:text="${category.getCategoryRoomPrice().getPrice()+' '+'VND'}"></p>
-                            <a class="main-btn border-white text-white mt-lg-5"
-                               th:href="@{/room/category/}+${category.roomCategoryId}">Xem ngay</a>
+                               th:text="${#numbers.formatDecimal(bookRoomByCategories.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"></p>
+                            <a class=" main-btn border-white text-white mt-lg-5"
+                               th:href="@{'/room/category/'+${category.roomCategoryId}}">Xem ngay</a>
                         </div>
                     </div>
                 </div>

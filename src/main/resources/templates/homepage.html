@@ -105,9 +105,10 @@
                                 th:text="${category.roomCategoryName}"></h5>
                             <p class="text-white" th:text="${category.description}"></p>
                             <p class="text-white fw-bold mt-lg-4"
-                               th:text="${category.getCategoryRoomPrice().getPrice()+' '+'VND'}"></p>
+                               th:text="${#numbers.formatDecimal(category.getCategoryRoomPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"
+                            ></p>
                             <a class="main-btn border-white text-white mt-lg-5"
-                               th:href="@{/room/category/}+${category.roomCategoryId}">Xem ngay</a>
+                               th:href="@{'/room/category/' + ${category.roomCategoryId}}">Xem ngay</a>
                         </div>
                     </div>
                 </div>
@@ -320,19 +321,22 @@
 
                                             <div class="col-12">
                                                 <label for="title" class="form-label">Tiêu đề</label>
-                                                <input type="text" class="form-control" id="title" name="title"
-                                                       placeholder="Tiêu đề">
+                                                <input type="text" class="form-control" id="title" maxlength="100"
+                                                       name="title" placeholder="Tiêu đề">
+                                                <div id="title-validation-msg" class="text-danger"></div>
                                             </div>
                                             <div class="col-12">
                                                 <label for="email" class="form-label">Email</label>
                                                 <input type="email" class="form-control" id="email" name="email"
                                                        placeholder="name@example.com">
+                                                <div id="email-validation-msg" class="text-danger"></div>
                                             </div>
                                             <div class="col-12">
                                                 <label for="content" class="form-label"> Nội dung </label>
                                                 <textarea id="content" name="content" cols="30" rows="5"
-                                                          class="form-control" placeholder="Viết ở đây..."></textarea>
-
+                                                          class="form-control" minlength="10" maxlength="2000"
+                                                          placeholder="Viết ở đây..."></textarea>
+                                                <div id="content-validation-msg" class="text-danger"></div>
                                             </div>
                                             <div class="col-lg-3">
                                                 <button type="button" id="submit-feedback"
@@ -354,6 +358,39 @@
                                             var title = document.getElementById("title").value;
                                             var email = document.getElementById("email").value;
                                             var content = document.getElementById("content").value;
+                                            //title validate
+                                            var titleValidationMsg = document.getElementById("title-validation-msg");
+
+                                            if (title.length == 0) {
+                                                titleValidationMsg.textContent = "Tiêu đề không được để trống";
+                                                return; // Prevent the form from being submitted
+                                            } else {
+                                                titleValidationMsg.textContent = ""; // Clear any previous error message
+                                            }
+                                            // email validate
+                                            var emailValidationMsg = document.getElementById("email-validation-msg");
+                                            var emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
+                                            if (email.length == 0) {
+                                                emailValidationMsg.textContent = "Email không được để trống";
+                                                return; // Prevent the form from being submitted
+                                            } else if (!emailRegex.test(email)) {
+                                                emailValidationMsg.textContent = "Email phải có định dạng example@gmail.com.";
+                                                return; // Prevent the form from being submitted
+                                            } else {
+                                                emailValidationMsg.textContent = ""; // Clear any previous error message
+                                            }
+                                            //content validate
+                                            var contentValidationMsg = document.getElementById("content-validation-msg");
+
+                                            if (content.length < 10) {
+                                                contentValidationMsg.textContent = "Nội dung phải có ít nhất 10 ký tự.";
+                                                return; // Prevent the form from being submitted
+                                            } else if (content.length > 2000) {
+                                                contentValidationMsg.textContent = "Nội dung không được vượt quá 2000 ký tự.";
+                                                return; // Prevent the form from being submitted
+                                            } else {
+                                                contentValidationMsg.textContent = ""; // Clear any previous error message
+                                            }
 
                                             var data = {
                                                 title: title,
@@ -370,13 +407,16 @@
                                             })
                                                 .then(response => response.text())
                                                 .then(data => {
-                                                    alert(data); // Hiển thị kết quả từ máy chủ
+                                                    var userConfirmed = confirm(data + "\nBấm 'OK' để tải lại trang.");
+                                                    if (userConfirmed) {
+                                                        // Người dùng đã bấm "OK," tải lại trang ngay lập tức
+                                                        location.reload();
+                                                    }
                                                 })
                                                 .catch(error => {
                                                     console.error("Lỗi khi gửi yêu cầu:", error);
                                                 });
                                         });
-
 
                                     </script>
                                 </div>

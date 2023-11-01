@@ -16,11 +16,14 @@ import java.util.Map;
 public class HotelBookingAvailable {
     private List<Room> rooms;
     private List<RoomCategories> roomCategories;
+
+
     private List<RoomImage> roomImages;
     private List<RoomFurniture> roomFurnitures;
     private List<RoomService> roomServices;
-    private CategoryRoomPrice categoryRoomPrice;
+    
     private List<CategoryRoomFurniture> categoryRoomFurnitures;
     private Map<Long, List<Room>> totalRoom;
+    private List<CategoryRoomPrice> categoryRoomPrices;
     private BigDecimal total;
 }

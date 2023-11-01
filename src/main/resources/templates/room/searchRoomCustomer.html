@@ -53,7 +53,8 @@
     <div class="col ps-5">
         <section class="room-section spad">
             <div class="container">
-                <div class="rooms-page-item" th:each="addedCategories : ${conflictingBookings.getRoomCategories()}">
+                <div class="rooms-page-item"
+                     th:each="addedCategories : ${conflictingBookings.getRoomCategories()}">
 
                     <div class="row">
                         <div class="col-lg-6">
@@ -132,14 +133,21 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-3">
-                            <select class="form-select w-75 " th:each="entry : ${conflictingBookings.getTotalRoom()}">
-                                <option selected>0 phòng</option>
-                                <option th:each="i : ${#numbers.sequence(1, entry.getValue().size())}"
-                                        th:value="${i}">[[${i}]]
-                                    phòng
-                                </option>
+                            <select class="form-select w-75">
+                                <th:block th:each="entry : ${conflictingBookings.getTotalRoom()}">
+                                    <th:block th:if="${entry.getKey() == addedCategories.roomCategoryId}">
+                                        <th:with th:with="rroomCount = ${#lists.size(entry.value)}">
+                                            <!-- Hiển thị số phòng -->
+                                            <p th:text="'Total Rooms: ' + ${rroomCount}"></p>
+                                            <option th:each="i : ${#numbers.sequence(0, rroomCount)}"
+                                                    th:value="${i}" th:utext="${i}"></option>
+                                        </th:with>
+                                    </th:block>
+                                </th:block>
                             </select>
+
                             <br>
                             <button onclick="showCal()" class="main-btn" style="font-size:15px">Lịch giá phòng <i
                                     class="fa fa-calendar"></i></button>
@@ -150,247 +158,200 @@
                         <div class="carousel-inner ps-5">
                             <div class="carousel-item active">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col" th:each="crp : ${conflictingBookings.getCategoryRoomPrices()}">
                                         <div class="calendar-price">
-                                            <p class="ps-2">Fri 01 Dec</p>
-                                            <p>1,500,000VND</p>
+                                            <p class="ps-2" th:text="${crp.getChangeDate()}"></p>
+                                            <p th:text="${crp.getPrice()}"></p>
                                             <p class="text-decoration-line-through text-warning">2,000,000VND
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sat 02 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sun 03 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Mon 04 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Tues 05 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Wed 06 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Thur 07 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
-                            <div class="carousel-item">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Fri 08 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sat 09 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sun 10 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Mon 11 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Tues 12 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Wed 13 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Thur 14 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--                            <div class="carousel-item">-->
+                            <!--                                <div class="row">-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Fri 08 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sat 09 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sun 10 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Mon 11 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Tues 12 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Wed 13 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Thur 14 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
 
-                            <div class="carousel-item">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Fri 15 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sat 16 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sun 17 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Mon 18 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Tues 19 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Wed 20 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Thur 21 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--                            <div class="carousel-item">-->
+                            <!--                                <div class="row">-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Fri 15 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sat 16 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sun 17 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Mon 18 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Tues 19 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Wed 20 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Thur 21 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
 
-                            <div class="carousel-item">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Fri 22 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sat 23 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Sun 24 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Mon 25 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Tues 26 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Wed 27 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="calendar-price">
-                                            <p class="ps-2">Thur 28 Dec</p>
-                                            <p>1,500,000VND</p>
-                                            <p class="text-decoration-line-through text-warning">2,000,000VND
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--                            <div class="carousel-item">-->
+                            <!--                                <div class="row">-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Fri 22 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sat 23 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Sun 24 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Mon 25 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Tues 26 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Wed 27 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="col">-->
+                            <!--                                        <div class="calendar-price">-->
+                            <!--                                            <p class="ps-2">Thur 28 Dec</p>-->
+                            <!--                                            <p>1,500,000VND</p>-->
+                            <!--                                            <p class="text-decoration-line-through text-warning">2,000,000VND-->
+                            <!--                                            </p>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
 
                         </div>
                         <button class="carousel-control-prev" type="button"
