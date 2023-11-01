@@ -5,5 +5,6 @@ import fu.hbs.entities.Contact;
 
 public interface ContactRepository extends JpaRepository<Contact, Long> {
 	Contact findByEmail(String email);
-	 Long findUserIdByEmail(String email);
+
+	Long findUserIdByEmail(String email);
 }

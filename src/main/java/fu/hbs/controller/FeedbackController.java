@@ -48,9 +48,9 @@ public class FeedbackController {
     public ResponseEntity<String> saveFeedback(@RequestBody Contact feedback) {
         try {
             // Kiểm tra nếu trường "content" là null hoặc trống
-            if (feedback.getContent() == null || feedback.getContent().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("Nội dung không được trống.");
-            }
+//            if (feedback.getContent() == null || feedback.getContent().trim().isEmpty()) {
+//                return ResponseEntity.badRequest().body("Nội dung không được trống.");
+//            }
 
             feedbackService.saveFeedback(feedback);
             return ResponseEntity.ok("Phản hồi đã được lưu thành công.");
