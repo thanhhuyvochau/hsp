@@ -61,7 +61,7 @@
                         <div class="hotel-room-body">
                             <h3 class="heading mb-0" th:text="${category.roomCategoryName}"><a href="#"></a></h3>
                             <strong class="price"
-                                    th:text="${#numbers.formatDecimal(category.getCategoryRoomPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"></strong>
+                                    th:text="${#numbers.formatDecimal(category.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"></strong>
                             <p th:text="${category.description}"></p>
                             <p1><a th:href="@{'/room/category/' +${category.roomCategoryId}}" class="main-btn mt-2">Xem
                                 ngay</a></p1>

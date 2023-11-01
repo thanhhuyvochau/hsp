@@ -83,7 +83,11 @@
 
                     <h2 th:text="${#numbers.formatDecimal(bookRoomByCategories.getCategoryRoomPrice().getPrice(), 0, 'COMMA', 0, 'POINT' )+' VND'}"></h2>
 
+                    <p1>
+                        <a th:href="@{'/room/search?checkIn=' + ${session.defaultDate} + '&checkOut=' + ${session.defaultDate} + '&numberOfPeople='}"
 
+
+                           class="main-btn mt-2">Đặt ngay</a></p1>
                     <div class="sidebar-box ftco-animate">
                         <div class="block-21 mb-4 d-flex">
                             <a class="blog-img mr-4" style="background-image: url(/assets/img/rooms/bed.png);"></a>

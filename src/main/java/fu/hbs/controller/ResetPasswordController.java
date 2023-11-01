@@ -106,7 +106,7 @@ public class ResetPasswordController {
      * Handles the password reset process.
      *
      * @param token      The reset password token.
-     * @param password   The new password.
+     * @param Password   The new password.
      * @param rePassword The confirmation of the new password.
      * @param model      The model used to pass data to the view.
      * @param session    The HttpSession for maintaining session data.
@@ -131,19 +131,19 @@ public class ResetPasswordController {
             model.addAttribute("pass", "Mật khẩu không được để trống");
             return "forgotPassword/resetPassword";
         }
-        if (!stringDealer.checkPasswordRegex(password)) { /* Password is not valid */
+        if (!stringDealer.checkPasswordRegex(password.trim())) { /* Password is not valid */
             model.addAttribute("pass", "Mật khẩu không hợp lệ");
             return "forgotPassword/resetPassword";
         }
         // Confirm password
         String rePassword1 = stringDealer.trimMax(rePassword);
 
-        if (!password.equals(rePassword)) { /* Password not match */
+        if (!password.trim().equals(rePassword.trim())) { /* Password not match */
             model.addAttribute("pass", "Mật khẩu không khớp");
             return "forgotPassword/resetPassword";
         }
         // Password match
-        if (password.equals(rePassword)) {
+        if (password.trim().equals(rePassword.trim())) {
             if (restPasswordService.resetPassword(tokenEntity, rePassword)) {
                 model.addAttribute("valid", "Đổi mật khẩu thành công");
                 session.removeAttribute("token");
