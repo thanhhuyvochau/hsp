@@ -142,7 +142,7 @@
                                             <!-- Hiển thị số phòng -->
                                             <p th:text="'Total Rooms: ' + ${rroomCount}"></p>
                                             <option th:each="i : ${#numbers.sequence(0, rroomCount)}"
-                                                    th:utext="${i}"></option>
+                                                    th:value="${i}" th:utext="${i}"></option>
                                         </th:with>
                                     </th:block>
                                 </th:block>
@@ -166,7 +166,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
 

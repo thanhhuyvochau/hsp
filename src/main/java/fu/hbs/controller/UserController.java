@@ -15,12 +15,14 @@ package fu.hbs.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import fu.hbs.exceptionHandler.ParseExceptionExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -146,7 +149,15 @@ public class UserController {
      * @return a success or error view based on the update result.
      */
     @PostMapping("/customer/updateprofile")
-    public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) throws UserNotFoundException, UserIvalidException, IOException {
+    public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) throws UserNotFoundException, UserIvalidException, ParseException {
+
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1900, 0, 1);
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.YEAR, -18);
+        Date eighteenYearsAgo = calendar.getTime();
+
 
         if (user.getName() != null && user.getName().length() > 32) {
             bindingResult.rejectValue("name", "name", "Tên không thể dài hơn 32 kí tự");
@@ -154,6 +165,8 @@ public class UserController {
             return "profile/updateProfileCustomer";
 
         }
+
+
         // Kiểm tra số điện thoại
         if (user.getPhone() != null && !user.getPhone().matches("^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")) {
             bindingResult.rejectValue("phone", "phone", "Điện thoại không đúng định dạng");
@@ -161,26 +174,30 @@ public class UserController {
             return "profile/updateProfileCustomer";
         }
         if (user.getAddress() != null && user.getAddress().length() > 100) {
-            bindingResult.rejectValue("name", "name", "Địa thể dài hơn 100 kí tự");
+            model.addAttribute("dobError", "Ngày sinh không đúng định dạng (yyyy-MM-dd)");
             model.addAttribute("user", user);
             return "profile/updateProfileCustomer";
         }
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1900, 0, 1);
 
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.YEAR, -18);
-        Date eighteenYearsAgo = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date userDob = dateFormat.parse(String.valueOf(user.getDob()));
 
+        } catch (ParseException e) {
+            // Xử lý khi ngày sinh không đúng định dạng
+            bindingResult.rejectValue("dob", "dob", "Ngày sinh không đúng định dạng (yyyy-MM-dd)");
+            model.addAttribute("user", user);
+            return "profile/updateProfileCustomer";
+        }
 
         if (user.getDob() != null) {
+
             if (user.getDob().before(calendar.getTime())) {
                 bindingResult.rejectValue("dob", "dob", "Ngày sinh không thể trước năm 1900");
                 model.addAttribute("user", user);
                 return "profile/updateProfileCustomer";
             }
-            if (user.getDob() != null && user.getDob().after(eighteenYearsAgo)) {
+            if (user.getDob().after(eighteenYearsAgo)) {
                 bindingResult.rejectValue("dob", "dob", "Bạn chưa đủ 18 tuổi");
                 model.addAttribute("user", user);
                 return "profile/updateProfileCustomer";

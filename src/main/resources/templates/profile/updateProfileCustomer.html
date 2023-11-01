@@ -120,9 +120,11 @@
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Ngày sinh</label>
-                                    <input type="date" class="form-control" name="dob" th:field="*{dob}"
-                                           placeholder="Date">
+                                    <input type="date" class="form-control" name="dob"
+                                           th:field="*{dob}"
+                                           placeholder="Date" maxlength="8">
                                     <div th:if="${#fields.hasErrors('dob')}" class="error" th:errors="*{dob}">
+                                        <div class="error" id="dob-error" th:text="${dobError}"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -154,7 +156,7 @@
             </div>
             <div class="container_swap">
                 <div class="div_left">
-                    <input type="submit" class="btn_fix" value=" Lưu lại ">
+                    <input type="submit" id="submit-button" class="btn_fix" value=" Lưu lại ">
                 </div>
                 <div class="div_right">
                     <input type="reset" class="btn_fix" value=" Mặc định">
@@ -254,6 +256,26 @@
     document.getElementById('uploadButton').addEventListener('click', function () {
         document.getElementById('profileImage').click(); // Kích hoạt hộp thoại chọn tệp
     });
+
+    document.getElementById("dob").addEventListener("input", function () {
+        var dobField = document.getElementById("dob");
+        var dobValue = dobField.value;
+
+        // Kiểm tra định dạng ngày tháng (yyyy-MM-dd) bằng biểu thức chính quy
+        var datePattern = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+        var errorElement = document.getElementById("dob-error");
+
+        if (!datePattern.test(dobValue)) {
+            errorElement.textContent = "Ngày sinh không đúng định dạng (yyyy-MM-dd).";
+            dobField.setCustomValidity("Ngày sinh không đúng định dạng.");
+        } else {
+            errorElement.textContent = "";
+            dobField.setCustomValidity("");
+        }
+    });
+
+
 </script>
 </body>
 
