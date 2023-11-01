@@ -7,21 +7,18 @@
     box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-.page-item {
-    color: #caa169;
-}
 
-.pagination .page-item.active .page-link {
+.page-link.active {
     background-color: #caa169;
+    color: #fff; /* Màu chữ trắng */
     border-color: #caa169;
-    color: #fff;
 }
 
-.pagination .page-link {
+ .page-link {
     color: #caa169;
 }
 
-.pagination .page-link[aria-label="Previous"],
-.pagination .page-link[aria-label="Next"] {
+.page-link[aria-label="Previous"],
+.page-link[aria-label="Next"] {
     color: #caa169;
 }

@@ -48,7 +48,7 @@
         </div>
         <div class="d-flex flex-column py-3">
             <p class="fw-bold"> Lịch sử đặt phòng</p>
-            <table class="table table-striped table-hover border align-baseline text-center">
+            <table id="myTable" class="table table-striped table-hover border align-baseline text-center">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">STT</th>
@@ -129,25 +129,66 @@
                         <td>Đã check-out</td>
                         <td><button class="btn btn-dark">Chi tiết</button></td>
                     </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>1006</td>
+                        <td>Nguyen Ngoc Khoa</td>
+                        <td>30/10/2023</td>
+                        <td>31/10/2023</td>
+                        <td>Phòng đôi</td>
+                        <td>2</td>
+                        <td>Đã check-out</td>
+                        <td><button class="btn btn-dark">Chi tiết</button></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>1006</td>
+                        <td>Nguyen Ngoc Khoa</td>
+                        <td>30/10/2023</td>
+                        <td>31/10/2023</td>
+                        <td>Phòng đôi</td>
+                        <td>2</td>
+                        <td>Đã check-out</td>
+                        <td><button class="btn btn-dark">Chi tiết</button></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>1006</td>
+                        <td>Nguyen Ngoc Khoa</td>
+                        <td>30/10/2023</td>
+                        <td>31/10/2023</td>
+                        <td>Phòng đôi</td>
+                        <td>2</td>
+                        <td>Đã check-out</td>
+                        <td><button class="btn btn-dark">Chi tiết</button></td>
+                    </tr><tr>
+                        <th scope="row">3</th>
+                        <td>1006</td>
+                        <td>Nguyen Ngoc Khoa</td>
+                        <td>30/10/2023</td>
+                        <td>31/10/2023</td>
+                        <td>Phòng đôi</td>
+                        <td>2</td>
+                        <td>Đã check-out</td>
+                        <td><button class="btn btn-dark">Chi tiết</button></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>1006</td>
+                        <td>Nguyen Ngoc Khoa</td>
+                        <td>30/10/2023</td>
+                        <td>31/10/2023</td>
+                        <td>Phòng đôi</td>
+                        <td>2</td>
+                        <td>Đã check-in</td>
+                        <td><button class="btn btn-dark">Chi tiết</button></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         <div class=" d-flex justify-content-center">
             <nav aria-label="Page navigatio">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
+                <ul id="pagination" class="pagination">
                 </ul>
             </nav>
         </div>
@@ -155,5 +196,4 @@
     </div>
       <section th:replace="~{footer :: footer}"></section>
 </body>
-
 </html>
