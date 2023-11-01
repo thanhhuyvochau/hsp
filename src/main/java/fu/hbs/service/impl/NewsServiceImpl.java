@@ -62,5 +62,10 @@ public class NewsServiceImpl implements NewsService {
 		List<New> news = (List<New>) newsRepository.findByUserId(UserId);
 		return news;
 	}
+	
+    @Override
+    public List<New> getAllNews() {
+        return newsRepository.findAll();
+    }
 }
 
