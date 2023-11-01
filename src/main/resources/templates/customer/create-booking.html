@@ -152,14 +152,61 @@
         </div>
     </div>
     <div class="g-2">
-        <div class="row g-2 m-0 mt-5 flex">
-            <div class="col p-0">
-                <h4> Giá tiền</h4>
-                <div class="bg-light-subtle border p-2 me-5 mb-3 ">
-                    <p class="fw-bold  p-3 m-0">Giá phòng <span class="fw-normal text-end">2.400.000</span></p>
-                    <p class="fw-bold border-bottom p-3 m-0">Thuế (10%) <span class="fw-normal text-end">240.000</span>
-                    </p>
-                    <p class="fw-bold  p-3 m-0">Tổng giá <span class="fw-normal text-end">2.640.000</span></p>
+      <div class="row g-2 m-0 mt-5 flex">
+        <div class="col p-0">
+          <h4> Giá tiền</h4>
+          <div class="bg-light-subtle border p-2 me-5 mb-3">
+            <p class="fw-bold  p-3 m-0">Giá phòng <span id="roomPrice" class="fw-normal text-end">2.400.000</span></p>
+            <p class="fw-bold border-bottom p-3 m-0">Thuế (10%) <span id="taxAmount" class="fw-normal text-end">240.000</span></p>
+            <p class="fw-bold  p-3 m-0">Tổng giá <span id="totalPrice" class="fw-normal text-end">2.640.000</span></p>
+            </div>
+          <h4 class="mt-4">Thanh toán</h4>
+          <div class="bg-light-subtle border p-3 me-5 mt-3 align-items-lg-stretch">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="paymentType" id="depositPayment" value="deposit">
+              <label class="form-check-label" for="depositPayment">
+                Đặt cọc trước
+              </label>
+            </div>
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="radio" name="paymentType" id="fullPayment" value="full" checked>
+              <label class="form-check-label" for="fullPayment">
+                Thanh toán hết
+              </label>
+            </div>
+            <p class="fw-bold  p-3  m-0 border-top">Số tiền thanh toán <span id="paymentAmount" class="fw-normal text-end">2.640.000</span></p>
+          </div>
+        </div>
+        <div class="col">
+          <h4> Thông tin khách hàng</h4>
+          <div class="bg-light-subtle border  mb-5 ">
+            <form class="row g-3 p-3">
+              <div class="col-md-6">
+                <label for="inputName" class="form-label">Họ và tên*</label>
+                <input type="text" class="form-control" id="inputName">
+              </div>
+              <div class="col-md-6">
+                <label for="inputEmail" class="form-label">Email*</label>
+                <input type="email" class="form-control" id="inputEmail">
+              </div>
+              <div class="col-md-6">
+                <label for="inputPhone" class="form-label">Điện thoại*</label>
+                <input type="text" class="form-control" id="inputPhone">
+              </div>
+              <div class="col-md-6">
+                <label for="inputAddress" class="form-label">Địa chỉ*</label>
+                <input type="text" class="form-control" id="inputAddress">
+              </div>
+              <div class="mb-2">
+                <label for="exampleFormControlTextarea1" class="form-label">Ghi chú (nếu có)</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck">
+                  <label class="form-check-label" for="gridCheck">
+                    Vui lòng đọc kỹ các điều khoản và đánh dấu vào ô bên cạnh.
+                  </label>
                 </div>
                 <h4 class="mt-5">Thanh toán</h4>
                 <div class="bg-light-subtle border p-3 me-5 align-items-lg-stretch">
@@ -222,8 +269,40 @@
             </div>
         </div>
     </div>
-</div>
-<section th:replace="~{footer :: footer}"></section>
+  </div>
+  <section th:replace="~{footer :: footer}"></section>
+
+  <script>
+  const roomPriceElement = document.getElementById("roomPrice");
+  const taxAmountElement = document.getElementById("taxAmount");
+  const totalPriceElement = document.getElementById("totalPrice");
+  const depositPaymentRadio = document.getElementById("depositPayment");
+  const fullPaymentRadio = document.getElementById("fullPayment");
+  const paymentAmountElement = document.getElementById("paymentAmount");
+
+  // Giá phòng và thuế cố định
+  const roomPrice = 2400000;
+  const taxRate = 0.1; // 10%
+
+  // Cập nhật giá trị khi trang được tải
+  updatePrice();
+
+  // Sử lý sự kiện khi radio button thay đổi
+  depositPaymentRadio.addEventListener("change", updatePrice);
+  fullPaymentRadio.addEventListener("change", updatePrice);
+
+  function updatePrice() {
+    // Cập nhật giá phòng và thuế
+    const depositPayment = depositPaymentRadio.checked;
+    const taxAmount = roomPrice * taxRate;
+    const total = roomPrice + taxAmount;
+
+    roomPriceElement.textContent = roomPrice.toLocaleString();
+    taxAmountElement.textContent = taxAmount.toLocaleString();
+    totalPriceElement.textContent = total.toLocaleString();
+    paymentAmountElement.textContent = depositPayment ? (total / 2).toLocaleString() : total.toLocaleString();
+  }
+  </script>
 </body>
 
 </html>
