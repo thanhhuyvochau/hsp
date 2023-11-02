@@ -1,11 +1,16 @@
 package fu.hbs.service.impl;
 
+import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.entities.*;
 import fu.hbs.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,25 +62,90 @@ public class HotelBookingServiceImpl {
             roomFurniture = roomFurnitureRepository.findByFurnitureId(categoryRoomFurnitures.get(i).getFurnitureId());
             roomFurnitures.add(roomFurniture);
         }
+
+
         CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
         for (int i = 0; i < addedCategories.size(); i++) {
-//            System.out.println(categoryRoomPriceRepository.getAllCategoryRoomPrice(addedCategories.get(i).getRoomCategoryId()));
-//            categoryRoomPrice = categoryRoomPriceRepository.findByRoomCategoryId(addedCategories.get(i).getRoomCategoryId());
-//            categoryRoomPrices = categoryRoomPriceRepository.getAllCategoryRoomPrice(addedCategories.get(i).getRoomCategoryId());
+            categoryRoomPrice = categoryRoomPriceRepository.getCategoryId(addedCategories.get(i).getRoomCategoryId());
+
+            categoryRoomPrices.add(categoryRoomPrice);
+        }
+
+
+        LocalDate startDate = convertDateToLocalDate(checkIn);
+        LocalDate endDate = convertDateToLocalDate(checkOut);
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = new ArrayList<>();
+        // xử lí day_type
+        for (int i = 0; i < categoryRoomPrices.size(); i++) {
+            LocalDate startDate1 = startDate;
+            LocalDate endDate1 = endDate;
+
+            while (!startDate1.isAfter(endDate1)) {
+                DayOfWeek dayOfWeek = startDate1.getDayOfWeek();
+                int dayType = getDayType(startDate1);
+
+                dateInfoList.add(new DateInfoCategoryRoomPriceDTO(startDate1, dayType));
+                startDate1 = startDate1.plusDays(1);
+            }
 
         }
 
-        System.out.println(categoryRoomPrices);
+
         hotelBookingAvailable.setRooms(rooms);
         hotelBookingAvailable.setRoomCategories(addedCategories);
         hotelBookingAvailable.setCategoryRoomFurnitures(categoryRoomFurnitures);
         hotelBookingAvailable.setRoomFurnitures(roomFurnitures);
         hotelBookingAvailable.setTotalRoom(groupedRooms);
         hotelBookingAvailable.setCategoryRoomPrices(categoryRoomPrices);
+        hotelBookingAvailable.setDateInfoCategoryRoomPriceDTOS(dateInfoList);
 
         return hotelBookingAvailable;
     }
+
+    private boolean isHoliday(LocalDate startDate) {
+        List<LocalDate> holidays = new ArrayList<>();
+        holidays.add(LocalDate.of(2023, 2, 1)); // Tết Nguyên Đán (Lunar New Year)
+        holidays.add(LocalDate.of(2023, 2, 2)); // Tết Nguyên Đán (Lunar New Year)
+        holidays.add(LocalDate.of(2023, 9, 22)); // Tết Trung Thu (Mid-Autumn Festival)
+        holidays.add(LocalDate.of(2023, 4, 30)); // Ngày Thống nhất Đất nước (Reunification Day)
+        holidays.add(LocalDate.of(2023, 5, 1)); // Ngày Quốc tế Lao động (International Workers' Day)
+        holidays.add(LocalDate.of(2023, 9, 2)); // Ngày Quốc khánh (National Day)
+
+
+        return holidays.contains(startDate);
+    }
+
+    private int getDayType(LocalDate startDate) {
+
+
+        List<LocalDate> holidays = new ArrayList<>();
+        holidays.add(LocalDate.of(2023, 2, 1)); // Tết Nguyên Đán (Lunar New Year)
+        holidays.add(LocalDate.of(2023, 2, 2)); // Tết Nguyên Đán (Lunar New Year)
+        holidays.add(LocalDate.of(2023, 9, 22)); // Tết Trung Thu (Mid-Autumn Festival)
+        holidays.add(LocalDate.of(2023, 4, 30)); // Ngày Thống nhất Đất nước (Reunification Day)
+        holidays.add(LocalDate.of(2023, 5, 1)); // Ngày Quốc tế Lao động (International Workers' Day)
+        holidays.add(LocalDate.of(2023, 9, 2)); // Ngày Quốc khánh (National Day)
+
+        if (holidays.contains(startDate)) {
+            return 3;
+        }
+        
+        DayOfWeek dayOfWeek = startDate.getDayOfWeek();
+
+        if (!(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public LocalDate convertDateToLocalDate(Date date) {
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault(); // Sử dụng múi giờ hệ thống
+        return instant.atZone(zoneId).toLocalDate();
+    }
+
 }
 
 
