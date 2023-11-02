@@ -4,21 +4,36 @@ import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.entities.*;
 import fu.hbs.repository.*;
+import fu.hbs.utils.Holidays;
+import fu.hbs.utils.StringDealer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class HotelBookingServiceImpl {
+
+    @Value("${app.holidays.tetDuongLich}")
+    private String tetDuongLichConfig;
+
+    @Value("${app.holidays.ngayThongNhatDatNuoc}")
+    private String ngayThongNhatDatNuocConfig;
+
+    @Value("${app.holidays.ngayQuocTeLaoDong}")
+    private String ngayQuocTeLaoDongConfig;
+
+    @Value("${app.holidays.ngayQuocKhanh}")
+    private String ngayQuocKhanhConfig;
+
     @Autowired
     private HotelBookingRepository hotelBookingRepository;
     @Autowired
@@ -32,7 +47,20 @@ public class HotelBookingServiceImpl {
     @Autowired
     CategoryRoomPriceRepository categoryRoomPriceRepository;
 
+    StringDealer stringDealer;
 
+    public HotelBookingServiceImpl() {
+        this.stringDealer = new StringDealer();
+    }
+
+    /**
+     * Find available hotel bookings based on check-in, check-out, and number of persons.
+     *
+     * @param checkIn      The check-in date.
+     * @param checkOut     The check-out date.
+     * @param numberPerson The number of persons.
+     * @return An instance of HotelBookingAvailable with available rooms and related information.
+     */
     public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) {
         HotelBookingAvailable hotelBookingAvailable = new HotelBookingAvailable();
 
@@ -41,6 +69,8 @@ public class HotelBookingServiceImpl {
 
         List<RoomCategories> addedCategories = new ArrayList<>();
         RoomCategories categories = new RoomCategories();
+
+        // Group rooms by room category
         Map<Long, List<Room>> groupedRooms = rooms.stream()
                 .collect(Collectors.groupingBy(Room::getRoomCategoryId));
         for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
@@ -72,9 +102,9 @@ public class HotelBookingServiceImpl {
             categoryRoomPrices.add(categoryRoomPrice);
         }
 
-
-        LocalDate startDate = convertDateToLocalDate(checkIn);
-        LocalDate endDate = convertDateToLocalDate(checkOut);
+        LocalDate startDate = stringDealer.convertDateToLocalDate(checkIn);
+        LocalDate endDate = stringDealer.convertDateToLocalDate(checkOut);
+  
         List<DateInfoCategoryRoomPriceDTO> dateInfoList = new ArrayList<>();
         // xử lí day_type
         for (int i = 0; i < categoryRoomPrices.size(); i++) {
@@ -82,13 +112,12 @@ public class HotelBookingServiceImpl {
             LocalDate endDate1 = endDate;
 
             while (!startDate1.isAfter(endDate1)) {
-                DayOfWeek dayOfWeek = startDate1.getDayOfWeek();
                 int dayType = getDayType(startDate1);
 
                 dateInfoList.add(new DateInfoCategoryRoomPriceDTO(startDate1, dayType));
                 startDate1 = startDate1.plusDays(1);
             }
-
+            break;
         }
 
 
@@ -103,48 +132,48 @@ public class HotelBookingServiceImpl {
         return hotelBookingAvailable;
     }
 
-    private boolean isHoliday(LocalDate startDate) {
+    /**
+     * Get a list of holidays for a specific year.
+     *
+     * @param year The year for which holidays are requested.
+     * @return A list of LocalDate objects representing holidays.
+     */
+    public List<LocalDate> getHolidays(int year) {
         List<LocalDate> holidays = new ArrayList<>();
-        holidays.add(LocalDate.of(2023, 2, 1)); // Tết Nguyên Đán (Lunar New Year)
-        holidays.add(LocalDate.of(2023, 2, 2)); // Tết Nguyên Đán (Lunar New Year)
-        holidays.add(LocalDate.of(2023, 9, 22)); // Tết Trung Thu (Mid-Autumn Festival)
-        holidays.add(LocalDate.of(2023, 4, 30)); // Ngày Thống nhất Đất nước (Reunification Day)
-        holidays.add(LocalDate.of(2023, 5, 1)); // Ngày Quốc tế Lao động (International Workers' Day)
-        holidays.add(LocalDate.of(2023, 9, 2)); // Ngày Quốc khánh (National Day)
 
+        // Chuyển đổi các ngày lễ từ cấu hình thành LocalDate
+        LocalDate tetDuongLich = LocalDate.parse(year + "-" + tetDuongLichConfig);
+        LocalDate ngayThongNhatDatNuoc = LocalDate.parse(year + "-" + ngayThongNhatDatNuocConfig);
+        LocalDate ngayQuocTeLaoDong = LocalDate.parse(year + "-" + ngayQuocTeLaoDongConfig);
+        LocalDate ngayQuocKhanh = LocalDate.parse(year + "-" + ngayQuocKhanhConfig);
 
-        return holidays.contains(startDate);
+        holidays.add(tetDuongLich);
+        holidays.add(ngayThongNhatDatNuoc);
+        holidays.add(ngayQuocTeLaoDong);
+        holidays.add(ngayQuocKhanh);
+
+        return holidays;
     }
 
+    /**
+     * Determine the day type (weekday, weekend, or holiday) for a given date.
+     *
+     * @param startDate The date to determine the day type.
+     * @return An integer representing the day type (1: weekday, 2: weekend, 3: holiday).
+     */
     private int getDayType(LocalDate startDate) {
-
-
-        List<LocalDate> holidays = new ArrayList<>();
-        holidays.add(LocalDate.of(2023, 2, 1)); // Tết Nguyên Đán (Lunar New Year)
-        holidays.add(LocalDate.of(2023, 2, 2)); // Tết Nguyên Đán (Lunar New Year)
-        holidays.add(LocalDate.of(2023, 9, 22)); // Tết Trung Thu (Mid-Autumn Festival)
-        holidays.add(LocalDate.of(2023, 4, 30)); // Ngày Thống nhất Đất nước (Reunification Day)
-        holidays.add(LocalDate.of(2023, 5, 1)); // Ngày Quốc tế Lao động (International Workers' Day)
-        holidays.add(LocalDate.of(2023, 9, 2)); // Ngày Quốc khánh (National Day)
-
-        if (holidays.contains(startDate)) {
-            return 3;
+        if (getHolidays(startDate.getYear()).contains(startDate)) {
+            return 3; // holidays
         }
-        
         DayOfWeek dayOfWeek = startDate.getDayOfWeek();
 
         if (!(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)) {
-            return 1;
+            return 1;  // weekday
         } else {
-            return 2;
+            return 2; // weekend
         }
     }
 
-    public LocalDate convertDateToLocalDate(Date date) {
-        Instant instant = date.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault(); // Sử dụng múi giờ hệ thống
-        return instant.atZone(zoneId).toLocalDate();
-    }
 
 }
 

@@ -428,28 +428,25 @@
             <!-- Contact section exit -->
             <!-- Footer section -->
             <section th:replace="~{footer :: footer}"></section>
-            <!-- Footer section exit -->
-
-            <!-- Bootstrap 5 JS CDN Links -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-            <script
-                    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-
-            <!-- Swiper JS -->
-            <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-
-            <!-- Custom Js Link -->
-            <script src="assets/js/main.js"></script>
-
-            <script>
-                // Ngăn người dùng chọn ngày trước đó
-
-                var today = new Date().toISOString().split("T")[0];
-                document.getElementById("checkInDate").min = today;
-                document.getElementById("checkOutDate").min = today;
-            </script>
 
 
+        </div>
+    </div>
+</section>
+<!-- Footer section exit -->
+
+<!-- Bootstrap 5 JS CDN Links -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<!-- Custom Js Link -->
+<script src="assets/js/main.js"></script>
+
+<script src="/assets/js/searchRoom.js"></script>
 </body>
 
 </html>

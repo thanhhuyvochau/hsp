@@ -12,13 +12,18 @@
 
 package fu.hbs.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import fu.hbs.service.impl.HotelBookingServiceImpl;
+import fu.hbs.utils.StringDealer;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,11 +45,14 @@ public class RoomController {
 
 
     private HotelBookingServiceImpl hotelBookingService;
+    StringDealer stringDealer;
+
 
     public RoomController(RoomCategoryService roomCategoryService, RoomByCategoryService roomByCategoryService, HotelBookingServiceImpl hotelBookingService) {
         this.roomCategoryService = roomCategoryService;
         this.roomByCategoryService = roomByCategoryService;
         this.hotelBookingService = hotelBookingService;
+        this.stringDealer = new StringDealer();
     }
 
     /**
@@ -89,27 +97,61 @@ public class RoomController {
 
 
     @GetMapping("/room/search")
-
-    public String searchRooms(@RequestParam(value = "checkIn", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkIn,
-                              @RequestParam(value = "checkOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkOut,
-                              @RequestParam(value = "numberOfPeople", required = false) Integer numberOfPeople,
-                              Model model) {
+    public String searchRooms(
+            @RequestParam(value = "checkIn", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkIn,
+            @RequestParam(value = "checkOut", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkOut,
+            @RequestParam(value = "numberOfPeople", required = false) Integer numberOfPeople,
+            Model model, HttpSession session
+    ) {
         HotelBookingAvailable conflictingBookings;
-//        List<RoomCategories> availableRoomCategories = roomCategoryService.findAvailableRoomCategories(numberOfPeople);
-        if (numberOfPeople == null || "".equals(numberOfPeople)) {
+        LocalDate today = LocalDate.now();
+        LocalDate checkin = stringDealer.convertDateToLocalDate(checkIn);
+        LocalDate checkout = stringDealer.convertDateToLocalDate(checkOut);
+
+        // Convert dates to strings for further use
+        String todayString = checkin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String todayString1 = checkout.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        // Check if the date parameters are valid
+        boolean areDatesValid = todayString.matches("^\\d{4}-\\d{2}-\\d{2}$") && todayString1.matches("^\\d{4}-\\d{2}-\\d{2}$");
+
+        // Set default date values
+        String defaultDate = todayString;
+        String defaultDate1 = todayString1;
+        if (!areDatesValid) {
+            LocalDate nextDay = today.plusDays(1);
+            defaultDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            defaultDate1 = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
+        session.setAttribute("defaultDate", defaultDate);
+        session.setAttribute("defaultDate1", defaultDate1);
+
+        // Set default value for numberOfPeople if it's null or invalid
+        if (numberOfPeople == null || !areDatesValid) {
+            Date currentDate = new Date();
             numberOfPeople = DEFAULT_NUMBERPERSON;
-            conflictingBookings = hotelBookingService.findBookingsByDates(checkIn, checkOut, numberOfPeople);
+            conflictingBookings = hotelBookingService.findBookingsByDates(currentDate, currentDate, numberOfPeople);
         } else {
             conflictingBookings = hotelBookingService.findBookingsByDates(checkIn, checkOut, numberOfPeople);
         }
-        // Lấy danh sách đặt phòng trùng với ngày check-in và check-out
 
+        List<DateInfoCategoryRoomPriceDTO> dataList = conflictingBookings.getDateInfoCategoryRoomPriceDTOS();
+        int pageSize = 7; // Number of records per page
 
-//        model.addAttribute("availableRoomCategories", availableRoomCategories);
+        List<List<DateInfoCategoryRoomPriceDTO>> pages = new ArrayList<>();
+        for (int i = 0; i < dataList.size(); i += pageSize) {
+            int end = Math.min(i + pageSize, dataList.size());
+            pages.add(dataList.subList(i, end));
+        }
 
+        model.addAttribute("carouselPages", pages);
+        session.setAttribute("numberOfPeople", numberOfPeople);
         model.addAttribute("conflictingBookings", conflictingBookings);
+
         return "room/searchRoomCustomer";
     }
+
 
     @GetMapping("/room/booking")
     public String booking(Model model) {
