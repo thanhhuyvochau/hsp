@@ -30,6 +30,4 @@ public class HotelBookingAvailable {
     private BigDecimal total;
     private List<DateInfoCategoryRoomPriceDTO> dateInfoCategoryRoomPriceDTOS;
 
-    private LocalDate checkIn;
-    private LocalDate checkOut;
 }

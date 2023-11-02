@@ -41,9 +41,12 @@ public class InitController {
         session.setAttribute("categories", categories);
         // Lấy ngày hôm nay và định dạng thành chuỗi ngày-tháng-năm
         LocalDate today = LocalDate.now();
+        LocalDate nextDay = today.plusDays(1);
         String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String nextDayString = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         // Đặt giá trị mặc định cho trường ngày
         session.setAttribute("defaultDate", todayString);
+        session.setAttribute("defaultDate1", nextDayString);
         return "homepage";
     }
 
