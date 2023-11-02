@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.getElementById("myTable");
     const tbody = table.querySelector("tbody");
     const rows = tbody.getElementsByTagName("tr");
-    const rowsPerPage = 4;
+    const rowsPerPage = 10;
     let currentPage = 1;
     let currentStatusFilter = "all";
     // Tạo các nút phân trang
