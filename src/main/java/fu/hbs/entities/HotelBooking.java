@@ -1,14 +1,15 @@
 /*
- * Copyright (C) 2023, FPT University 
+ * Copyright (C) 2023, FPT University
  * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
+ * HBS
+ * Hotel Booking System
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 04/10/2023    1.0        HieuLBM          First Deploy
  * 10/10/2023    2.0        HieuLBM          Fix notation, id filed
  * 22/10/2023	 2.1		HieuLBM			 change name
+ * 2/11/2023     2.2        HieuLBM          Add attribute
  */
 
 package fu.hbs.entities;
@@ -36,20 +37,20 @@ import lombok.ToString;
 @Entity
 @Table(name = "hotel_booking")
 public class HotelBooking {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "hotel_booking_id")
-	private Long hotelBookingId;
-	private Long userId;
-	private Long roomId;
-	private Long bookingServicesId;
-	private String name;
-	private String email;
-	private String address;
-	private String phone;
-	private BigDecimal totalPrice;
-	private Date checkIn;
-	private Date checkOut;
-	private boolean status;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "hotel_booking_id")
+    private Long hotelBookingId;
+    private Long userId;
+    private Long roomCategoryId;
+    private int totalRoom;
+    private String name;
+    private String email;
+    private String address;
+    private String phone;
+    private BigDecimal totalPrice;
+    private Date checkIn;
+    private Date checkOut;
+    private String status;
 
 }
