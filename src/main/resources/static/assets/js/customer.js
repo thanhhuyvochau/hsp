@@ -38,13 +38,13 @@ $(document).ready(function () {
         .clone(true)
         .addClass('filters')
         .appendTo('#thead');
- 
+
     var table = $('#myTable').DataTable({
         orderCellsTop: true,
         fixedHeader: true,
         initComplete: function () {
             var api = this.api();
- 
+
             // For each column
             api
                 .columns()
@@ -56,7 +56,7 @@ $(document).ready(function () {
                     );
                     var title = $(cell).text();
                     $(cell).html('<input type="text" placeholder="' + title + '" />');
- 
+
                     // On every keypress in this input
                     $(
                         'input',
@@ -67,7 +67,7 @@ $(document).ready(function () {
                             // Get the search value
                             $(this).attr('title', $(this).val());
                             var regexr = '({search})'; //$(this).parents('th').find('select').val();
- 
+
                             var cursorPosition = this.selectionStart;
                             // Search the column for that value
                             api
@@ -83,7 +83,7 @@ $(document).ready(function () {
                         })
                         .on('keyup', function (e) {
                             e.stopPropagation();
- 
+
                             $(this).trigger('change');
                             $(this)
                                 .focus()[0]
