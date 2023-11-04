@@ -15,4 +15,9 @@ public interface RoomCategoriesRepository extends JpaRepository<RoomCategories, 
     List<RoomCategories> findByNumberPersonGreaterThanEqual(int numberOfPeople);
 
     RoomCategories findDistinctByRoomCategoryId(Long id);
+
+
+    RoomCategories deleteByRoomCategoryId(Long id);
+
+
 }

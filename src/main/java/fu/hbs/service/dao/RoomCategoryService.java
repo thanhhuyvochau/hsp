@@ -24,4 +24,9 @@ public interface RoomCategoryService {
     List<ViewRoomCategoryDTO> getAllRoom();
 
     List<RoomCategories> findAvailableRoomCategories(int numberOfPeople);
+
+    RoomCategories getRoomCategoryId(Long id);
+
+
+    RoomCategories deleteByRoomCategoryId(Long id);
 }

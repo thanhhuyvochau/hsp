@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.entities.CategoryRoomPrice;
 import fu.hbs.service.impl.HotelBookingServiceImpl;
 import fu.hbs.utils.StringDealer;
 import org.springframework.format.annotation.DateTimeFormat;
