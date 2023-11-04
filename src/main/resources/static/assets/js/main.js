@@ -118,3 +118,12 @@ function showCal() {
         display = 1;
     }
 }
+
+
+// Cập nhật số phòng đã chọn khi thay đổi số phòng trong dropdown
+document.getElementById('roomSelect').addEventListener('change', function () {
+    const selectedRooms = this.value;
+    document.getElementById('selectedRooms').textContent = `${selectedRooms} phòng`;
+});
+
+

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Room Receptionist</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/assets/css/createRoomReceptionist.css">
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <img src="./images/Orilogo.png" alt="" width="180" height="80"
+                        class="d-inline-block align-text-top">
+                </div>
+                <!-- Sidebar Navigation -->
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header fw-bold">
+                        Lễ tân
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-regular fa-rectangle-list"></i>
+                            Danh sách phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-check-double"></i>
+                            Đặt phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Trả phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-house-user"></i>
+                            Phòng đang sử dụng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-bell"></i>
+                            Đặt trước
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-clipboard"></i>
+                            Lịch sử đặt phòng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="main">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <!-- Button for sidebar toggle -->
+                <button type="button" class="bi bi-person-circle "></button>
+            </nav>
+            <main class="content px-3 py-2">
+                <div class="container-fluid">
+                    <div class="mb-3">
+                        <div class="container shadow min-vh-100">
+                            <div class="row p-3">
+                                <ul class="nav nav-tabs d-flex justify-content-around" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" id="chooseRoom-tab" data-bs-toggle="tab"
+                                            href="#chooseRoom" role="tab" aria-controls="chooseRoom"
+                                            aria-selected="true">
+                                            <h4>Chọn phòng</h4>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile"
+                                            role="tab" aria-controls="profile" aria-selected="false">
+                                            <h4>Thông tin khách hàng</h4>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="confirm-tab" data-bs-toggle="tab" href="#confirm"
+                                            role="tab" aria-controls="confirm" aria-selected="false">
+                                            <h4>Xác nhận</h4>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="chooseRoom" role="tabpanel"
+                                    aria-labelledby="chooseRoom-tab">
+                                    <div class=" navSearch row justify-content-center">
+                                        <div class="col-lg-2">Ngày nhận phòng:
+                                            <input type="date" class="form-control">
+                                        </div>
+                                        <div class="col-lg-2">Ngày trả phòng:
+                                            <input type="date" class="form-control">
+                                        </div>
+                                        <div class="col-lg-3">Loại phòng:
+                                            <select class="form-select">
+                                                <option selected>Phòng Tiêu Chuẩn</option>
+                                                <option value="2">Phòng Cao Cấp</option>
+                                                <option value="3">Phòng Sang Trọng</option>
+                                                <option value="4">Phòng Đơn</option>
+                                                <option value="5">Phòng Gia Đình</option>
+                                                <option value="6">Phòng Hạng cao cấp</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-3">Số lượng phòng:
+                                            <input type="input" class="form-control">
+                                        </div>
+                                        <div class="col-lg-2 mt-4">
+                                            <button type="button" class="btn btn-dark">Tìm kiếm</button>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row mt-5 ms-1 me-1 ">
+                                        <h3>Kết quả:</h3>
+                                        <div class="d-flex flex-column">
+                                            <table
+                                                class="table table-striped table-hover border align-baseline text-center shadow">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th scope="col">STT</th>
+                                                        <th scope="col">Loại phòng</th>
+                                                        <th scope="col">Còn trống</th>
+                                                        <th scope="col">Ưu đãi</th>
+                                                        <th scope="col">Giường</th>
+                                                        <th scope="col">Diện tích(m2)</th>
+                                                        <th scope="col">Người lớn</th>
+                                                        <th scope="col">Trẻ em</th>
+                                                        <th scope="col">Giá</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Phòng Tiêu Chuẩn</td>
+                                                        <td>10</td>
+                                                        <td>Bữa sáng</td>
+                                                        <td>1 giường lớn</td>
+                                                        <td>40</td>
+                                                        <td>2</td>
+                                                        <td>1</td>
+                                                        <td>1.200.000</td>
+                                                        <td><button class="btn button btn-dark">Thêm</button></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Phòng Cao Cấp</td>
+                                                        <td>5</td>
+                                                        <td>Bữa sáng</td>
+                                                        <td>2 giường nhỏ</td>
+                                                        <td>60</td>
+                                                        <td>2</td>
+                                                        <td>1</td>
+                                                        <td>1.700.000</td>
+                                                        <td><button class="btn button btn-dark">Thêm</button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4 ms-1 me-1">
+                                        <h3>Phòng đã chọn:</h3>
+
+                                        <div class="d-flex flex-column">
+                                            <table
+                                                class="table table-striped table-hover border align-baseline text-center shadow">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th scope="col">STT</th>
+                                                        <th scope="col">Loại phòng</th>
+                                                        <th scope="col">Phòng đã đặt</th>
+                                                        <th scope="col">Ưu đãi</th>
+                                                        <th scope="col">Giường</th>
+                                                        <th scope="col">Diện tích(m2)</th>
+                                                        <th scope="col">Người lớn</th>
+                                                        <th scope="col">Trẻ em</th>
+                                                        <th scope="col">Giá</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Phòng Tiêu Chuẩn</td>
+                                                        <td>10</td>
+                                                        <td>Bữa sáng</td>
+                                                        <td>1 giường lớn</td>
+                                                        <td>40</td>
+                                                        <td>2</td>
+                                                        <td>1</td>
+                                                        <td>1.200.000</td>
+                                                        <td><button class=" btn btn-link text-dark">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Phòng Cao Cấp</td>
+                                                        <td>5</td>
+                                                        <td>Bữa sáng</td>
+                                                        <td>2 giường nhỏ</td>
+                                                        <td>60</td>
+                                                        <td>2</td>
+                                                        <td>1</td>
+                                                        <td>1.700.000</td>
+                                                        <td><button class="btn btn-link text-dark">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2 ms-3 me-3">
+                                        <h4>Tổng tiền cần thanh toán:</h4>
+                                        <div class="col-lg-12 border shadow">
+                                            <div class="row me-5 mt-2">
+                                                <div class="col ms-3">
+                                                    <h6 class="fw-bold">Tiền phòng:</h6>
+                                                </div>
+                                                <div class="col text-end"> <a>2.900.000</a></div>
+                                            </div>
+                                            <div class="row mt-2 me-5">
+                                                <div class="col ms-3">
+                                                    <h6 class="fw-bold">Thuế(10%):</h6>
+                                                </div>
+                                                <div class="col text-end"><a>370.000</a></div>
+                                            </div>
+                                            <div class="row mt-2 me-5">
+                                                <div class="col ms-3">
+                                                    <h6 class="fw-bold">Tổng:</h6>
+                                                </div>
+                                                <div class="col text-end"><a>3.270.000</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--
+                                <div class="row mt-3">
+                                    <div class="col-lg-6">
+                                        <h2>Dịch vụ:</h2>
+                                        <div class="d-flex flex-column py-3">
+                                            <table class="table table-striped table-hover border align-baseline">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th scope="col">STT</th>
+                                                        <th scope="col">Tên dịch vụ</th>
+                                                        <th scope="col">Đơn giá</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">1</th>
+                                                        <td>Giặt là</td>
+                                                        <td>50.000</td>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">2</th>
+                                                        <td>Cafe sáng tại phòng</td>
+                                                        <td>70.000</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">3</th>
+                                                        <td>Massage</td>
+                                                        <td>350.000</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">4</th>
+                                                        <td>Coca Cola</td>
+                                                        <td>15.000</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row"></th>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td><button class="btn btn-dark">Thêm</button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h2>Đã chọn:</h2>
+                                        <div class="d-flex flex-column py-3">
+                                            <table class="table table-striped table-hover border align-baseline">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th scope="col">Tên dịch vụ</th>
+                                                        <th scope="col">Số lượng</th>
+                                                        <th scope="col">Giá</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">Giặt là</th>
+                                                        <td>2</td>
+                                                        <td>100.000</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Massage</th>
+                                                        <td>2</td>
+                                                        <td>700.000</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                -->
+                                    <div class="row mt-3">
+                                        <div class="btn-end text-center">
+                                            <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
+                                            <button type="button" class="btn btn-secondary"
+                                                style="margin-right: 2rem;margin-bottom: 2rem;">Quay
+                                                lại</button>
+                                            <button type="button" class="btn btn-dark" style="margin-bottom: 2rem;">Tiếp
+                                                tục</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                    <div class="container">
+                                        <div class="row mt-3 ">
+                                            <h4>Thông tin phòng & dịch vụ:</h4>
+                                            <hr>
+                                            <h6>Mã đặt phòng: <a>1001</a>
+                                            </h6>
+                                            <h6>Số phòng đặt: <a>2</a>
+                                            </h6>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="d-flex flex-column">
+                                                <table
+                                                    class="table table-striped table-hover border align-baseline text-center">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th scope="col">STT</th>
+                                                            <th scope="col">Loại phòng</th>
+                                                            <th scope="col">Giá</th>
+                                                            <th scope="col">Ngày nhận phòng</th>
+                                                            <th scope="col">Ngày trả phòng</th>
+                                                            <th scope="col">Giường</th>
+                                                            <th scope="col">Diện tích</th>
+                                                            <th scope="col">Ưu đãi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">1</th>
+                                                            <td>Deluxe</td>
+                                                            <td>1.200.000</td>
+                                                            <td>29/09/2023</td>
+                                                            <td>30/09/2023</td>
+                                                            <td>1 giường lớn</td>
+                                                            <td>40m2</td>
+                                                            <td>Bữa sáng</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">2</th>
+                                                            <td>Premium</td>
+                                                            <td>1.700.000</td>
+                                                            <td>29/09/2023</td>
+                                                            <td>30/09/2023</td>
+                                                            <td>2 giường nhỏ</td>
+                                                            <td>60m2</td>
+                                                            <td>Bữa sáng</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3  me-1">
+                                            <h4>Khách hàng:</h4>
+                                            <hr>
+                                            <div class="col-lg-4">
+                                                <div class="row ms-1">
+                                                    <h6>(*) Họ tên:</h6>
+                                                    <input type="input" class="form-control" id="nameCustomer"
+                                                        placeholder="Nguyễn Ngọc Khoa">
+                                                </div>
+                                                <div class="row mt-2 ms-1">
+                                                    <h6>(*) Số điện thoại:</h6>
+                                                    <input type="input" class="form-control" id="phoneCustomer"
+                                                        placeholder="0388 663 366">
+                                                </div>
+                                                <div class="row mt-2 ms-1">
+                                                    <h6>(*) Địa chỉ:</h6>
+                                                    <input type="input" class="form-control" id="addressCustomer"
+                                                        placeholder="Thạch Hòa - Thạch Thất - Hà Nội">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                            </div>
+                                            <div class="col-lg-4 ">
+                                                <div class="row">
+                                                    <h6>(*) Email:</h6>
+                                                    <input type="input" class="form-control" id="emailCustomer"
+                                                        placeholder="nnkhoa36@gmail.com">
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <h6>Ghi chú:</h6>
+                                                    <input type="input" class="form-control" id="noteCustomer"
+                                                        placeholder="">
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <h6>Phương thức đặt:</h6>
+                                                    <select class="form-select">
+                                                        <option selected>Tại quầy lễ tân</option>
+                                                        <option value="2">Liên hệ</option>
+                                                        <option value="3">Trực tuyến</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-5">
+                                                <div class="btn-end text-center">
+                                                    <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
+                                                    <button type="button" class="btn btn-secondary"
+                                                        style="margin-right: 2rem; margin-top: 2rem;">Quay
+                                                        lại</button>
+                                                    <button type="button" class="btn btn-dark" style="margin-right: 2rem; margin-top:
+                                                    2rem;">Tiếp tục</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="confirm" role="tabpanel" aria-labelledby="confirm-tab">
+                                    <div class="container">
+                                        <div class="row mt-3">
+                                            <h4>Thông tin phòng & dịch vụ:</h4>
+                                            <hr>
+                                            <h6>Mã đặt phòng: <a>1001</a>
+                                            </h6>
+                                            <h6>Số phòng đặt: <a>2</a>
+                                            </h6>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="d-flex flex-column">
+                                                <table
+                                                    class="table table-striped table-hover border align-baseline text-center">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th scope="col">STT</th>
+                                                            <th scope="col">Loại phòng</th>
+                                                            <th scope="col">Giá</th>
+                                                            <th scope="col">Ngày nhận phòng</th>
+                                                            <th scope="col">Ngày trả phòng</th>
+                                                            <th scope="col">Giường</th>
+                                                            <th scope="col">Diện tích</th>
+                                                            <th scope="col">Ưu đãi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">1</th>
+                                                            <td>Deluxe</td>
+                                                            <td>1.200.000</td>
+                                                            <td>29/09/2023</td>
+                                                            <td>30/09/2023</td>
+                                                            <td>1 giường lớn</td>
+                                                            <td>40m2</td>
+                                                            <td>Bữa sáng</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">2</th>
+                                                            <td>Premium</td>
+                                                            <td>1.700.000</td>
+                                                            <td>29/09/2023</td>
+                                                            <td>30/09/2023</td>
+                                                            <td>2 giường nhỏ</td>
+                                                            <td>60m2</td>
+                                                            <td>Bữa sáng</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 ms-1 me-1">
+                                            <div class="row">
+                                                <h4>Khách hàng:</h4>
+                                            </div>
+                                            <div class="row border shadow">
+                                                <div class="col-lg-8">
+                                                    <div class="row me-5">
+                                                        <div class="col ms-2 mt-2">
+                                                            <h6 class="fw-bold">Họ tên: <a>Nguyễn Ngọc Khoa</a></h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col  ms-2">
+                                                            <h6 class="fw-bold">Số điện thoại: <a>0388 663 366</a></h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col  ms-2">
+                                                            <h6 class="fw-bold">Địa chỉ: <a>Thạch Hòa - Thạch Thất - Hà
+                                                                    Nội</a></h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 ">
+                                                    <div class="row me-5 mt-2">
+                                                        <h6 class="fw-bold">Email: <a>nnkhoa36@gmail.com</a></h6>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <h6 class="fw-bold">Ghi chú: <a>Không</a></h6>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <h6 class="fw-bold">Phương thức đặt: <a>Tại quầy lễ tân</a></h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-5">
+                                            <div class="row ms-2">
+                                                <h4>Thanh toán:</h4>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 border shadow">
+                                                    <div class="row me-5 mt-2">
+                                                        <div class="col ms-4">
+                                                            <h6 class="fw-bold">Tiền phòng:</h6>
+                                                        </div>
+                                                        <div class="col text-end"> <a>2.900.000</a></div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col ms-4">
+                                                            <h6 class="fw-bold">Thuế(10%):</h6>
+                                                        </div>
+                                                        <div class="col text-end"><a>370.000</a></div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col ms-4">
+                                                            <h6 class="fw-bold">Tổng:</h6>
+                                                        </div>
+                                                        <div class="col text-end"><a>3.270.000</a></div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col ms-4">
+                                                            <h6 class="fw-bold">Đặt cọc(50%):</h6>
+                                                        </div>
+                                                        <div class="col text-end"><a>1.635.000</a></div>
+                                                    </div>
+                                                    <div class="row mt-2 me-5">
+                                                        <div class="col ms-4">
+                                                            <h6 class="fw-bold">Thanh toán hết:</h6>
+                                                        </div>
+                                                        <div class="col text-end"><a>2.943.000</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mt-5">
+                                                <div class="btn-end text-center">
+                                                    <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
+                                                    <button type="button" class="btn btn-secondary"
+                                                        style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;">Quay
+                                                        lại</button>
+                                                    <button type="button" class="btn btn-dark" style="margin-right: 2rem; margin-top:
+                                                    2rem;margin-bottom: 2rem;">Tiếp tục</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+
+</html>
