@@ -153,13 +153,4 @@ public class RoomController {
     }
 
 
-    @GetMapping("/room/booking")
-    public String booking(Model model) {
-        return "customer/booking-history";
-    }
-
-    @GetMapping("/room/addbooking")
-    public String addbooking(Model model) {
-        return "customer/create-booking";
-    }
 }

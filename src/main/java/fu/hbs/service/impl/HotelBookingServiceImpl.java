@@ -2,25 +2,22 @@ package fu.hbs.service.impl;
 
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
+import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.entities.*;
 import fu.hbs.repository.*;
-import fu.hbs.utils.Holidays;
+import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.utils.StringDealer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class HotelBookingServiceImpl {
+public class HotelBookingServiceImpl implements HotelBookingService {
 
     @Value("${app.holidays.tetDuongLich}")
     private String tetDuongLichConfig;
@@ -46,11 +43,38 @@ public class HotelBookingServiceImpl {
     RoomFurnitureRepository roomFurnitureRepository;
     @Autowired
     CategoryRoomPriceRepository categoryRoomPriceRepository;
+    @Autowired
+    UserRepository userRepository;
+
 
     StringDealer stringDealer;
 
     public HotelBookingServiceImpl() {
         this.stringDealer = new StringDealer();
+    }
+
+    @Override
+    public List<ViewHotelBookingDTO> findAllByUserId(Long id) {
+        List<HotelBooking> hotelBookings = hotelBookingRepository.findByUserId(id);
+        List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
+        RoomCategories roomCategories1 = new RoomCategories();
+        User user = new User();
+
+        for (int i = 0; i < hotelBookings.size(); i++) {
+            ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
+            roomCategories1 = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
+            user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
+            viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
+            viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
+            viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
+            viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
+            viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setUser(user);
+            viewHotelBookingDTO.setRoomCategoriesList(roomCategories1);
+            viewHotelBookingDTOList.add(viewHotelBookingDTO);
+        }
+        System.out.println(viewHotelBookingDTOList);
+        return viewHotelBookingDTOList;
     }
 
     /**
@@ -104,7 +128,7 @@ public class HotelBookingServiceImpl {
 
         LocalDate startDate = stringDealer.convertDateToLocalDate(checkIn);
         LocalDate endDate = stringDealer.convertDateToLocalDate(checkOut);
-  
+
         List<DateInfoCategoryRoomPriceDTO> dateInfoList = new ArrayList<>();
         // xử lí day_type
         for (int i = 0; i < categoryRoomPrices.size(); i++) {
