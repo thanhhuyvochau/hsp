@@ -10,6 +10,7 @@
  */
 package fu.hbs.repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -31,5 +32,14 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             + "   AND br.room_id IS NULL", nativeQuery = true)
     List<Room> getAllRoom(Date checkIn, Date checkOut, int numberPerson);
 
+    @Query(value = "SELECT r.*\n" +
+            "FROM room r\n" +
+            "WHERE r.room_category_id = ?1\n" +
+            "AND r.room_id NOT IN (\n" +
+            "    SELECT br.room_id\n" +
+            "    FROM hotel_booking br\n" +
+            "    WHERE (br.check_in BETWEEN ?1 AND ?2 AND br.check_out BETWEEN ?1 AND ?2)\n" +
+            ")", nativeQuery = true)
+    List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 }
