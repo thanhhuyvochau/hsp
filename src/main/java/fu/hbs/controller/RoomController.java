@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.entities.CategoryRoomPrice;
 import fu.hbs.service.impl.HotelBookingServiceImpl;
 import fu.hbs.utils.StringDealer;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -104,34 +105,14 @@ public class RoomController {
             Model model, HttpSession session
     ) {
         HotelBookingAvailable conflictingBookings;
-        LocalDate today = LocalDate.now();
         LocalDate checkin = stringDealer.convertDateToLocalDate(checkIn);
         LocalDate checkout = stringDealer.convertDateToLocalDate(checkOut);
 
-        // Convert dates to strings for further use
-        String todayString = checkin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String todayString1 = checkout.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        // Check if the date parameters are valid
-        boolean areDatesValid = todayString.matches("^\\d{4}-\\d{2}-\\d{2}$") && todayString1.matches("^\\d{4}-\\d{2}-\\d{2}$");
-
-        // Set default date values
-        String defaultDate = todayString;
-        String defaultDate1 = todayString1;
-        if (!areDatesValid) {
-            LocalDate nextDay = today.plusDays(1);
-            defaultDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            defaultDate1 = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-
-        session.setAttribute("defaultDate", defaultDate);
-        session.setAttribute("defaultDate1", defaultDate1);
 
         // Set default value for numberOfPeople if it's null or invalid
-        if (numberOfPeople == null || !areDatesValid) {
-            Date currentDate = new Date();
+        if (numberOfPeople == null) {
             numberOfPeople = DEFAULT_NUMBERPERSON;
-            conflictingBookings = hotelBookingService.findBookingsByDates(currentDate, currentDate, numberOfPeople);
+            conflictingBookings = hotelBookingService.findBookingsByDates(checkIn, checkOut, numberOfPeople);
         } else {
             conflictingBookings = hotelBookingService.findBookingsByDates(checkIn, checkOut, numberOfPeople);
         }
@@ -144,7 +125,8 @@ public class RoomController {
             int end = Math.min(i + pageSize, dataList.size());
             pages.add(dataList.subList(i, end));
         }
-
+        session.setAttribute("defaultDate", checkin);
+        session.setAttribute("defaultDate1", checkout);
         model.addAttribute("carouselPages", pages);
         session.setAttribute("numberOfPeople", numberOfPeople);
         model.addAttribute("conflictingBookings", conflictingBookings);

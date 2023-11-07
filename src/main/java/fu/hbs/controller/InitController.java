@@ -23,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
@@ -44,11 +46,20 @@ public class InitController {
         LocalDate nextDay = today.plusDays(1);
         String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String nextDayString = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        // Đặt giá trị mặc định cho trường ngày
+//        Đặt giá trị mặc định cho trường ngày
         session.setAttribute("defaultDate", todayString);
         session.setAttribute("defaultDate1", nextDayString);
         return "homepage";
     }
+
+    @RequestMapping("/room/reversion")
+    public String redirectToLongURL(HttpSession session) {
+        LocalDate checkIn = (LocalDate) session.getAttribute("defaultDate");
+        LocalDate checkOut = (LocalDate) session.getAttribute("defaultDate1");
+        return "redirect:/room/search?checkIn=" + checkIn + "&checkOut=" + checkOut + "&numberOfPeople=";
+
+    }
+
 
     /**
      * Handles the access denied scenario and displays an access denied page.

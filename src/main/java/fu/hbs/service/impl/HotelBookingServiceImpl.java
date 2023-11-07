@@ -1,20 +1,37 @@
 package fu.hbs.service.impl;
 
-import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
-import fu.hbs.dto.HotelBookingAvailable;
-import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
-import fu.hbs.entities.*;
-import fu.hbs.repository.*;
-import fu.hbs.service.dao.HotelBookingService;
-import fu.hbs.utils.StringDealer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import fu.hbs.dto.HotelBookingAvailable;
+import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
+import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
+import fu.hbs.entities.CategoryRoomFurniture;
+import fu.hbs.entities.CategoryRoomPrice;
+import fu.hbs.entities.HotelBooking;
+import fu.hbs.entities.Room;
+import fu.hbs.entities.RoomCategories;
+import fu.hbs.entities.RoomFurniture;
+import fu.hbs.entities.User;
+import fu.hbs.repository.CategoryRoomFurnitureRepository;
+import fu.hbs.repository.CategoryRoomPriceRepository;
+import fu.hbs.repository.HotelBookingRepository;
+import fu.hbs.repository.RoomCategoriesRepository;
+import fu.hbs.repository.RoomFurnitureRepository;
+import fu.hbs.repository.RoomRepository;
+import fu.hbs.repository.UserRepository;
+import fu.hbs.service.dao.HotelBookingService;
+import fu.hbs.utils.StringDealer;
 
 @Service
 public class HotelBookingServiceImpl implements HotelBookingService {
@@ -46,7 +63,6 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     @Autowired
     UserRepository userRepository;
 
-
     StringDealer stringDealer;
 
     public HotelBookingServiceImpl() {
@@ -64,13 +80,10 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
             roomCategories1 = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
-            viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
-            viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
             viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
             viewHotelBookingDTO.setUser(user);
-            viewHotelBookingDTO.setRoomCategoriesList(roomCategories1);
             viewHotelBookingDTOList.add(viewHotelBookingDTO);
         }
         System.out.println(viewHotelBookingDTOList);
@@ -78,25 +91,25 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     }
 
     /**
-     * Find available hotel bookings based on check-in, check-out, and number of persons.
+     * Find available hotel bookings based on check-in, check-out, and number of
+     * persons.
      *
      * @param checkIn      The check-in date.
      * @param checkOut     The check-out date.
      * @param numberPerson The number of persons.
-     * @return An instance of HotelBookingAvailable with available rooms and related information.
+     * @return An instance of HotelBookingAvailable with available rooms and related
+     * information.
      */
     public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) {
         HotelBookingAvailable hotelBookingAvailable = new HotelBookingAvailable();
 
         List<Room> rooms = roomRepository.getAllRoom(checkIn, checkOut, numberPerson);
 
-
         List<RoomCategories> addedCategories = new ArrayList<>();
         RoomCategories categories = new RoomCategories();
 
         // Group rooms by room category
-        Map<Long, List<Room>> groupedRooms = rooms.stream()
-                .collect(Collectors.groupingBy(Room::getRoomCategoryId));
+        Map<Long, List<Room>> groupedRooms = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
         for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
             Long categoryId = entry.getKey();
             List<Room> roomsWithSameCategory = entry.getValue();
@@ -105,9 +118,10 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
 
         List<CategoryRoomFurniture> categoryRoomFurnitures = new ArrayList<>();
-//        CategoryRoomFurniture categoryRoomFurniture = new CategoryRoomFurniture();
+        // CategoryRoomFurniture categoryRoomFurniture = new CategoryRoomFurniture();
         for (int i = 0; i < addedCategories.size(); i++) {
-            categoryRoomFurnitures = categoryRoomFurnitureRepository.findByRoomCategoryId(addedCategories.get(i).getRoomCategoryId());
+            categoryRoomFurnitures = categoryRoomFurnitureRepository
+                    .findByRoomCategoryId(addedCategories.get(i).getRoomCategoryId());
         }
 
         List<RoomFurniture> roomFurnitures = new ArrayList<>();
@@ -116,7 +130,6 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             roomFurniture = roomFurnitureRepository.findByFurnitureId(categoryRoomFurnitures.get(i).getFurnitureId());
             roomFurnitures.add(roomFurniture);
         }
-
 
         CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
@@ -144,7 +157,6 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             break;
         }
 
-
         hotelBookingAvailable.setRooms(rooms);
         hotelBookingAvailable.setRoomCategories(addedCategories);
         hotelBookingAvailable.setCategoryRoomFurnitures(categoryRoomFurnitures);
@@ -154,6 +166,45 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         hotelBookingAvailable.setDateInfoCategoryRoomPriceDTOS(dateInfoList);
 
         return hotelBookingAvailable;
+    }
+
+    @Override
+    public CreateBookingDTO createBooking(Long categoryId, LocalDate checkIn, LocalDate checkOut) {
+        CreateBookingDTO createBookingDTO = new CreateBookingDTO();
+        RoomCategories roomCategories = roomCategoriesRepository.findByRoomCategoryId(categoryId);
+        // Lấy ra rooms còn trống
+        List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(categoryId, checkIn, checkOut);
+
+        return createBookingDTO;
+    }
+
+    @Override
+    public List<ViewHotelBookingDTO> findAllByUserIdAndSameTime(Long id) {
+        List<HotelBooking> hotelBookings = hotelBookingRepository.findByUserIdSameTime(id);
+        List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
+        List<RoomCategories> roomCategoriesList = new ArrayList<>();
+        RoomCategories roomCategories = new RoomCategories();
+        User user = new User();
+
+        for (int i = 0; i < hotelBookings.size(); i++) {
+            ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
+            roomCategories = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
+            roomCategoriesList.add(roomCategories);
+            user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
+            viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
+            viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
+            viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setUser(user);
+            viewHotelBookingDTO.setRoomCategoriesList(roomCategoriesList);
+            viewHotelBookingDTOList.add(viewHotelBookingDTO);
+        }
+        System.out.println(viewHotelBookingDTOList);
+        return viewHotelBookingDTOList;
+    }
+
+    @Override
+    public HotelBooking save(HotelBooking hotelBooking) {
+        return hotelBookingRepository.save(hotelBooking);
     }
 
     /**
@@ -183,7 +234,8 @@ public class HotelBookingServiceImpl implements HotelBookingService {
      * Determine the day type (weekday, weekend, or holiday) for a given date.
      *
      * @param startDate The date to determine the day type.
-     * @return An integer representing the day type (1: weekday, 2: weekend, 3: holiday).
+     * @return An integer representing the day type (1: weekday, 2: weekend, 3:
+     * holiday).
      */
     private int getDayType(LocalDate startDate) {
         if (getHolidays(startDate.getYear()).contains(startDate)) {
@@ -192,13 +244,10 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         DayOfWeek dayOfWeek = startDate.getDayOfWeek();
 
         if (!(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)) {
-            return 1;  // weekday
+            return 1; // weekday
         } else {
             return 2; // weekend
         }
     }
 
-
 }
-
-

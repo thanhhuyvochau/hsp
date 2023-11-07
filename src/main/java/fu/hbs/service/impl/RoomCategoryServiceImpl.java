@@ -60,4 +60,14 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
     public List<RoomCategories> findAvailableRoomCategories(int numberOfPeople) {
         return roomCategoriesRepository.findByNumberPersonGreaterThanEqual(numberOfPeople);
     }
+
+    @Override
+    public RoomCategories getRoomCategoryId(Long id) {
+        return roomCategoriesRepository.findByRoomCategoryId(id);
+    }
+
+    @Override
+    public RoomCategories deleteByRoomCategoryId(Long id) {
+        return roomCategoriesRepository.deleteByRoomCategoryId(id);
+    }
 }
