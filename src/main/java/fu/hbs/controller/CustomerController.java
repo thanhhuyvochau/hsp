@@ -18,11 +18,12 @@ import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
-import fu.hbs.entities.CategoryRoomPrice;
-import fu.hbs.entities.Room;
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.User;
+import fu.hbs.entities.*;
+import fu.hbs.repository.HotelBookingRepository;
 import fu.hbs.service.dao.*;
+import fu.hbs.service.dao.RoomService;
+import fu.hbs.service.impl.VNPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -67,12 +69,17 @@ public class CustomerController {
     private CategoryRoomPriceService categoryRoomPriceService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private VNPayService vnPayService;
+    @Autowired
+    private VnpayTransactionsService vnpayTransactionsService;
+
 
     @GetMapping("/customer/viewBooking")
     public String booking(Authentication authentication, Model model) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
-        List<ViewHotelBookingDTO> hotelBookings = hotelBookingService.findAllByUserId(user.getUserId());
+        List<ViewHotelBookingDTO> hotelBookings = hotelBookingService.findAllByUserIdAndSameTime(user.getUserId());
         model.addAttribute("hotelBookings", hotelBookings);
         return "customer/bookingHistory";
     }
@@ -84,16 +91,14 @@ public class CustomerController {
 
             Model model, HttpSession session) {
 
-//        System.out.println(totalRoom);
         CreateBookingDTO createBookingDTO = new CreateBookingDTO();
         Map<Long, Integer> roomCategoryMap = new HashMap<>();
         Integer number = (Integer) session.getAttribute("numberOfPeople");
-        String checkIn = (String) session.getAttribute("defaultDate");
-        String checkOut = (String) session.getAttribute("defaultDate1");
+        LocalDate checkIn = (LocalDate) session.getAttribute("defaultDate");
+        LocalDate checkOut = (LocalDate) session.getAttribute("defaultDate1");
 
-        LocalDate inputDate = LocalDate.parse(checkIn);
-        LocalDate inputDate1 = LocalDate.parse(checkOut);
-
+//        LocalDate inputDate = LocalDate.parse(checkIn);
+//        LocalDate inputDate1 = LocalDate.parse(checkOut);
 
         // Lấy ra các Loại phòng và số phòng còn trống
         if (roomCategoryNames.size() == selectedRoomCategories.size()) {
@@ -105,19 +110,25 @@ public class CustomerController {
                 }
             }
         }
+        if (roomCategoryMap.isEmpty()) {
+            model.addAttribute("error", "Bạn chưa đặt phòng nào");
+            return "customer/errorBooking";
+        }
+
+
         List<Room> rooms = new ArrayList<>();
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            rooms = roomService.countRoomAvaliableByCategory(category, inputDate, inputDate1);
+            rooms = roomService.countRoomAvaliableByCategory(category, checkIn, checkOut);
             roomCategoriesList.add(roomCategoryService.getRoomCategoryId(category));
         }
 
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            List<Room> roomsByCategory = roomService.countRoomAvaliableByCategory(category, inputDate, inputDate1);
+            List<Room> roomsByCategory = roomService.countRoomAvaliableByCategory(category, checkOut, checkOut);
             rooms.addAll(roomsByCategory);
         }
 
@@ -128,7 +139,7 @@ public class CustomerController {
             List<Room> roomsWithSameCategory = entry.getValue();
 
         }
-        System.out.println(roomMap);
+
 
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
 
@@ -137,7 +148,7 @@ public class CustomerController {
             categoryRoomPrices.add(categoryRoomPrice);
         }
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(inputDate, inputDate1);
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkOut, checkOut);
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
@@ -153,43 +164,124 @@ public class CustomerController {
             Integer roomCount = entry1.getValue();
 
             if (totalPriceByCategoryId.containsKey(category)) {
-                // Nếu khóa tồn tại trong map 2, bạn có thể lấy giá trị từ cả hai map
+                // Nếu khóa tồn tại trong map 2, lấy giá trị từ cả hai map
                 BigDecimal totalPrice1 = totalPriceByCategoryId.get(category);
 
                 BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomCount));
 
                 total_Price = total_Price.add(totalPrice2);
-                // Sử dụng category, roomCount và totalPrice theo mong muốn
+
             }
         }
 
 
         createBookingDTO.setRoomCategoriesList(roomCategoriesList);
         createBookingDTO.setTotalPrice(total_Price);
-        createBookingDTO.setCheckIn(LocalDate.parse(checkIn));
-        createBookingDTO.setCheckOut(LocalDate.parse(checkOut));
+        createBookingDTO.setCheckIn(checkIn);
+        createBookingDTO.setCheckOut(checkOut);
+        createBookingDTO.setRoomCategoryMap(roomCategoryMap);
 
-        model.addAttribute("checkIn", inputDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
-        model.addAttribute("checkOut", inputDate1.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
+        model.addAttribute("checkIn", checkIn.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
+        model.addAttribute("checkOut", checkOut.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
         model.addAttribute("createBookingDTO", createBookingDTO);
         model.addAttribute("roomCategoryMap", roomCategoryMap);
         model.addAttribute("categoryRoomPrices", categoryRoomPrices);
         model.addAttribute("totalPriceByCategoryId", totalPriceByCategoryId);
         model.addAttribute("roomMap", roomMap);
-
-
+        session.setAttribute("createBookingDTO", createBookingDTO);
         return "customer/createBooking";
     }
 
+    @PostMapping("/room/addBooking")
+    public String submidOrder(@RequestParam("amount") String orderTotal,
+                              @RequestParam("orderInfo") String orderInfo, Model model) {
+        model.addAttribute("orderTotal", formatString(orderTotal));
+        model.addAttribute("orderInfo", orderInfo);
 
-    @GetMapping("/room/deleteBooking/{roomCategoryId}")
-    public String deleteBooking(@RequestParam Long categoryId) {
-        roomCategoryService.deleteByRoomCategoryId(categoryId);
-        return "redirect:/room/addBooking";
+        return "customer/orderCustomer";
+    }
+
+    @GetMapping("/vnpay-payment")
+    public String GetMapping(HttpServletRequest request, Model model, Authentication authentication, HttpSession session) {
+        int paymentStatus = vnPayService.orderReturn(request);
+        VnpayTransactions vnpayTransactions = new VnpayTransactions();
+        HotelBooking hotelBooking = new HotelBooking();
+        CreateBookingDTO createBookingDTO = (CreateBookingDTO) session.getAttribute("createBookingDTO");
+        List<RoomCategories> roomCategories = createBookingDTO.getRoomCategoriesList();
+        Map<Long, Integer> roomCategoryMap = createBookingDTO.getRoomCategoryMap();
+
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String paymentTime = request.getParameter("vnp_PayDate");
+        String transactionId = request.getParameter("vnp_TransactionNo");
+        String totalPrice = request.getParameter("vnp_Amount");
+
+        model.addAttribute("orderId", orderInfo);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("paymentTime", paymentTime);
+        model.addAttribute("transactionId", transactionId);
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUserbyEmail(userDetails.getUsername());
+        HotelBooking newHotelBooking = null;
+        for (int i = 0; i < roomCategories.size(); i++) {
+            hotelBooking.setUserId(user.getUserId());
+            hotelBooking.setRoomCategoryId(roomCategories.get(i).getRoomCategoryId());
+            hotelBooking.setCheckIn(Date.valueOf(createBookingDTO.getCheckIn()));
+            hotelBooking.setCheckOut(Date.valueOf(createBookingDTO.getCheckOut()));
+            hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice());
+            for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+                Long key = entry.getKey();
+                Integer value = entry.getValue();
+
+                if (key == roomCategories.get(i).getRoomCategoryId()) {
+                    hotelBooking.setTotalRoom(value);
+                }
+            }
+            hotelBooking.setStatus("Chưa check-in");
+            newHotelBooking = hotelBookingService.save(hotelBooking);
+        }
+
+
+        if (paymentStatus == 1) {
+            vnpayTransactions.setTransactionId(transactionId);
+            vnpayTransactions.setHotelBookingId(newHotelBooking.getHotelBookingId());
+//            vnpayTransactions.setCreatedDate(Date.valueOf(paymentTime));
+            vnpayTransactionsService.save(vnpayTransactions);
+            return "customer/ordersuccess";
+        }
+        return "customer/orderfail";
+    }
+
+    @PostMapping("/submitOrder")
+    public String submidOrder(@RequestParam("amount") int orderTotal,
+                              @RequestParam("orderInfo") String orderInfo,
+                              HttpServletRequest request) {
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+        return "redirect:" + vnpayUrl;
+    }
+
+
+    public String formatString(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // Remove trailing zeros and decimal point
+        String formattedString = input.replaceAll("0*$", "");
+
+        // Remove decimal point if it's the last character
+        if (formattedString.endsWith(".")) {
+            formattedString = formattedString.substring(0, formattedString.length() - 1);
+        }
+
+        return formattedString;
     }
 
     // Hàm tính tổng giá cho một CategoryRoomPrice dựa trên dateInfoList
-    public BigDecimal calculateTotalForCategory(CategoryRoomPrice cpr, List<DateInfoCategoryRoomPriceDTO> dateInfoList) {
+    public BigDecimal calculateTotalForCategory(CategoryRoomPrice
+                                                        cpr, List<DateInfoCategoryRoomPriceDTO> dateInfoList) {
         BigDecimal totalForCategory = BigDecimal.ZERO;
 
         for (int i = 0; i < dateInfoList.size(); i++) {
@@ -213,9 +305,14 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/bookingDetails")
-    public String bookingDetails(Model model) {
+    public String bookingDetails(Model model, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUserbyEmail(userDetails.getUsername());
+
+        model.addAttribute("user", user);
         return "customer/bookingDetail";
     }
+
 
     private List<DateInfoCategoryRoomPriceDTO> processDateInfo(LocalDate startDate, LocalDate endDate) {
         List<DateInfoCategoryRoomPriceDTO> dateInfoList = new ArrayList<>();

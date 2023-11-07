@@ -25,6 +25,7 @@
             <h6>Ngày nhận phòng</h6>
             <input type="date" name="checkIn" class="form-control" placeholder="Date" id="checkInDate"
                    th:value="${session.defaultDate}" required>
+
         </div>
         <div class="col-lg mb-3 ">
             <h6>Ngày trả phòng</h6>
@@ -46,12 +47,18 @@
             <h6></h6>
             <button type="submit" class="main-btn rounded-2 px-lg-3 mt-3">Tìm Phòng</button>
         </div>
+
+        <!-- Thêm các trường ẩn để lưu trữ các giá trị -->
+        <input type="hidden" id="checkIn" th:value="${session.defaultDate}">
+        <input type="hidden" id="checkOut" th:value="${session.defaultDate1}">
+        <input type="hidden" id="numberOfPeople" th:value="${session.numberOfPeople}">
+
     </form>
 
 
 </div>
 
-<!--<script src="/assets/js/searchRoom.js"></script>-->
+<script src="/assets/js/searchRoom.js"></script>
 
 </body>
 </html>

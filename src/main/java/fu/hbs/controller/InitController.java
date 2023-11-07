@@ -46,19 +46,17 @@ public class InitController {
         LocalDate nextDay = today.plusDays(1);
         String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String nextDayString = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        // Đặt giá trị mặc định cho trường ngày
+//        Đặt giá trị mặc định cho trường ngày
         session.setAttribute("defaultDate", todayString);
         session.setAttribute("defaultDate1", nextDayString);
         return "homepage";
     }
 
     @RequestMapping("/room/reversion")
-    public String redirectToLongURL() {
-        LocalDate today = LocalDate.now();
-        LocalDate nextDay = today.plusDays(1);
-        String todayString = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String nextDayString = nextDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        return "redirect:/room/search?checkIn=" + todayString + "&checkOut=" + nextDayString + "&numberOfPeople=";
+    public String redirectToLongURL(HttpSession session) {
+        LocalDate checkIn = (LocalDate) session.getAttribute("defaultDate");
+        LocalDate checkOut = (LocalDate) session.getAttribute("defaultDate1");
+        return "redirect:/room/search?checkIn=" + checkIn + "&checkOut=" + checkOut + "&numberOfPeople=";
 
     }
 

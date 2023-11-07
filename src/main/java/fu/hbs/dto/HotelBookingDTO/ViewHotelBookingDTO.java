@@ -25,12 +25,11 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class ViewHotelBookingDTO {
-    private Long hotelBookingId;
     private int totalRoom;
     private String status;
+    private String invoiceId;
     private User user;
-    private RoomCategories roomCategoriesList;
-
+    private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;
     private Date checkIn;
     private Date checkOut;

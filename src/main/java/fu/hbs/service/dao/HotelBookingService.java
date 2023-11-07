@@ -3,6 +3,7 @@ package fu.hbs.service.dao;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
+import fu.hbs.entities.HotelBooking;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -15,4 +16,9 @@ public interface HotelBookingService {
 
 
     public CreateBookingDTO createBooking(Long categoryId, LocalDate checkIn, LocalDate checkOut);
+
+    List<ViewHotelBookingDTO> findAllByUserIdAndSameTime(Long id);
+
+
+    HotelBooking save(HotelBooking hotelBooking);
 }

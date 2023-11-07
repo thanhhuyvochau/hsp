@@ -80,13 +80,10 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
             roomCategories1 = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
-            viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
-            viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
             viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
             viewHotelBookingDTO.setUser(user);
-            viewHotelBookingDTO.setRoomCategoriesList(roomCategories1);
             viewHotelBookingDTOList.add(viewHotelBookingDTO);
         }
         System.out.println(viewHotelBookingDTOList);
@@ -179,6 +176,35 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(categoryId, checkIn, checkOut);
 
         return createBookingDTO;
+    }
+
+    @Override
+    public List<ViewHotelBookingDTO> findAllByUserIdAndSameTime(Long id) {
+        List<HotelBooking> hotelBookings = hotelBookingRepository.findByUserIdSameTime(id);
+        List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
+        List<RoomCategories> roomCategoriesList = new ArrayList<>();
+        RoomCategories roomCategories = new RoomCategories();
+        User user = new User();
+
+        for (int i = 0; i < hotelBookings.size(); i++) {
+            ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
+            roomCategories = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
+            roomCategoriesList.add(roomCategories);
+            user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
+            viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
+            viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
+            viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setUser(user);
+            viewHotelBookingDTO.setRoomCategoriesList(roomCategoriesList);
+            viewHotelBookingDTOList.add(viewHotelBookingDTO);
+        }
+        System.out.println(viewHotelBookingDTOList);
+        return viewHotelBookingDTOList;
+    }
+
+    @Override
+    public HotelBooking save(HotelBooking hotelBooking) {
+        return hotelBookingRepository.save(hotelBooking);
     }
 
     /**

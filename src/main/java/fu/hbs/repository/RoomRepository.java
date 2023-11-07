@@ -25,21 +25,26 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByRoomCategoryId(Long roomCategoryId);
 
-    @Query(value = "SELECT r.*\n" + "FROM room r \n"
-            + "LEFT JOIN room_categories rc ON rc.room_category_id = r.room_category_id\n"
-            + "LEFT JOIN hotel_booking br ON r.room_id = br.room_id\n" + "   AND (br.check_in BETWEEN ?1 AND ?2\n"
-            + "	AND br.check_out BETWEEN ?1 AND ?2 ) \n" + "WHERE rc.number_person >= ?3\n"
-            + "   AND br.room_id IS NULL", nativeQuery = true)
+    @Query(value = "SELECT r.*\n" +
+            "FROM room r\n" +
+            "LEFT JOIN room_categories rc ON rc.room_category_id = r.room_category_id\n" +
+            "WHERE r.room_id NOT IN (\n" +
+            "SELECT brd.room_id\n" +
+            "FROM booking_room_details brd\n" +
+            "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
+            "WHERE ((hb.check_in BETWEEN ?1 AND ?2\n" +
+            "OR hb.check_out BETWEEN ?1 AND ?2)))\n" +
+            "AND rc.number_person >= ?3", nativeQuery = true)
     List<Room> getAllRoom(Date checkIn, Date checkOut, int numberPerson);
 
     @Query(value = "SELECT r.*\n" +
             "FROM room r\n" +
             "WHERE r.room_category_id = ?1\n" +
-            "AND r.room_id NOT IN (\n" +
-            "    SELECT br.room_id\n" +
-            "    FROM hotel_booking br\n" +
-            "    WHERE (br.check_in BETWEEN ?1 AND ?2 AND br.check_out BETWEEN ?1 AND ?2)\n" +
-            ")", nativeQuery = true)
+            "AND r.room_id NOT IN (SELECT brd.room_id\n" +
+            "FROM booking_room_details brd\n" +
+            "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
+            "WHERE ((hb.check_in BETWEEN ?2 AND ?3 \n" +
+            "OR hb.check_out BETWEEN ?2 AND ?3)))", nativeQuery = true)
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 }
