@@ -60,11 +60,10 @@
                 <thead class="table-dark" id="thead">
                 <tr id="theadtr">
                     <th scope="col">STT</th>
-                    <th scope="col">Mã đặt phòng</th>
+                    <!--                    <th scope="col">Mã đặt phòng</th>-->
                     <th scope="col">Tên khách hàng</th>
                     <th scope="col">Ngày nhận phòng</th>
                     <th scope="col">Ngày trả phòng</th>
-                    <th scope="col">Loại phòng</th>
                     <th scope="col">Số phòng đặt</th>
                     <th scope="col">Trạng thái</th>
                     <th scope="col">Chi tiết</th>
@@ -73,14 +72,10 @@
                 <tbody>
                 <tr th:each="hbs,iterStat  : ${hotelBookings}">
                     <th scope="row" th:text="${iterStat.count}"></th>
-                    <td th:text="${hbs.getInvoiceId()}"></td>
                     <td th:text="${hbs.getUser().getName()}"></td>
                     <td th:text="${hbs.getCheckIn()}"></td>
                     <td th:text="${hbs.getCheckOut()}"></td>
-                    <td th:each="cate : ${hbs.getRoomCategoriesList()}" th:text="${cate}">
-
-                    </td>
-                    <!--                    <td th:text="${hbs.getTotalRoom()}"></td>-->
+                    <td th:text="${hbs.getTotalRoom()}"></td>
                     <td th:text="${hbs.getStatus()}" class="status-column"></td>
                     <td>
                         <button class="btn btn-dark"><a th:href="@{/customer/bookingDetails}"> Chi tiết</a></button>

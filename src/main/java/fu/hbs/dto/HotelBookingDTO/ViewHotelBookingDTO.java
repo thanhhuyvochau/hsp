@@ -27,7 +27,6 @@ import java.util.List;
 public class ViewHotelBookingDTO {
     private int totalRoom;
     private String status;
-    private String invoiceId;
     private User user;
     private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;

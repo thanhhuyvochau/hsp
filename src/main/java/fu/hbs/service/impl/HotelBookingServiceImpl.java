@@ -180,7 +180,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
     @Override
     public List<ViewHotelBookingDTO> findAllByUserIdAndSameTime(Long id) {
-        List<HotelBooking> hotelBookings = hotelBookingRepository.findByUserIdSameTime(id);
+        List<HotelBooking> hotelBookings = hotelBookingRepository.findAllByUserId(id);
         List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
         RoomCategories roomCategories = new RoomCategories();
@@ -194,6 +194,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
             viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
             viewHotelBookingDTO.setUser(user);
             viewHotelBookingDTO.setRoomCategoriesList(roomCategoriesList);
             viewHotelBookingDTOList.add(viewHotelBookingDTO);

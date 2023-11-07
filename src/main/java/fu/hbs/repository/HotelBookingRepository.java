@@ -23,10 +23,7 @@ import java.util.List;
 public interface HotelBookingRepository extends JpaRepository<HotelBooking, Long> {
     List<HotelBooking> findByUserId(Long id);
 
-    @Query(value = "SELECT invoice_id, user_id, check_in, check_out, GROUP_CONCAT(DISTINCT room_category_id) AS room_categories\n" +
-            "FROM hotel_booking\n" +
-            "WHERE user_id = ?1\n" +
-            "GROUP BY invoice_id, user_id, check_in, check_out", nativeQuery = true)
-    List<HotelBooking> findByUserIdSameTime(Long id);
+    
+    List<HotelBooking> findAllByUserId(Long id);
 
 }
