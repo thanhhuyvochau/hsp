@@ -78,7 +78,7 @@
                             <div class="d-flex me-2 align-items-center">
                                 <i class="far fa-user"> </i>
 
-                                <p th:text="${user.name}">UserId</p>
+                                <p class="mt-4" th:text="${user.name}">UserId</p>
 
 
                             </div>
@@ -89,7 +89,8 @@
 
                         </div>
                         <b th:text="${news.title}">News Title</b>
-                        <p th:text="${news.descriptions}">Description</p>
+                        <p></p>
+                        <p class="me-5" th:text="${news.descriptions}">Description</p>
                         <a th:href="@{/news-details(newId=${news.newId})}">Đọc thêm <i
                                 class='fas fa-angle-right'></i> </a>
                     </div>
