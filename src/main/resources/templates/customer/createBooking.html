@@ -18,7 +18,6 @@
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="/assets/css/customer.css"/>
-    <script src="/assets/js/customer.js"></script>
     <link rel="stylesheet" href="/assets/css/header-footer.css">
     <link rel="stylesheet" href="/assets/css/header-footer-style.css">
 </head>
@@ -35,10 +34,10 @@
     <div class="row bg-light-subtle border mb-5 m-0 shadow">
         <div class="p-3">
             <p class="fw-bold">
-                Nhận phòng: <span th:text="${checkIn}+' Vào lúc: 14h'"></span>
+                Nhận phòng: <span class="fw-normal" th:text="${checkIn}+' Vào lúc: 14:00'"></span>
             </p>
             <p class="fw-bold">
-                Trả phòng: <span th:text="${checkOut} +' Trả phòng: 12h'"></span>
+                Trả phòng: <span class="fw-normal" th:text="${checkOut} +' Trả phòng: 12:00'"></span>
             </p>
             <a class="text-decoration-none" th:href="@{/room/reversion}">
                 Bạn muốn thay đổi lịch trình?
@@ -48,11 +47,6 @@
     <h4>Chi tiết đặt phòng</h4>
     <div th:if="${error != null and error != ''}" class="alert alert-warning" role="alert">
         <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
-
-        <div class="pb-5 text-center"><a class="text-decoration-none" th:href="@{/room/reversion}">
-            Trở lại.
-        </a>
-        </div>
     </div>
 
 
@@ -68,22 +62,21 @@
                 <!--                <input name="RoomCategoryId" hidden th:value="${cate.getRoomCategoryId()}">-->
                 <p class="text-danger m-0 fw-bold">ƯU ĐÃI ĐẶC BIỆT: </p>
                 <p class="">Bao gồm bữa sáng</p>
-                <P class="fw-bold mb-0">Chi tiết:</P> <span
-                    class="fw-normal"><span>1</span> phòng, <span>1</span> đêm,
-          <span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
-          trong giá.</span>
+                <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span>1</span> phòng,
+							<span>1</span> đêm,
+							<span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
+							trong giá.</span>
 
 
             </div>
             <div class="col-2 p-3 align-content-between align-middle">
-                <p class="mb-0">Số lượng phòng</p>
-                <p class=" mb-3" aria-label="Select example">
+                <p class="mb-0 fw-bold">Số lượng phòng</p>
+                <p class=" mb-3">
                     <th:block th:each="entry : ${roomCategoryMap}">
                         <th:block th:if="${entry.key == cate.roomCategoryId}">
 
                             <th:block th:each="roomCount : ${entry.value}">
-                            <span th:value="${roomCount}" th:utext="${roomCount}"
-                            ></span>
+                                <span th:value="${roomCount}" th:utext="${roomCount}"></span>
 
 
                             </th:block>
@@ -92,19 +85,14 @@
                     </th:block>
                 </p>
 
-                <p class="mb-0">Số lượng khách
+                <p class="mb-0 fw-bold">Số lượng khách
                     <i class="bi bi-exclamation-circle-fill" data-bs-container="body" data-bs-toggle="popover"
                        data-bs-placement="top"
                        data-bs-content="Từ 0 đến 12 tuổi được miễn phí nếu sử dụng giường có sẵn."
                        data-bs-trigger="hover"></i>
                 </p>
 
-                <select class="form-select" aria-label="Default select example">
-                    <option value="1">2 người lớn</option>
-                    <option value="2">1 người lớn, 1 trẻ em</option>
-                    <option value="3">2 người lớn, 1 trẻ em</option>
-                    <option value="4">1 người lớn</option>
-                </select>
+                <p>2</p>
             </div>
 
             <div class="col p-3 text-end">
@@ -114,12 +102,14 @@
                             <th:block th:each="entry : ${roomCategoryMap}">
                                 <th:block th:if="${entry1.getKey() == cate.getRoomCategoryId() }">
                                     <th:block th:if="${entry.getKey()== entry1.getKey()}">
-                                        <p class=" fw-bold">Giá từng phòng: <span class="fw-normal"
-                                                                                  th:text="${#numbers.formatDecimal(entry1.getValue(), 0, 'COMMA', 0, 'POINT') + ' VND/Phòng'}"></span>
+                                        <p class="mb-0 fw-bold">Giá từng phòng
                                         </p>
-                                        <p class="fw-bold">Tổng giá phòng: <span class="fw-normal"
-                                                                                 th:text="${#numbers.formatDecimal(entry1.getValue().multiply(entry.getValue()), 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                                        <p class="fw-normal"
+                                           th:text="${#numbers.formatDecimal(entry1.getValue(), 0, 'COMMA', 0, 'POINT') + ' VND/Đêm'}"></p>
+                                        <p class="mb-0 fw-bold">Tổng giá phòng
                                         </p>
+                                        <p class="fw-normal"
+                                           th:text="${#numbers.formatDecimal(entry1.getValue().multiply(entry.getValue()), 0, 'COMMA', 0, 'POINT') + ' VND'}"></p>
 
                                     </th:block>
                                 </th:block>
@@ -136,14 +126,17 @@
             <div class="col py-5 d-flex flex-column">
                 <h4>Chính sách của chúng tôi</h4>
                 <div class="bg-light-subtle border shadow p-2 flex-grow-1">
-                    <p class="fw-bold p-3 m-0">Huỷ: <span class="fw-normal">Nếu hủy hoặc thay đổi trước ngày nhận phòng, sẽ trừ 20% số tiền đặt cọc.</span>
+                    <p class="fw-bold p-3 m-0">Huỷ: <span class="fw-normal">Nếu hủy hoặc thay đổi trước ngày
+									nhận phòng, sẽ trừ 10% tổng hoá đơn phải thanh toán.</span>
                     </p>
-                    <p class="fw-bold p-3 m-0">Thanh toán: <span class="fw-normal">Thanh toán toàn bộ hoặc đặt cọc 50% giá trị tiền đặt phòng.</span>
+                    <p class="fw-bold p-3 m-0">Thanh toán: <span class="fw-normal">Thanh toán toàn bộ hoặc đặt
+									cọc 50% giá trị tiền đặt phòng.</span>
                     </p>
                     <p class="fw-bold p-3 m-0">Bữa ăn: <span class="fw-normal">Bữa sáng đã bao gồm.</span></p>
                     <p class="fw-bold p-3 m-0">Nhận phòng: <span class="fw-normal">14:00.</span></p>
                     <p class="fw-bold p-3 m-0">Trả phòng: <span class="fw-normal">12:00.</span></p>
-                    <p class="fw-bold p-3 m-0">Chính sách khác: <span class="fw-normal">Giá phòng 2 người lớn và 1 trẻ em dưới 12 tuổi. Trẻ em từ 12 tuổi trở lên tính như người lớn.</span>
+                    <p class="fw-bold p-3 m-0">Chính sách khác: <span class="fw-normal">Giá phòng 2 người lớn và
+									1 trẻ em dưới 12 tuổi. Trẻ em từ 12 tuổi trở lên tính như người lớn.</span>
                     </p>
 
                 </div>
@@ -151,25 +144,21 @@
             <div class="col py-5 ps-5 d-flex flex-column">
                 <h4>Giá tiền</h4>
 
-                <div class="bg-light-subtle border shadow p-2 mb-3 text-end flex-grow-1"
-                >
-                    <p class="fw-bold p-3 m-0"
-                    >
-                        Tổng Giá phòng <span id="" class="fw-normal text-end"
-                                             th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"
-                    ></span>
+                <div class="bg-light-subtle border shadow p-2 mb-3 text-end flex-grow-1">
+                    <p class="fw-bold p-3 m-0">
+                        Tổng Giá phòng: <span id="" class="fw-normal text-end"
+                                              th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
                     </p>
-                    <p class="fw-bold border-bottom p-3 m-0">Thuế (10%) <span id="taxAmount"
-                                                                              class="fw-normal text-end"
-                                                                              th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(0.1) , 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                    <p class="fw-bold border-bottom p-3 m-0">Thuế (10%): <span id="taxAmount"
+                                                                               class="fw-normal text-end"
+                                                                               th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(0.1) , 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
                     </p>
-                    <p class="fw-bold p-3 m-0">Tổng giá <span id="totalPrice" class="fw-normal text-end"
-                                                              th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(1.1)  , 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                    <p class="fw-bold p-3 m-0">Tổng giá: <span id="totalPrice" class="fw-normal text-end"
+                                                               th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(1.1)  , 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
 
                     </p>
-                    <input hidden
-                           th:value="${createBookingDTO.totalPrice.multiply(1.1)}"
-                           name="amount" id="amount"/>
+                    <input hidden th:value="${createBookingDTO.totalPrice.multiply(1.1)}" name="amount"
+                           id="amount"/>
                 </div>
 
 
@@ -190,77 +179,88 @@
                         </label>
                         <div class="form-check mb-4">
                             <input class="form-check-input" type="radio" name="paymentType" id="fullPayment"
-                                   value="full"
-                                   checked>
+                                   value="full" checked>
                         </div>
                     </div>
                     <p class="fw-bold p-3 m-0 border-top text-end">
-                        Số tiền thanh toán <span id="paymentAmount" class="fw-normal text-end"
-                                                 th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(1.1)  , 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                        Số tiền thanh toán: <span id="paymentAmount" class="fw-normal text-end"
+                                                  th:text="${#numbers.formatDecimal(createBookingDTO.totalPrice.multiply(1.1), 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
                     </p>
                 </div>
             </div>
-            <div th:if="${roomCategoryMap != null}">
-                <div class="pb-5 text-center"><input type="submit" class="main-btn mt-2" value="Thanh Toán"></input>
-                </div>
-                <div class="pb-5 text-center"><a class="text-decoration-none" th:href="@{/room/reversion}">
-                    Trở lại.
-                </a>
+
+
+            <div th:if="${session.accountDetail == null}">
+                <div id="popup" class="popup">
+                    <div class="popup-content">
+                        <button id="closePopupBtn" class="close btn-close "></button>
+                        <!-- Nội dung "Thông tin khách hàng" ở đây -->
+                        <h4> Thông tin khách hàng</h4>
+                        <form class="row g-3 p-3">
+                            <div class="col">
+                                <label for="inputName" class="form-label">Họ và tên*</label>
+                                <input type="text" class="form-control" id="inputName">
+                            </div>
+                            <div class="col">
+                                <label for="inputPhone" class="form-label">Điện thoại*</label>
+                                <input type="text" class="form-control" id="inputPhone"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                            <div class="col">
+                                <label for="inputEmail" class="form-label">Email*</label>
+                                <input type="email" class="form-control" id="inputEmail">
+                            </div>
+
+                            <div class="col">
+                                <label for="inputAddress" class="form-label">Địa chỉ*</label>
+                                <input type="text" class="form-control" id="inputAddress">
+                            </div>
+                            <div class="mb-2">
+                                <label for="exampleFormControlTextarea1" class="form-label">Ghi chú (nếu
+                                    có)</label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1"
+                                          rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="gridCheck">
+                                    <label class="form-check-label" for="gridCheck">
+                                        Vui lòng đọc kỹ các điều khoản và đánh dấu vào ô bên cạnh.
+                                    </label>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <button type="submit" class="btn btn-dark">Xác nhận đặt phòng</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
                 </div>
             </div>
 
-    </form>
-    <div th:if="${session.accountDetail == null}">
-        <div id="popup" class="popup">
-            <div class="popup-content">
-                <button id="closePopupBtn" class="close btn-close "></button>
-                <!-- Nội dung "Thông tin khách hàng" ở đây -->
-                <h4> Thông tin khách hàng</h4>
-                <form class="row g-3 p-3">
-                    <div class="col-md-6">
-                        <label for="inputName" class="form-label">Họ và tên*</label>
-                        <input type="text" class="form-control" id="inputName">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="inputPhone" class="form-label">Điện thoại*</label>
-                        <input type="text" class="form-control" id="inputPhone">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="inputEmail" class="form-label">Email*</label>
-                        <input type="email" class="form-control" id="inputEmail">
-                    </div>
+            <div class="row pb-4" th:if="${roomCategoryMap != null}">
 
-                    <div class="col-md-6">
-                        <label for="inputAddress" class="form-label">Địa chỉ*</label>
-                        <input type="text" class="form-control" id="inputAddress">
-                    </div>
-                    <div class="mb-2">
-                        <label for="exampleFormControlTextarea1" class="form-label">Ghi chú (nếu có)</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gridCheck">
-                            <label class="form-check-label" for="gridCheck">
-                                Vui lòng đọc kỹ các điều khoản và đánh dấu vào ô bên cạnh.
-                            </label>
-                        </div>
-                        <div class="mt-2 text-center">
-                            <button type="submit" class="btn btn-dark">Xác nhận đặt phòng</button>
-                        </div>
-                    </div>
-                </form>
+                <div class=" col pb-2 text-end">
+                    <a class="main-btn" th:href="@{/room/reversion}">
+                        Trở lại
+                    </a>
+                </div>
+                <div class=" col pb-2 text-start"><input id="openPopupBtn" type="submit" class="main-btn"
+                                                         value="Tiếp tục"></input>
+                </div>
 
             </div>
         </div>
-    </div>
 
+    </form>
 </div>
+
 </div>
 
 
 <section th:replace="~{footer :: footer}"></section>
 
+<script src="/assets/js/customer.js"></script>
 </body>
 
 </html>
