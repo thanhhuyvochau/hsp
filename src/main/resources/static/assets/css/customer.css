@@ -28,11 +28,6 @@ body {
     font-size: 14px; /* Điều chỉnh kích thước font chữ theo ý muốn */
   }
   
-  /* Thu nhỏ kích thước của phần tử container */
-  .container {
-    max-width: 70%; /* Điều chỉnh độ rộng của container */
-  }
-  
   /* Thu nhỏ h4 */
   h4 {
     font-size: 16px; /* Điều chỉnh kích thước của tiêu đề h4 */
