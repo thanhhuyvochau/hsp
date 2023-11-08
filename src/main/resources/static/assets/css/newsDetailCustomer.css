@@ -7,9 +7,17 @@ h3{
 }
 
 .h7{
-    font-size: medium;
-    color: var(--text-black);
-    line-height: 1.625rem;
-    padding-right: 300px;
-    text-align: justify;
+	text-align: justify;
+	color: grey;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
+a {
+  color: #CC8C18;
+  font-size: 15px;
 }

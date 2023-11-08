@@ -4,33 +4,33 @@
 </html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
-    <title>Tin tức chi tiết</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+	<title>Tin tức chi tiết</title>
 
-    <!-- FAVICON -->
-    <link rel="icon" type="image/png" href="">
+	<!-- FAVICON -->
+	<link rel="icon" type="image/png" href="">
 
-    <!-- Bootstrap5 CND Links -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<!-- Bootstrap5 CND Links -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-    <!-- Link Swiper's CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+	<!-- Link Swiper's CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 
-    <!-- Custom File's Link -->
-    <link rel="stylesheet" href="assets/css/newsDetailCustomer.css">
-    <link rel="stylesheet" href="assets/css/header-footer.css">
-    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+	<!-- Custom File's Link -->
+	<link rel="stylesheet" href="assets/css/newsDetailCustomer.css">
+	<link rel="stylesheet" href="assets/css/header-footer.css">
+	<link rel="stylesheet" href="assets/css/header-footer-style.css">
 
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+		integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"
+		integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
 
 
 </head>
@@ -51,36 +51,40 @@
 				<img th:src="@{'/assets/img/news/' + ${news.image}}" width="1000px" height="700px" />
 			</div>
 			<br>
-			<div class="row m-0">
-				<h2>Danh sách các tin tức khác</h2>
-				<div class="col-md-4 mb-4 mb-lg-0" th:each="otherNews, iteration : ${distinctNews}">
-					<div class="room-item" th:if="${iteration.index < 3}">
-						<img decoding="async" th:src="@{'/assets/img/news/' + ${otherNews.image}}" width="350px" height="200px" class="img-fluid">
-						
-						<div class="text">
-							<b th:text="${news.title}">News Title</b>
-							<p th:text="${news.descriptions}">Description</p>
-							<a th:href="@{'/news-details?newId=' + ${otherNews.newId}}">Đọc thêm <i
-									class='fas fa-angle-right'></i> </a>
+			<div class="row mt-2">
+				<h3 class="text-center">Danh sách các tin tức khác</h3>
+				<hr>
+				<div class="row">
+					<div class="col-lg-4" th:each="otherNews, iteration : ${distinctNews}">
+						<div class="room-item" th:if="${iteration.index < 3}">
+							<div class="image-container text-center"> <!-- Tạo một lớp mới cho container của ảnh -->
+								<img decoding="async" th:src="@{'/assets/img/news/' + ${otherNews.image}}" width="350px"
+									height="200px" class="img-fluid">
+							</div>
+							<div class="text ms-3 me-3 mt-3 mb-3">
+								<b class="text-dark" th:text="${news.title}">News Title</b>
+								<p class="h7 mt-3" th:text="${news.descriptions}">Description</p>
+								<a th:href="@{'/news-details?newId=' + ${otherNews.newId}}">Đọc thêm <i
+										class='fas fa-angle-right'></i> </a>
+							</div>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
 
 	<section th:replace="~{footer :: footer}"></section>
-<!-- Bootstrap 5 JS CDN Links -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+	<!-- Bootstrap 5 JS CDN Links -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
 
-<!-- Swiper JS -->
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<!-- Swiper JS -->
+	<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-<!-- Custom Js Link -->
-<script src="assets/js/main.js"></script>
-<script src="assets/js/aos.js"></script>
-"
+	<!-- Custom Js Link -->
+	<script src="assets/js/main.js"></script>
+	<script src="assets/js/aos.js"></script>
+	"
 </body>
