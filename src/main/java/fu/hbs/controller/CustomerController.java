@@ -49,13 +49,10 @@ import java.util.stream.Collectors;
 public class CustomerController {
     @Value("${app.holidays.tetDuongLich}")
     private String tetDuongLichConfig;
-
     @Value("${app.holidays.ngayThongNhatDatNuoc}")
     private String ngayThongNhatDatNuocConfig;
-
     @Value("${app.holidays.ngayQuocTeLaoDong}")
     private String ngayQuocTeLaoDongConfig;
-
     @Value("${app.holidays.ngayQuocKhanh}")
     private String ngayQuocKhanhConfig;
     @Autowired
@@ -64,7 +61,6 @@ public class CustomerController {
     private HotelBookingService hotelBookingService;
     @Autowired
     private RoomCategoryService roomCategoryService;
-
     @Autowired
     private CategoryRoomPriceService categoryRoomPriceService;
     @Autowired
@@ -73,7 +69,8 @@ public class CustomerController {
     private VNPayService vnPayService;
     @Autowired
     private VnpayTransactionsService vnpayTransactionsService;
-
+    @Autowired
+    BookingRoomDetailsService bookingRoomDetailsService;
 
     @GetMapping("/customer/viewBooking")
     public String booking(Authentication authentication, Model model) {
@@ -205,10 +202,12 @@ public class CustomerController {
     public String GetMapping(HttpServletRequest request, Model model, Authentication authentication, HttpSession session) {
         int paymentStatus = vnPayService.orderReturn(request);
         VnpayTransactions vnpayTransactions = new VnpayTransactions();
-        HotelBooking hotelBooking = new HotelBooking();
+
         CreateBookingDTO createBookingDTO = (CreateBookingDTO) session.getAttribute("createBookingDTO");
         List<RoomCategories> roomCategories = createBookingDTO.getRoomCategoriesList();
         Map<Long, Integer> roomCategoryMap = createBookingDTO.getRoomCategoryMap();
+
+        List<BookingRoomDetails> bookingRoomDetailsList = new ArrayList<>();
 
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
@@ -224,26 +223,52 @@ public class CustomerController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUserbyEmail(userDetails.getUsername());
         HotelBooking newHotelBooking = null;
-        for (int i = 0; i < roomCategories.size(); i++) {
-            hotelBooking.setUserId(user.getUserId());
-            hotelBooking.setRoomCategoryId(roomCategories.get(i).getRoomCategoryId());
-            hotelBooking.setCheckIn(Date.valueOf(createBookingDTO.getCheckIn()));
-            hotelBooking.setCheckOut(Date.valueOf(createBookingDTO.getCheckOut()));
-            hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice());
-            for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
-                Long key = entry.getKey();
-                Integer value = entry.getValue();
+        int totalRoom = 0;
 
-                if (key == roomCategories.get(i).getRoomCategoryId()) {
-                    hotelBooking.setTotalRoom(value);
+
+        HotelBooking hotelBooking = new HotelBooking();
+        hotelBooking.setUserId(user.getUserId());
+        hotelBooking.setCheckIn(Date.valueOf(createBookingDTO.getCheckIn()));
+        hotelBooking.setCheckOut(Date.valueOf(createBookingDTO.getCheckOut()));
+        hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice());
+        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+            Integer value = entry.getValue();
+            totalRoom += value;
+        }
+        hotelBooking.setTotalRoom(totalRoom);
+        hotelBooking.setStatus("Chưa check-in");
+        newHotelBooking = hotelBookingService.save(hotelBooking);
+
+
+        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+            Long categoryId = entry.getKey();
+            Integer roomCount = entry.getValue();
+            List<Room> rooms = roomService.countRoomAvaliableByCategory(categoryId, newHotelBooking.getCheckIn().toLocalDate(), newHotelBooking.getCheckOut().toLocalDate());
+
+            // Khai báo biến đếm số lần đã thêm phòng
+            int roomsAdded = 0;
+
+            for (Room room : rooms) {
+                if (roomsAdded < roomCount) {
+                    BookingRoomDetails bookingRoomDetails = new BookingRoomDetails();
+                    bookingRoomDetails.setRoomId(room.getRoomId());
+                    bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
+                    bookingRoomDetails.setRoomCategoryId(categoryId);
+                    bookingRoomDetailsService.save(bookingRoomDetails);
+
+                    // Tăng biến đếm số phòng đã thêm
+                    roomsAdded++;
+                } else {
+                    break; // Đã thêm đủ số lượng phòng cần thiết, thoát khỏi vòng lặp
                 }
+                System.out.println("Số lần đã thêm" + roomsAdded);
             }
-            hotelBooking.setStatus("Chưa check-in");
-            newHotelBooking = hotelBookingService.save(hotelBooking);
         }
 
 
         if (paymentStatus == 1) {
+
+
             vnpayTransactions.setTransactionId(transactionId);
             vnpayTransactions.setHotelBookingId(newHotelBooking.getHotelBookingId());
 //            vnpayTransactions.setCreatedDate(Date.valueOf(paymentTime));

@@ -37,7 +37,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query(value = "SELECT r.*\n" +
             "FROM room r\n" +
             "LEFT JOIN room_categories rc ON r.room_category_id = rc.room_category_id\n" +
-            "WHERE r.room_category_id = ?1 AND  r.status_id = 1\n" +
+            "WHERE r.room_category_id = ?1 AND  (r.status_id = 1 OR r.status_id = 2)\n" +
             "AND r.room_id NOT IN (\n" +
             "SELECT brd.room_id\n" +
             "FROM booking_room_details brd\n" +
