@@ -12,6 +12,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
     @Autowired
     BookingRoomRepository bookingRoomRepository;
 
+    
     @Override
     public BookingRoomDetails save(BookingRoomDetails bookingRoomDetails) {
 

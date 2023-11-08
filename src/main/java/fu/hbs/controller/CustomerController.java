@@ -43,6 +43,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Controller
@@ -125,7 +126,7 @@ public class CustomerController {
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            List<Room> roomsByCategory = roomService.countRoomAvaliableByCategory(category, checkOut, checkOut);
+            List<Room> roomsByCategory = roomService.countRoomAvaliableByCategory(category, checkIn, checkOut);
             rooms.addAll(roomsByCategory);
         }
 
@@ -145,7 +146,7 @@ public class CustomerController {
             categoryRoomPrices.add(categoryRoomPrice);
         }
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkOut, checkOut);
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
@@ -167,6 +168,7 @@ public class CustomerController {
                 BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomCount));
 
                 total_Price = total_Price.add(totalPrice2);
+
 
             }
         }
@@ -191,12 +193,13 @@ public class CustomerController {
 
     @PostMapping("/room/addBooking")
     public String submidOrder(@RequestParam("amount") String orderTotal,
-                              @RequestParam("orderInfo") String orderInfo, Model model) {
+                              @RequestParam("orderInfo") String orderInfo, Model model, HttpSession session) {
         model.addAttribute("orderTotal", formatString(orderTotal));
         model.addAttribute("orderInfo", orderInfo);
 
         return "customer/orderCustomer";
     }
+
 
     @GetMapping("/vnpay-payment")
     public String GetMapping(HttpServletRequest request, Model model, Authentication authentication, HttpSession session) {
@@ -236,7 +239,7 @@ public class CustomerController {
             totalRoom += value;
         }
         hotelBooking.setTotalRoom(totalRoom);
-        hotelBooking.setStatus("Chưa check-in");
+        hotelBooking.setStatusId(1L);
         newHotelBooking = hotelBookingService.save(hotelBooking);
 
 
@@ -255,13 +258,13 @@ public class CustomerController {
                     bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
                     bookingRoomDetails.setRoomCategoryId(categoryId);
                     bookingRoomDetailsService.save(bookingRoomDetails);
-
+                    
                     // Tăng biến đếm số phòng đã thêm
                     roomsAdded++;
                 } else {
                     break; // Đã thêm đủ số lượng phòng cần thiết, thoát khỏi vòng lặp
                 }
-                System.out.println("Số lần đã thêm" + roomsAdded);
+
             }
         }
 
@@ -308,8 +311,10 @@ public class CustomerController {
     public BigDecimal calculateTotalForCategory(CategoryRoomPrice
                                                         cpr, List<DateInfoCategoryRoomPriceDTO> dateInfoList) {
         BigDecimal totalForCategory = BigDecimal.ZERO;
+//        int daysBetween = calculateDaysBetween(dateInfoList.getDate(), endDate.getDate());
+        int daysBetween = dateInfoList.size(); //
 
-        for (int i = 0; i < dateInfoList.size(); i++) {
+        for (int i = 0; i < daysBetween; i++) {
             BigDecimal multiplier = BigDecimal.ONE; // Mặc định là 1
 
             switch (dateInfoList.get(i).getDayType()) {
@@ -326,6 +331,7 @@ public class CustomerController {
             BigDecimal price = cpr.getPrice().multiply(multiplier); // Tính giá tiền cho cpr cụ thể
             totalForCategory = totalForCategory.add(price);
         }
+
         return totalForCategory;
     }
 
@@ -393,4 +399,11 @@ public class CustomerController {
             return 2; // weekend
         }
     }
+
+    @GetMapping("/room/invoice")
+    public String getInvoice() {
+
+        return "customer/invoice";
+    }
+
 }

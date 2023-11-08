@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
+import fu.hbs.entities.*;
+import fu.hbs.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,20 +18,6 @@ import org.springframework.stereotype.Service;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
-import fu.hbs.entities.CategoryRoomFurniture;
-import fu.hbs.entities.CategoryRoomPrice;
-import fu.hbs.entities.HotelBooking;
-import fu.hbs.entities.Room;
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.RoomFurniture;
-import fu.hbs.entities.User;
-import fu.hbs.repository.CategoryRoomFurnitureRepository;
-import fu.hbs.repository.CategoryRoomPriceRepository;
-import fu.hbs.repository.HotelBookingRepository;
-import fu.hbs.repository.RoomCategoriesRepository;
-import fu.hbs.repository.RoomFurnitureRepository;
-import fu.hbs.repository.RoomRepository;
-import fu.hbs.repository.UserRepository;
 import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.utils.StringDealer;
 
@@ -62,6 +50,8 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     CategoryRoomPriceRepository categoryRoomPriceRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoomStatusRepository roomStatusRepository;
 
     StringDealer stringDealer;
 
@@ -75,14 +65,15 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
         RoomCategories roomCategories1 = new RoomCategories();
         User user = new User();
-
+        RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
             roomCategories1 = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
+            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
-            viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setStatusId(roomStatus);
             viewHotelBookingDTO.setUser(user);
             viewHotelBookingDTOList.add(viewHotelBookingDTO);
         }
@@ -185,15 +176,16 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
         RoomCategories roomCategories = new RoomCategories();
         User user = new User();
-
+        RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
             roomCategories = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
             roomCategoriesList.add(roomCategories);
+            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
-            viewHotelBookingDTO.setStatus(hotelBookings.get(i).getStatus());
+            viewHotelBookingDTO.setStatusId(roomStatus);
             viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
             viewHotelBookingDTO.setUser(user);
             viewHotelBookingDTO.setRoomCategoriesList(roomCategoriesList);

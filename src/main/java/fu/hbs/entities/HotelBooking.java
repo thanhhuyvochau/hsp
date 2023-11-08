@@ -43,6 +43,7 @@ public class HotelBooking {
     private Long hotelBookingId;
     private Long userId;
     private Long roomCategoryId;
+    private Long statusId;
     private int totalRoom;
     private String name;
     private String email;
@@ -51,6 +52,6 @@ public class HotelBooking {
     private BigDecimal totalPrice;
     private Date checkIn;
     private Date checkOut;
-    private String status;
+
 
 }
