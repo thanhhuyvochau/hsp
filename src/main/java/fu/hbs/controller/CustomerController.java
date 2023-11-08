@@ -239,7 +239,7 @@ public class CustomerController {
             totalRoom += value;
         }
         hotelBooking.setTotalRoom(totalRoom);
-        hotelBooking.setStatusId(1L);
+        hotelBooking.setStatusId((Long) 1L);
         newHotelBooking = hotelBookingService.save(hotelBooking);
 
 
@@ -258,7 +258,7 @@ public class CustomerController {
                     bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
                     bookingRoomDetails.setRoomCategoryId(categoryId);
                     bookingRoomDetailsService.save(bookingRoomDetails);
-                    
+
                     // Tăng biến đếm số phòng đã thêm
                     roomsAdded++;
                 } else {
