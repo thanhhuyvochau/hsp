@@ -4,6 +4,7 @@ import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.entities.HotelBooking;
+import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -21,4 +22,11 @@ public interface HotelBookingService {
 
 
     HotelBooking save(HotelBooking hotelBooking);
+
+    public CreateBookingDTO createBooking(
+            List<Long> roomCategoryNames,
+            List<Integer> selectedRoomCategories,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            HttpSession session);
 }

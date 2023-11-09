@@ -23,4 +23,5 @@ public class CreateBookingDTO {
     private BigDecimal totalPrice;
     private int totalDay;
     private Map<Long, Integer> roomCategoryMap;
+    private Map<Long, BigDecimal> totalPriceByCategoryId;
 }

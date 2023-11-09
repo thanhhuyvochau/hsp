@@ -1,16 +1,15 @@
 package fu.hbs.service.impl;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.entities.*;
 import fu.hbs.repository.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -198,6 +197,146 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     @Override
     public HotelBooking save(HotelBooking hotelBooking) {
         return hotelBookingRepository.save(hotelBooking);
+    }
+
+    @Override
+    public CreateBookingDTO createBooking(List<Long> roomCategoryNames, List<Integer> selectedRoomCategories, LocalDate checkIn, LocalDate checkOut, HttpSession session) {
+        CreateBookingDTO createBookingDTO = new CreateBookingDTO();
+        Map<Long, Integer> roomCategoryMap = new HashMap<>();
+        Integer number = (Integer) session.getAttribute("numberOfPeople");
+
+        // Lấy ra các Loại phòng và số phòng còn trống
+        if (roomCategoryNames.size() == selectedRoomCategories.size()) {
+            for (int i = 0; i < roomCategoryNames.size(); i++) {
+                Long category = roomCategoryNames.get(i);
+                int roomCount = selectedRoomCategories.get(i);
+                if (roomCount > 0) {
+                    roomCategoryMap.put(category, roomCount);
+                }
+            }
+        }
+        if (roomCategoryMap.isEmpty()) {
+            throw new RuntimeException("Bạn chưa đặt phòng nào"); // Handle the case when no rooms are booked
+        }
+
+        List<Room> rooms = new ArrayList<>();
+        List<RoomCategories> roomCategoriesList = new ArrayList<>();
+
+        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+            Long category = entry.getKey();
+            rooms = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
+            roomCategoriesList.add(roomCategoriesRepository.findByRoomCategoryId(category));
+        }
+
+
+        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+            Long category = entry.getKey();
+            List<Room> roomsByCategory = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
+            rooms.addAll(roomsByCategory);
+        }
+
+        // Group rooms by room category
+        Map<Long, List<Room>> roomMap = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
+        for (Map.Entry<Long, List<Room>> entry : roomMap.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
+
+        }
+
+
+        List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
+
+        for (RoomCategories roomCategory : roomCategoriesList) {
+            CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.getCategoryId(roomCategory.getRoomCategoryId());
+            categoryRoomPrices.add(categoryRoomPrice);
+        }
+
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
+        BigDecimal total_Price = BigDecimal.ZERO;
+        Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
+
+        for (CategoryRoomPrice cpr : categoryRoomPrices) {
+            BigDecimal totalForCategory = calculateTotalForCategory(cpr, dateInfoList);
+            totalPriceByCategoryId.put(cpr.getRoomCategoryId(), totalForCategory);
+
+        }
+
+        // Lặp qua map 1 và kiểm tra xem khóa có tồn tại trong map 2 không
+        for (Map.Entry<Long, Integer> entry1 : roomCategoryMap.entrySet()) {
+            Long category = entry1.getKey();
+            Integer roomCount = entry1.getValue();
+
+            if (totalPriceByCategoryId.containsKey(category)) {
+                // Nếu khóa tồn tại trong map 2, lấy giá trị từ cả hai map
+                BigDecimal totalPrice1 = totalPriceByCategoryId.get(category);
+
+                BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomCount));
+
+                total_Price = total_Price.add(totalPrice2);
+
+
+            }
+        }
+
+
+        createBookingDTO.setRoomCategoriesList(roomCategoriesList);
+        createBookingDTO.setTotalPrice(total_Price);
+        createBookingDTO.setCheckIn(checkIn);
+        createBookingDTO.setCheckOut(checkOut);
+        createBookingDTO.setRoomCategoryMap(roomCategoryMap);
+        createBookingDTO.setTotalPriceByCategoryId(totalPriceByCategoryId);
+
+        return createBookingDTO;
+
+
+    }
+
+
+    // Hàm tính tổng giá cho một CategoryRoomPrice dựa trên dateInfoList
+    public BigDecimal calculateTotalForCategory(CategoryRoomPrice
+                                                        cpr, List<DateInfoCategoryRoomPriceDTO> dateInfoList) {
+        BigDecimal totalForCategory = BigDecimal.ZERO;
+//        int daysBetween = calculateDaysBetween(dateInfoList.getDate(), endDate.getDate());
+        int daysBetween = dateInfoList.size(); //
+
+        for (int i = 0; i < daysBetween; i++) {
+            BigDecimal multiplier = BigDecimal.ONE; // Mặc định là 1
+
+            switch (dateInfoList.get(i).getDayType()) {
+                case 2:
+                    multiplier = new BigDecimal("1.5");
+                    break;
+                case 3:
+                    multiplier = new BigDecimal("3");
+                    break;
+                default:
+                    // Mặc định không thay đổi giá
+                    break;
+            }
+            BigDecimal price = cpr.getPrice().multiply(multiplier); // Tính giá tiền cho cpr cụ thể
+            totalForCategory = totalForCategory.add(price);
+        }
+
+        return totalForCategory;
+    }
+
+
+    private List<DateInfoCategoryRoomPriceDTO> processDateInfo(LocalDate startDate, LocalDate endDate) {
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = new ArrayList<>();
+
+
+        LocalDate startDate1 = startDate;
+        LocalDate endDate1 = endDate;
+
+        while (!startDate1.isAfter(endDate1)) {
+            int dayType = getDayType(startDate1);
+
+            dateInfoList.add(new DateInfoCategoryRoomPriceDTO(startDate1, dayType));
+            startDate1 = startDate1.plusDays(1);
+        }
+
+
+        return dateInfoList;
     }
 
     /**

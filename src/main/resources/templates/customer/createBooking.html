@@ -72,7 +72,7 @@
             <div class="col-2 p-3 align-content-between align-middle">
                 <p class="mb-0 fw-bold">Số lượng phòng</p>
                 <p class=" mb-3">
-                    <th:block th:each="entry : ${roomCategoryMap}">
+                    <th:block th:each="entry : ${createBookingDTO.getRoomCategoryMap()}">
                         <th:block th:if="${entry.key == cate.roomCategoryId}">
 
                             <th:block th:each="roomCount : ${entry.value}">
@@ -95,10 +95,10 @@
             </div>
 
             <div class="col p-3 text-end">
-                <th:block th:each="catePrice : ${categoryRoomPrices}">
+                <th:block th:each="catePrice : ${createBookingDTO.getRoomCategoriesList()}">
                     <th:block th:if="${catePrice.getRoomCategoryId()== cate.getRoomCategoryId()}">
-                        <th:block th:each="entry1 : ${totalPriceByCategoryId}">
-                            <th:block th:each="entry : ${roomCategoryMap}">
+                        <th:block th:each="entry1 : ${createBookingDTO.getTotalPriceByCategoryId()}">
+                            <th:block th:each="entry : ${createBookingDTO.getRoomCategoryMap()}">
                                 <th:block th:if="${entry1.getKey() == cate.getRoomCategoryId() }">
                                     <th:block th:if="${entry.getKey()== entry1.getKey()}">
 
@@ -240,7 +240,7 @@
                 </div>
             </div>
 
-            <div class="row pb-4" th:if="${roomCategoryMap != null}">
+            <div class="row pb-4" th:if="${createBookingDTO.getRoomCategoryMap() != null}">
 
                 <div class=" col pb-2 text-end">
                     <a class="main-btn" th:href="@{/room/reversion}">
