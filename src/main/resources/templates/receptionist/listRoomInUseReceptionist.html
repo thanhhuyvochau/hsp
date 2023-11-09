@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Room In Use Receptionist</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/assets/css/checkInReceptionist.css">
+    <script src="/assets/js/main.js"></script>
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
+
+    <div class="wrapper">
+
+        <aside id="sidebar">
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <img src="./images/Orilogo.png" alt="" width="180" height="80"
+                        class="d-inline-block align-text-top">
+                </div>
+                <!-- Sidebar Navigation -->
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header fw-bold">
+                        Lễ tân
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-regular fa-rectangle-list"></i>
+                            Danh sách phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-check-double"></i>
+                            Đặt phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Trả phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-house-user"></i>
+                            Phòng đang sử dụng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-bell"></i>
+                            Đặt trước
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-clipboard"></i>
+                            Lịch sử đặt phòng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="main">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <!-- Button for sidebar toggle -->
+                <button type="button" class="bi bi-person-circle "></button>
+            </nav>
+            <main class="content px-3 py-2">
+                <div class="container-fluid">
+                    <div class="mb-3">
+                        <div class="container shadow min-vh-100">
+                            <h3 class="mb-4">Danh sách phòng đang sử dụng</h3>
+                            <div class=" navSearch row justify-content-center">
+                                <div class="col-lg-2">Loại phòng:
+                                    <select class="form-select">
+                                        <option selected>Deluxe</option>
+                                        <option value="2">Premium</option>
+                                        <option value="3">Family</option>
+                                    </select>
+                                </div>
+                                <div class="col mt-4">
+                                    <button type="button" class="btn btn-dark">Tìm kiếm</button>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3 ms-1 me-1 ">
+                                <div class="d-flex flex-column">
+                                    <table
+                                        class="table table-striped table-hover border align-baseline text-center shadow">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Mã đặt phòng</th>
+                                                <th scope="col">Loại phòng</th>
+                                                <th scope="col">Phòng số</th>
+                                                <th scope="col">Khách hàng</th>
+                                                <th scope="col">Ngày nhận phòng</th>
+                                                <th scope="col">Ngày trả phòng</th>
+                                                <th scope="col">Dịch vụ đang dùng</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td>1001</td>
+                                                <td>Deluxe</td>
+                                                <td>101</td>
+                                                <td>Nguyễn Ngọc Khoa</td>
+                                                <td>29/09/2023</td>
+                                                <td>31/09/2023</td>
+                                                <td>2</td>
+                                                <td><button class="btn button btn-dark">Thêm dịch vụ</button></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">2</th>
+                                                <td>1002</td>
+                                                <td>Premium</td>
+                                                <td>102</td>
+                                                <td>Nguyễn Ngọc Khoa</td>
+                                                <td>29/09/2023</td>
+                                                <td>31/09/2023</td>
+                                                <td>2</td>
+                                                <td><button class="btn button btn-dark">Thêm dịch vụ</button></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">3</th>
+                                                <td>1003</td>
+                                                <td>Family</td>
+                                                <td>103</td>
+                                                <td>Nguyễn Ngọc Khoa</td>
+                                                <td>29/09/2023</td>
+                                                <td>31/09/2023</td>
+                                                <td>0</td>
+                                                <td><button class="btn button btn-dark">Thêm dịch vụ</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Service Receptionist</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/assets/css/checkInReceptionist.css">
+    <script src="/assets/js/main.js"></script>
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
+
+    <div class="wrapper">
+
+        <aside id="sidebar">
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <img src="./images/Orilogo.png" alt="" width="180" height="80"
+                        class="d-inline-block align-text-top">
+                </div>
+                <!-- Sidebar Navigation -->
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header fw-bold">
+                        Lễ tân
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-regular fa-rectangle-list"></i>
+                            Danh sách phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-check-double"></i>
+                            Đặt phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Trả phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-house-user"></i>
+                            Phòng đang sử dụng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-bell"></i>
+                            Đặt trước
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-clipboard"></i>
+                            Lịch sử đặt phòng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="main">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <!-- Button for sidebar toggle -->
+                <button type="button" class="bi bi-person-circle "></button>
+            </nav>
+            <main class="content px-3 py-2">
+                <div class="container shadow">
+                    <h4 class="pt-5">Thông tin cơ bản</h4>
+                    <div class="row bg-light-subtle border mb-5 m-0 shadow">
+                        <div class="p-3">
+                            <p class="fw-bold">
+                                Mã đặt phòng: <span class="fw-normal">1001</span>
+                            </p>
+
+                            <p class="fw-bold">
+                                Nhận phòng: <span class="fw-normal">Ngày <span>30</span>, Tháng <span>10</span>, Năm
+                                    <span>2023</span>
+                                    Vào lúc <span>14:00</span></span>
+                            </p>
+                            <p class="fw-bold">
+                                Trả phòng: <span class="fw-normal">Ngày <span>1</span>, Tháng <span>11</span>, Năm
+                                    <span>2023</span>
+                                    Vào lúc <span>12:00</span></span>
+                            </p>
+                        </div>
+                    </div>
+                    <h4>Chi tiết đặt phòng</h4>
+                    <div class="row bg-light-subtle border m-0 shadow">
+                        <div class="col-6 p-3">
+                            <p class="fw-bold">Loại phòng: <span class="fw-normal">Phòng đơn</span></p>
+                            <p class="text-danger m-0 fw-bold">ƯU ĐÃI ĐẶC BIỆT: </p>
+                            <p class="">Bao gồm bữa sáng</p>
+                            <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span>1</span> phòng,
+                                <span>1</span> đêm,
+                                <span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
+                                trong giá.</span>
+                        </div>
+                        <div class="col-2 p-3 align-content-between align-middle">
+                            <p class="mb-0">Số lượng phòng</p>
+                            <select class="form-select mb-3" aria-label="Select example" disabled>
+                                <option selected>2</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <p class="mb-0">Số lượng khách
+                                <i class="bi bi-exclamation-circle-fill" data-bs-container="body"
+                                    data-bs-toggle="popover" data-bs-placement="top"
+                                    data-bs-content="Từ 0 đến 12 tuổi được miễn phí nếu sử dụng giường có sẵn."
+                                    data-bs-trigger="hover"></i>
+                            </p>
+                            <select class="form-select" aria-label="Default select example" disabled>
+                                <option value="1">2 người lớn</option>
+                                <option value="2">1 người lớn, 1 trẻ em</option>
+                                <option value="2">2 người lớn, 1 trẻ em</option>
+                                <option value="3">1 người lớn</option>
+                            </select>
+                        </div>
+                        <div class="col p-3 text-end">
+                            <p class="fw-bold">Giá từng phòng: <span class="fw-normal">1.200.000</span></p>
+                            <p class="fw-bold">Tổng giá phòng: <span class="fw-normal">2.400.000</span></p>
+                            <p>Chính sách đặt phòng
+                                <i class="bi bi-exclamation-circle-fill" data-bs-container="body"
+                                    data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
+                                    data-bs-content="Hủy: Nếu hủy hoặc thay đổi trước ngày nhận phòng, sẽ trừ 10% tổng hoá đơn phải thanh toán.
+            
+                      <br><br>Thanh toán: Thanh toán toàn bộ hoặc đặt cọc 50% giá trị tiền đặt phòng..
+                      
+                      <br><br>Bữa ăn bao gồm: Bữa sáng đã bao gồm
+                      
+                      <br><br>Nhận phòng: 14:00
+                      
+                      <br><br>Trả phòng: 12:00
+                      
+                      <br><br>Chính sách khác: Giá phòng 2 người lớn và 1 trẻ em dưới 12 tuổi. Trẻ em từ 12 tuổi trở lên tính như người lớn."
+                                    data-bs-trigger="hover"></i>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="row bg-light-subtle border m-0 shadow">
+                        <div class="col-6 p-3">
+                            <p class="fw-bold">Loại phòng: <span class="fw-normal">Phòng đôi</span></p>
+                            <p class="text-danger m-0 fw-bold">ƯU ĐÃI ĐẶC BIỆT: </p>
+                            <p class="">Bao gồm bữa sáng</p>
+                            <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span>1</span> phòng,
+                                <span>1</span> đêm,
+                                <span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
+                                trong giá.</span>
+                        </div>
+                        <div class="col-2 p-3 align-content-between align-middle">
+                            <p class="mb-0">Số lượng phòng</p>
+                            <select class="form-select mb-3" aria-label="Select example" disabled>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <p class="mb-0">Số lượng khách
+                                <i class="bi bi-exclamation-circle-fill" data-bs-container="body"
+                                    data-bs-toggle="popover" data-bs-placement="top"
+                                    data-bs-content="Từ 0 đến 12 tuổi được miễn phí nếu sử dụng giường có sẵn."
+                                    data-bs-trigger="hover"></i>
+                            </p>
+                            <select class="form-select" aria-label="Default select example" disabled>
+                                <option value="1">2 người lớn</option>
+                                <option value="2">1 người lớn, 1 trẻ em</option>
+                                <option value="2">2 người lớn, 1 trẻ em</option>
+                                <option value="3">1 người lớn</option>
+                            </select>
+                        </div>
+                        <div class="col p-3 text-end">
+                            <p class="fw-bold">Giá từng phòng: <span class="fw-normal">1.200.000</span></p>
+                            <p class="fw-bold">Tổng giá phòng: <span class="fw-normal">1.200.000</span></p>
+                            <p>Chính sách đặt phòng
+                                <i class="bi bi-exclamation-circle-fill" data-bs-container="body"
+                                    data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
+                                    data-bs-content="Hủy: Nếu hủy hoặc thay đổi trước ngày nhận phòng, sẽ trừ 10% tổng hoá đơn phải thanh toán.
+            
+                      <br><br>Thanh toán: Thanh toán toàn bộ hoặc đặt cọc 50% giá trị tiền đặt phòng..
+                      
+                      <br><br>Bữa ăn bao gồm: Bữa sáng đã bao gồm
+                      
+                      <br><br>Nhận phòng: 14:00
+                      
+                      <br><br>Trả phòng: 12:00
+                      
+                      <br><br>Chính sách khác: Giá phòng 2 người lớn và 1 trẻ em dưới 12 tuổi. Trẻ em từ 12 tuổi trở lên tính như người lớn."
+                                    data-bs-trigger="hover"></i>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="row g-2">
+                        <div class="col-lg-6 py-5 d-flex flex-column">
+                            <h4>Khách hàng</h4>
+                            <div class="bg-light-subtle border shadow p-2 flex-grow-1">
+                                <p class="fw-bold ">
+                                    Ngày đặt: <span class="fw-normal">Ngày <span>29</span>, Tháng <span>10</span>, Năm
+                                        <span>2023</span></span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Tên khách hàng: <span class="fw-normal">Nguyen Ngoc Khoa</span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Số điện thoại: <span class="fw-normal">0354789654</span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Email: <span class="fw-normal">khoann153156@fpt.edu.vn</span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Địa chỉ: <span class="fw-normal">Thach Hoa, Thach That, Ha Noi</span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Phương thức đặt: <span class="fw-normal">Trực tuyến</span>
+                                </p>
+                                <p class="fw-bold ">
+                                    Ghi chú: <span class="fw-normal">Không có</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col py-5 ps-5 d-flex flex-column">
+                            <h4>Thông tin thanh toán</h4>
+                            <div class="bg-light-subtle border shadow p-2 text-end flex-grow-1">
+                                <p class="fw-bold p-3 m-0">Giá phòng <span class="fw-normal text-end">3.960.000</span>
+                                </p>
+                                <p class="fw-bold border-bottom p-3 m-0">Thuế (10%) <span id="taxAmount"
+                                        class="fw-normal text-end">360.000</span></p>
+                                <p class="fw-bold p-3 m-0">Tổng giá <span class="fw-normal text-end">3.960.000</span>
+                                </p>
+                                <p class="fw-bold p-3 m-0 border-top text-end">
+                                    Số tiền đã thanh toán <span class="fw-normal text-end">3.960.000</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=" col text-end"><a href="#" class="btn btn-dark ">Quay lại</a></div>
+                            <div class="col text-start"><a th:href="@{/customer/cancelBooking}"
+                                    class="btn btn-dark ">Huỷ đặt
+                                    phòng</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+
+</html>

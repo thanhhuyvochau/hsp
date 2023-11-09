@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Room Receptionist</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/assets/css/checkInReceptionist.css">
+    <script src="/assets/js/main.js"></script>
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
+
+    <div class="wrapper">
+
+        <aside id="sidebar">
+            <div class="h-100">
+                <div class="sidebar-logo">
+                    <img src="./images/Orilogo.png" alt="" width="180" height="80"
+                        class="d-inline-block align-text-top">
+                </div>
+                <!-- Sidebar Navigation -->
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header fw-bold">
+                        Lễ tân
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-regular fa-rectangle-list"></i>
+                            Danh sách phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-check-double"></i>
+                            Đặt phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Trả phòng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-house-user"></i>
+                            Phòng đang sử dụng
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-bell"></i>
+                            Đặt trước
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="fa-solid fa-clipboard"></i>
+                            Lịch sử đặt phòng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="main">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <!-- Button for sidebar toggle -->
+                <button type="button" class="bi bi-person-circle "></button>
+            </nav>
+            <main class="content px-3 py-2">
+                <div class="container-fluid">
+                    <div class="mb-3">
+                        <div class="container shadow min-vh-100">
+                            <br>
+                            <h3 class="ms-3 mb-2 mt-2 fw-bold">Danh sách phòng đang sử dụng</h3>
+                            <div class="navSearch row justify-content-center">
+                                <div class="col-lg-3">
+                                    <p>Loại phòng: <select class="form-select">
+                                            <option selected>Deluxe</option>
+                                            <option value="1">Premium</option>
+                                            <option value="2">Family</option>
+                                        </select></p>
+                                </div>
+                                <div class="col mt-4">
+                                    <button type="button" class="btn btn-dark">Tìm kiếm</button>
+                                </div>
+                            </div>
+                            <div class="row mt-4 ms-1 me-1 ">
+                                <div class="d-flex flex-column">
+                                    <table
+                                        class="table table-striped table-hover border align-baseline text-center shadow">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Loại phòng</th>
+                                                <th scope="col">Phòng số</th>
+                                                <th scope="col">Tầng</th>
+                                                <th scope="col">Diện tích</th>
+                                                <th scope="col">Giá</th>
+                                                <th scope="col">Trạng thái</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td>Deluxe</td>
+                                                <td>101</td>
+                                                <td>1</td>
+                                                <td>30m2</td>
+                                                <td>1.500.000</td>
+                                                <td>Sẵn sàng</td>
+                                                <td><i class="bi bi-three-dots"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">2</th>
+                                                <td>Premium</td>
+                                                <td>201</td>
+                                                <td>2</td>
+                                                <td>40m2</td>
+                                                <td>2.000.000</td>
+                                                <td>Chưa sẵn sàng</td>
+                                                <td><i class="bi bi-three-dots"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">3</th>
+                                                <td>Family</td>
+                                                <td>301</td>
+                                                <td>3</td>
+                                                <td>50m2</td>
+                                                <td>3.000.000</td>
+                                                <td>Đang sử dụng</td>
+                                                <td><i class="bi bi-three-dots"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+
+</html>
