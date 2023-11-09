@@ -22,9 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import fu.hbs.service.dao.NewsService;
+import fu.hbs.service.dao.ReceptionistBookingService;
 import fu.hbs.service.dao.ServiceService;
 import fu.hbs.service.impl.CustomizeUserDetailsService;
 import fu.hbs.service.impl.NewsServiceImpl;
+import fu.hbs.service.impl.ReceptionistBookingServiceImpl;
 import fu.hbs.service.impl.ServiceServiceImpl;
 
 @Configuration
@@ -53,6 +55,10 @@ public class WebbSecurityConfig {
         return new NewsServiceImpl();
     }
 
+    @Bean
+    public ReceptionistBookingService receptionistBookingService() {
+        return new ReceptionistBookingServiceImpl();
+    }
     public void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception {
         System.out.println("Authentication manager!");
         managerBuilder.userDetailsService(customizeUserDetailsService).passwordEncoder(passwordEncoder());
