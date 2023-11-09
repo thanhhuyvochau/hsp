@@ -18,4 +18,6 @@ public class RoomServiceImpl implements RoomService {
     public List<Room> countRoomAvaliableByCategory(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
         return roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
     }
+
+
 }

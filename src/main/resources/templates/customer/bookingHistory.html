@@ -76,7 +76,7 @@
                     <td th:text="${hbs.getCheckIn()}"></td>
                     <td th:text="${hbs.getCheckOut()}"></td>
                     <td th:text="${hbs.getTotalRoom()}"></td>
-                    <td th:text="${hbs.getStatus()}" class="status-column"></td>
+                    <td th:text="${hbs.getStatusId().getStatusName()}" class="status-column"></td>
                     <td>
                         <button class="btn btn-dark"><a th:href="@{/customer/bookingDetails}"> Chi tiết</a></button>
                     </td>

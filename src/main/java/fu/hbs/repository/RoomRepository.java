@@ -25,25 +25,30 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByRoomCategoryId(Long roomCategoryId);
 
-    @Query(value = "SELECT r.* FROM room r\n" +
+    @Query(value = "SELECT r.*\n" +
+            "FROM room r\n" +
             "LEFT JOIN room_categories rc ON r.room_category_id = rc.room_category_id\n" +
-            "WHERE (r.status_id = 1 OR r.status_id = 2) AND rc.number_person >= ?3 AND r.room_id NOT IN (\n" +
-            "SELECT brd.room_id FROM booking_room_details brd\n" +
+            "WHERE  rc.number_person >= ?3 \n" +
+            "AND r.room_id NOT IN (\n" +
+            "SELECT brd.room_id\n" +
+            "FROM booking_room_details brd\n" +
             "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
-            "WHERE ( (hb.check_in BETWEEN ?1 AND ?2)\n" +
-            " OR (hb.check_out BETWEEN ?1 AND ?2)));", nativeQuery = true)
+            "WHERE (\n" +
+            "(hb.check_in BETWEEN ?1 AND ?2 )\n" +
+            "OR (hb.check_out BETWEEN ?1 AND ?2 ))\n" +
+            ");", nativeQuery = true)
     List<Room> getAllRoom(Date checkIn, Date checkOut, int numberPerson);
 
     @Query(value = "SELECT r.*\n" +
             "FROM room r\n" +
             "LEFT JOIN room_categories rc ON r.room_category_id = rc.room_category_id\n" +
-            "WHERE r.room_category_id = ?1 AND  r.status_id = 1\n" +
+            "WHERE r.room_category_id = ?1 " +
             "AND r.room_id NOT IN (\n" +
             "SELECT brd.room_id\n" +
             "FROM booking_room_details brd\n" +
             "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
-            "WHERE ((hb.check_in BETWEEN ?2 AND ?3)\n" +
-            "OR (hb.check_out BETWEEN ?2 AND ?3)));", nativeQuery = true)
+            "WHERE ((hb.check_in BETWEEN ?2 AND ?3 )\n" +
+            "OR (hb.check_out BETWEEN ?2 AND ?3 )));", nativeQuery = true)
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 }

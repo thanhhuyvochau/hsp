@@ -12,6 +12,7 @@ package fu.hbs.dto.HotelBookingDTO;
 
 
 import fu.hbs.entities.RoomCategories;
+import fu.hbs.entities.RoomStatus;
 import fu.hbs.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,7 @@ import java.util.List;
 @Data
 public class ViewHotelBookingDTO {
     private int totalRoom;
-    private String status;
+    private RoomStatus statusId;
     private User user;
     private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;

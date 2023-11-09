@@ -8,26 +8,12 @@
 }
 
 
-.page-link.active {
-    background-color: #caa169;
-    color: #fff; /* Màu chữ trắng */
-    border-color: #caa169;
-}
-
- .page-link {
-    color: #caa169;
-}
-
-.page-link[aria-label="Previous"],
-.page-link[aria-label="Next"] {
-    color: #caa169;
-}
 
 /* Thu nhỏ font chữ cho toàn bộ trang */
 body {
     font-size: 14px; /* Điều chỉnh kích thước font chữ theo ý muốn */
   }
-  
+ 
   /* Thu nhỏ h4 */
   h4 {
     font-size: 16px; /* Điều chỉnh kích thước của tiêu đề h4 */
