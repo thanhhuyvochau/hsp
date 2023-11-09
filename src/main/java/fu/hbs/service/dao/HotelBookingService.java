@@ -4,6 +4,7 @@ import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.entities.HotelBooking;
+import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface HotelBookingService {
     List<ViewHotelBookingDTO> findAllByUserId(Long id);
 
-    public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson);
+    public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) throws RoomCategoryNamesNullException;
 
 
     public CreateBookingDTO createBooking(Long categoryId, LocalDate checkIn, LocalDate checkOut);
@@ -29,4 +30,6 @@ public interface HotelBookingService {
             LocalDate checkIn,
             LocalDate checkOut,
             HttpSession session);
+
+    void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName);
 }

@@ -69,12 +69,10 @@ public class HotelBookingServiceImplTest {
         HotelBooking hotelBooking1 = new HotelBooking();
         hotelBooking1.setHotelBookingId(1L);
         hotelBooking1.setUserId(1L);
-        hotelBooking1.setRoomCategoryId(1L);
 
         HotelBooking hotelBooking2 = new HotelBooking();
         hotelBooking2.setHotelBookingId(2L);
         hotelBooking2.setUserId(1L);
-        hotelBooking2.setRoomCategoryId(2L);
         List<HotelBooking> hotelBookings = hotelBookingRepository.findByUserId(1L);
 
         hotelBookings.add(hotelBooking2);

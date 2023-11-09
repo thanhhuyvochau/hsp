@@ -26,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class ViewHotelBookingDTO {
+    private Long hotelBookingId;
     private int totalRoom;
     private RoomStatus statusId;
     private User user;

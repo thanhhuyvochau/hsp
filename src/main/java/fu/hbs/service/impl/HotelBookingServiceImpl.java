@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.entities.*;
+import fu.hbs.exceptionHandler.NotFoundBooking;
+import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import fu.hbs.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,10 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     @Autowired
     RoomStatusRepository roomStatusRepository;
 
+    @Autowired
+    CustomerCancellationReasonRepository customerCancellationReasonRepository;
+    @Autowired
+    CustomerCancellationRepository customerCancellationRepository;
     StringDealer stringDealer;
 
     public HotelBookingServiceImpl() {
@@ -67,9 +73,9 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomCategories1 = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
             roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
+            viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
             viewHotelBookingDTO.setStatusId(roomStatus);
@@ -90,13 +96,17 @@ public class HotelBookingServiceImpl implements HotelBookingService {
      * @return An instance of HotelBookingAvailable with available rooms and related
      * information.
      */
-    public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) {
+    public HotelBookingAvailable findBookingsByDates(Date checkIn, Date checkOut, int numberPerson) throws RoomCategoryNamesNullException {
         HotelBookingAvailable hotelBookingAvailable = new HotelBookingAvailable();
 
         List<Room> rooms = roomRepository.getAllRoom(checkIn, checkOut, numberPerson);
 
         List<RoomCategories> addedCategories = new ArrayList<>();
         RoomCategories categories = new RoomCategories();
+
+        if (addedCategories == null) {
+            throw new RoomCategoryNamesNullException("Khônng có phòng nào trong khoảng thời gian này");
+        }
 
         // Group rooms by room category
         Map<Long, List<Room>> groupedRooms = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
@@ -128,6 +138,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
             categoryRoomPrices.add(categoryRoomPrice);
         }
+
 
         LocalDate startDate = stringDealer.convertDateToLocalDate(checkIn);
         LocalDate endDate = stringDealer.convertDateToLocalDate(checkOut);
@@ -173,15 +184,13 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         List<HotelBooking> hotelBookings = hotelBookingRepository.findAllByUserId(id);
         List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
-        RoomCategories roomCategories = new RoomCategories();
         User user = new User();
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomCategories = roomCategoriesRepository.findByRoomCategoryId(hotelBookings.get(i).getRoomCategoryId());
-            roomCategoriesList.add(roomCategories);
             roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
+            viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
             viewHotelBookingDTO.setStatusId(roomStatus);
@@ -216,7 +225,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             }
         }
         if (roomCategoryMap.isEmpty()) {
-            throw new RuntimeException("Bạn chưa đặt phòng nào"); // Handle the case when no rooms are booked
+            throw new RuntimeException("Bạn chưa đặt phòng nào");
         }
 
         List<Room> rooms = new ArrayList<>();
@@ -289,6 +298,22 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         return createBookingDTO;
 
 
+    }
+
+    @Override
+    public void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName) {
+        // Reason
+        customerCancellationReasons cancellationReason = new customerCancellationReasons();
+        cancellationReason.setReasonDescription(reason);
+        cancellationReason = customerCancellationReasonRepository.save(cancellationReason);
+
+        // Cancellation
+        CustomerCancellation customerCancellation = new CustomerCancellation();
+        customerCancellation.setHotelBookingId(hotelBookingId);
+        customerCancellation.setCancelTime((java.sql.Date) new Date());
+        customerCancellation.setReasonId(cancellationReason.getReasonId());
+        customerCancellation.setOtherReason(otherReason);
+        customerCancellationRepository.save(customerCancellation);
     }
 
 

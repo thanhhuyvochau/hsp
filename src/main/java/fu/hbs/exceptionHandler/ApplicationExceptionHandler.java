@@ -60,4 +60,24 @@ public class ApplicationExceptionHandler {
         model.addAttribute("customError", errorMessage);
         return "profile/updateProfileCustomer";
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public String handleRuntimeException(Model model, RuntimeException ex) {
+        model.addAttribute("error", "Bạn đã không đặt phòng nào.");
+        return "customer/errorBooking";
+    }
+
+    @ExceptionHandler(RoomCategoryNamesNullException.class)
+    public String handleRoomCategoryNamesNullException(Model model, RoomCategoryNamesNullException ex) {
+        model.addAttribute("error", "Không còn phòng nào trống");
+        return "room/searchRoomCustomer";
+    }
+
+    @ExceptionHandler(CustomIllegalArgumentException.class)
+    public String handleCustomIllegalArgumentException(Model model, CustomIllegalArgumentException ex) {
+        model.addAttribute("error", ex.getMessage());
+        return "errorPage"; // Create an error page for displaying the error message.
+    }
+
+
 }

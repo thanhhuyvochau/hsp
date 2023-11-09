@@ -12,8 +12,9 @@
 package fu.hbs.repository;
 
 import fu.hbs.entities.BookingRoomDetails;
+import fu.hbs.entities.HotelBooking;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookingRoomRepository extends JpaRepository<BookingRoomDetails, Long> {
+public interface BookingRoomRepository extends JpaRepository<HotelBooking, Long> {
 
 }

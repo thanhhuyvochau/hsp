@@ -42,7 +42,6 @@ public class HotelBooking {
     @Column(name = "hotel_booking_id")
     private Long hotelBookingId;
     private Long userId;
-    private Long roomCategoryId;
     private Long statusId;
     private int totalRoom;
     private String name;
