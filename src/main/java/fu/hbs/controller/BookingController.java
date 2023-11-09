@@ -1,3 +1,15 @@
+/*
+ * Copyright (C) 2023, FPT University
+ * SEP490 - SEP490_G77
+ * HBS
+ * Hotel Booking System
+ *
+ * Record of change:
+ * DATE          Version    Author           DESCRIPTION
+ * 10/11/2023    1.0        HieuLBM          First Deploy
+ *
+ */
+
 package fu.hbs.controller;
 
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
@@ -39,6 +51,8 @@ public class BookingController {
     private VnpayTransactionsService vnpayTransactionsService;
     @Autowired
     BookingRoomDetailsService bookingRoomDetailsService;
+    @Autowired
+    CustomerCancellationReasonService customerCancellationReasonService;
 
     @GetMapping("/room/addBooking")
     public String addBooking(
@@ -206,7 +220,10 @@ public class BookingController {
     public String cancelBooking(Model model, Authentication authentication,
                                 @PathVariable Long hotelBookingId) {
         BookingDetailsDTO bookingDetailsDTO = bookingRoomDetailsService.getBookingDetails(authentication, hotelBookingId);
+        List<customerCancellationReasons> customerCancellationReasons = customerCancellationReasonService.findAll();
+
         model.addAttribute("bookingDetailsDTO", bookingDetailsDTO);
+        model.addAttribute("customerCancellationReasons", customerCancellationReasons);
 
         return "customer/cancel-booking";
     }
