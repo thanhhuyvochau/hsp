@@ -1,11 +1,13 @@
 package fu.hbs.service.dao;
 
+import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingAvailable;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.entities.HotelBooking;
 import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -31,5 +33,6 @@ public interface HotelBookingService {
             LocalDate checkOut,
             HttpSession session);
 
-    void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName);
+    //    void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName);
+    void cancelBooking(CancellationFormDTO cancellationFormDTO, Authentication authentication);
 }

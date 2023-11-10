@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2023, FPT University 
+ * Copyright (C) 2023, FPT University
  * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
+ * HBS
+ * Hotel Booking System
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
  * 22/10/2023    1.0        HieuLBM          First Deploy
  *
- * 
+ *
  */
 package fu.hbs.entities;
 
@@ -31,10 +31,10 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "customer_cancellation_reasons")
-public class customerCancellationReasons {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "reason_id")
-	private Long reasonId;
-	private String reasonDescription;
+public class CustomerCancellationReasons {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reason_id")
+    private Long reasonId;
+    private String reasonDescription;
 }

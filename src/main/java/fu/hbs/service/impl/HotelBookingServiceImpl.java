@@ -19,14 +19,16 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.entities.*;
-import fu.hbs.exceptionHandler.NotFoundBooking;
 import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import fu.hbs.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import fu.hbs.dto.HotelBookingAvailable;
@@ -71,6 +73,8 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     CustomerCancellationReasonRepository customerCancellationReasonRepository;
     @Autowired
     CustomerCancellationRepository customerCancellationRepository;
+    @Autowired
+    RefundAccountRepository refundAccountRepository;
     StringDealer stringDealer;
 
     public HotelBookingServiceImpl() {
@@ -314,20 +318,46 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     }
 
     @Override
-    public void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName) {
-        // Reason
-        customerCancellationReasons cancellationReason = new customerCancellationReasons();
-        cancellationReason.setReasonDescription(reason);
-        cancellationReason = customerCancellationReasonRepository.save(cancellationReason);
+    public void cancelBooking(CancellationFormDTO cancellationFormDTO, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.getUserByEmail(userDetails.getUsername());
+
+        // RefundAccount
+        RefundAccount refundAccount = new RefundAccount();
+        refundAccount.setAccountNumber(cancellationFormDTO.getAccountNumber());
+        refundAccount.setAccountName(cancellationFormDTO.getAccountName());
+        refundAccount.setBankId(cancellationFormDTO.getBankId());
+        refundAccount.setUserId(user.getUserId());
+
+        RefundAccount newRefundAccount = refundAccountRepository.save(refundAccount);
+
 
         // Cancellation
         CustomerCancellation customerCancellation = new CustomerCancellation();
-        customerCancellation.setHotelBookingId(hotelBookingId);
-        customerCancellation.setCancelTime((java.sql.Date) new Date());
-        customerCancellation.setReasonId(cancellationReason.getReasonId());
-        customerCancellation.setOtherReason(otherReason);
+        customerCancellation.setHotelBookingId(cancellationFormDTO.getHotelBookingId());
+        customerCancellation.setCancelTime(new Date());
+        customerCancellation.setReasonId(cancellationFormDTO.getReasonId());
+        customerCancellation.setOtherReason(cancellationFormDTO.getOtherReason());
+        customerCancellation.setAccountId(newRefundAccount.getAccountId());
+        customerCancellation.setStatus(false);
         customerCancellationRepository.save(customerCancellation);
     }
+
+//    @Override
+//    public void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName) {
+//        // Reason
+//        CustomerCancellationReasons cancellationReason = new CustomerCancellationReasons();
+//        cancellationReason.setReasonDescription(reason);
+//        cancellationReason = customerCancellationReasonRepository.save(cancellationReason);
+//
+//        // Cancellation
+//        CustomerCancellation customerCancellation = new CustomerCancellation();
+//        customerCancellation.setHotelBookingId(hotelBookingId);
+//        customerCancellation.setCancelTime((java.sql.Date) new Date());
+//        customerCancellation.setReasonId(cancellationReason.getReasonId());
+//        customerCancellation.setOtherReason(otherReason);
+//        customerCancellationRepository.save(customerCancellation);
+//    }
 
 
     // Hàm tính tổng giá cho một CategoryRoomPrice dựa trên dateInfoList

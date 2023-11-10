@@ -21,36 +21,47 @@
     <script src="/src/main/resources/static/assets/js/customer.js"></script>
     <link rel="stylesheet" href="/assets/css/header-footer.css">
     <link rel="stylesheet" href="/assets/css/header-footer-style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 
 <body>
 
+
 <body data-bs-target=".navbar" data-bs-offset="100"></body>
 <header th:replace="~{header :: header}"></header>
 <div class="container shadow">
+    <div th:if="${param.changeSuccess}">
+        <div id="successMessage" class="alert alert-success" style="margin-top: 15px;">
+            <span>Quá đã </span>
+        </div>
+    </div>
     <h4 class="pt-5">Thông tin cơ bản</h4>
     <div class="row bg-light-subtle border mb-5 m-0 shadow">
-        <div class="p-3">
+        <div class="p-3" th:if="${session.bookingDetailsDTO != null}">
             <p class="fw-bold">
                 Mã đặt phòng: <span class="fw-normal"
-                                    th:text="${bookingDetailsDTO.getHotelBooking().getHotelBookingId()}"></span>
+                                    th:text="${session.bookingDetailsDTO.getHotelBooking().getHotelBookingId()}"></span>
             </p>
 
             <p class="fw-bold">
                 Nhận phòng: <span class="fw-normal"
-                                  th:text="${bookingDetailsDTO.getHotelBooking().getCheckIn()}"></span>
+                                  th:text="${session.bookingDetailsDTO.getHotelBooking().getCheckIn()}"></span>
                 Vào lúc <span>14:00</span></span>
             </p>
             <p class="fw-bold">
                 Trả phòng: <span class="fw-normal"
-                                 th:text="${bookingDetailsDTO.getHotelBooking().getCheckOut()}"></span>
+                                 th:text="${session.bookingDetailsDTO.getHotelBooking().getCheckOut()}"></span>
                 Vào lúc <span>12:00</span></span>
             </p>
         </div>
     </div>
     <h4>Chi tiết đặt phòng</h4>
     <div class="row bg-light-subtle border m-0 shadow"
-         th:each="room, iteration : ${bookingDetailsDTO.getBookingRoomDetails()}"
+         th:each="room, iteration : ${session.bookingDetailsDTO.getBookingRoomDetails()}"
     >
 
 
@@ -68,7 +79,7 @@
         <div class="col-2 p-3 align-content-between align-middle">
             <p class="mb-0">Số lượng phòng</p>
 
-            <th:block th:each="r : ${bookingDetailsDTO.getGroupedRooms()}">
+            <th:block th:each="r : ${session.bookingDetailsDTO.getGroupedRooms()}">
                 <th:block th:if="${r.getKey() == room.getRoomCategories().getRoomCategoryId()}">
             <span class="form-select mb-3" aria-label="Select example"
                   th:text="${r.getValue().size()}">
@@ -109,23 +120,27 @@
         </div>
 
     </div>
+    <form id="cancellationForm">
+        <input th:value="${hotelBookingId}" name="hotelBookingId" type="hidden">
+        <div class="row g-2 pb-3">
+            <div class="col pb-3 d-flex flex-column">
+                <h4>Lý do huỷ</h4>
+                <div class="bg-light-subtle border shadow p-2 flex-grow-1">
 
-    <div class="row g-2 pb-3">
-        <div class="col pb-3 d-flex flex-column">
-            <h4>Lý do huỷ</h4>
-            <div class="bg-light-subtle border shadow p-2 flex-grow-1">
-                <form action="">
                     <label for="exampleFormControlTextarea1" class="form-label">Vui lòng chọn lý do huỷ
                         phòng</label>
-                    <select class="form-select" id="cancelReason" aria-label="Cancel reason">
-                        <option value="1">Thay đổi lịch trình</option>
-                        <option value="2">Gặp sự cố cá nhân</option>
-                        <option value="3">Gặp vấn đề về tài chính</option>
-                        <option value="4">Lý do khác, mời nhập vào ô dưới</option>
+                    <select class="form-select" id="cancelReason" name="reasonId" aria-label="Cancel reason">
+
+                        <option th:each="reason : ${customerCancellationReasons}"
+                                th:text="${reason.getReasonDescription()}"
+                                th:value="${reason.getReasonId()}"
+                        ></option>
+
+
                     </select>
                     <div class="other-reason">
                         <label for="exampleFormControlTextarea1" class="form-label">Lý do khác</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" disabled></textarea>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="otherReason"></textarea>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="gridCheck"
@@ -134,96 +149,113 @@
                             Vui lòng đọc kỹ các điều khoản và đánh dấu vào ô bên cạnh.
                         </label>
                     </div>
-                </form>
 
+
+                </div>
             </div>
-        </div>
-        <div class="col pb-3 ps-5 d-flex flex-column">
-            <h4>Tài khoản nhận hoàn tiền (nếu có)</h4>
+            <div class="col pb-3 ps-5 d-flex flex-column">
+                <h4>Tài khoản nhận hoàn tiền (nếu có)</h4>
 
-            <div class="bg-light-subtle border shadow p-2 flex-grow-1">
-                <form action="">
+                <div class="bg-light-subtle border shadow p-2 flex-grow-1">
+
                     <label for="exampleFormControlTextarea1" class="form-label">Ngân hàng</label>
-                    <select class="form-select " aria-label="Bank select">
-                        <option value="vietcombank">Vietcombank</option>
-                        <option value="techcombank">Techcombank</option>
-                        <option value="acb">ACB - Asia Commercial Bank</option>
-                        <option value="bidv">BIDV - Bank for Investment and Development of Vietnam</option>
-                        <option value="mbbank">MBBank - Military Commercial Joint Stock Bank</option>
-                        <option value="vietinbank">VietinBank - Vietnam Joint Stock Commercial Bank for Industry and
-                            Trade
+                    <select class="form-select " name="bankId" id="bankSelect" aria-label="Bank select">
+                        <option th:each="bank : ${bankLists}"
+                                th:text="${bank.getBankName()}"
+                                th:value="${bank.getBankId()}">
                         </option>
-                        <option value="vpbank">VPBank - Vietnam Prosperity Joint Stock Commercial Bank</option>
+
                     </select>
                     <div class="">
-                        <label for="inputPhone" class="form-label">Số tài khoản</label>
-                        <input type="text" class="form-control" id="inputStk"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <label class="form-label">Số tài khoản</label>
+                        <input type="text" class="form-control" name="accountNumber" id="inputStk"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required></input>
 
                     </div>
                     <div class="pb-2">
-                        <label for="inputPhone" class="form-label">Chủ tài khoản</label>
-                        <input type="text" class="form-control" id="inputCtk">
+                        <label name="accountName" class="form-label">Chủ tài khoản</label>
+                        <input type="text" class="form-control" id="inputCtk" required maxlength="32"
+                               name="accountName"></input>
                     </div>
-                </form>
+
+                </div>
+
             </div>
-
         </div>
-    </div>
-    <div class="row">
-        <div class=" col text-end"><a href="#" class="btn btn-dark ">Quay lại</a></div>
-        <div class="col text-start">
-            <a href="#" class="btn btn-dark" id="cancelButton" disabled onclick="confirmCancellation()">Xác nhận
-                huỷ</a>
+        <div class="row">
+            <div class=" col text-end"><a href="#" class="btn btn-dark ">Quay lại</a></div>
+            <div class="col text-start">
+                <a href="" class="btn btn-dark" id="cancelButton" disabled onclick="confirmCancellation()">Xác nhận
+                    huỷ</a>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 </div>
 
-
-<script>
-    // Lấy tham chiếu đến select box và textarea
-    const cancelReasonSelect = document.getElementById("cancelReason");
-    const otherReasonTextarea = document.getElementById("exampleFormControlTextarea1");
-
-    // Sử dụng sự kiện onchange để theo dõi sự thay đổi trong select box
-    cancelReasonSelect.addEventListener("change", function () {
-        if (cancelReasonSelect.value === "4") {
-            // Nếu người dùng chọn "Lý do khác", bỏ disable cho textarea
-            otherReasonTextarea.removeAttribute("disabled");
-        } else {
-            // Nếu không chọn "Lý do khác", disable textarea
-            otherReasonTextarea.setAttribute("disabled", "disabled");
-        }
-    });
-</script>
 
 <section th:replace="~{footer :: footer}"></section>
 
+
+<!-- Thêm vào phần đầu trang để đảm bảo rằng jQuery đã được tải -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Liên kết thư viện Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // Lấy tham chiếu đến checkbox và nút "Xác nhận huỷ"
-    const checkbox = document.getElementById("gridCheck");
-    const cancelButton = document.getElementById("cancelButton");
-
-    // Hàm để kiểm tra trạng thái checkbox và kích hoạt hoặc vô hiệu hóa nút "Xác nhận huỷ"
-    function toggleCancelButton() {
-        if (checkbox.checked) {
-            cancelButton.removeAttribute("disabled");
-        } else {
-            cancelButton.setAttribute("disabled", "disabled");
-        }
-    }
-
-    // Hàm để xác nhận huỷ phòng và hiển thị thông báo nếu checkbox chưa được tích
     function confirmCancellation() {
-        if (!checkbox.checked) {
-            alert("Vui lòng đánh dấu vào ô điều khoản trước khi xác nhận huỷ phòng.");
+        // Lấy các trường form
+        var checkBox = document.getElementById("gridCheck");
+        var cancelReasonSelect = document.getElementById("cancelReason");
+        var otherReasonTextarea = document.getElementById("exampleFormControlTextarea1");
+        var bankSelect = document.getElementById("bankSelect");
+        var accountNumberInput = document.getElementById("inputStk");
+        var accountNameInput = document.getElementById("inputCtk");
+
+
+        // Định nghĩa các thông báo lỗi
+        var errorMessages = {
+            checkBox: "Vui lòng đọc kỹ các điều khoản và đánh dấu vào ô bên cạnh.",
+            accountNumberInput: "Vui lòng nhập số tài khoản.",
+            accountNameInput: "Vui lòng nhập chủ tài khoản.",
+            accountNameInput1: "Vui lòng nhập chủ tài khoản không quá 32 ký tự."
+        };
+// Lấy giá trị của trường input ẩn
+        var hotelBookingId = document.querySelector('input[name="hotelBookingId"]').value;
+
+        if (accountNameInput.value.length > 32) {
+            alert(errorMessages.accountNameInput1);
+            return;
+        }
+        // Kiểm tra từng trường và hiển thị thông báo lỗi nếu cần
+        if (!checkBox.checked) {
+            alert(errorMessages.checkBox);
+        } else if (!accountNumberInput.value) {
+            alert(errorMessages.accountNumberInput);
+        } else if (!accountNameInput.value) {
+            alert(errorMessages.accountNameInput);
         } else {
-            // Xử lý xác nhận huỷ phòng khi checkbox đã được tích
-            // Thêm mã xử lý tại đây nếu cần
+            // Nếu tất cả trường đều hợp lệ, sử dụng serialize để lấy dữ liệu từ form và gửi yêu cầu
+            var formData = $("#cancellationForm").serialize();
+            $.ajax({
+                type: 'POST',
+                url: '/customer/cancelBooking',
+                data: formData,
+                success: function (response) {
+                    window.location.href = '/customer/cancelBooking/' + hotelBookingId + '?changeSuccess';
+
+                },
+                error: function (error) {
+                    // Xử lý khi gửi không thành công (nếu cần)
+                    console.error(error);
+                }
+            });
         }
     }
+
+
 </script>
+
 
 </body>
 

@@ -1,10 +1,10 @@
 package fu.hbs.service.dao;
 
-import fu.hbs.entities.customerCancellationReasons;
+import fu.hbs.entities.CustomerCancellationReasons;
 
 import java.util.List;
 
 public interface CustomerCancellationReasonService {
 
-    List<customerCancellationReasons> findAll();
+    List<CustomerCancellationReasons> findAll();
 }

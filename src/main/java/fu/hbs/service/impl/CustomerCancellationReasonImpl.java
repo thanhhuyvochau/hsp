@@ -13,7 +13,7 @@
 package fu.hbs.service.impl;
 
 
-import fu.hbs.entities.customerCancellationReasons;
+import fu.hbs.entities.CustomerCancellationReasons;
 import fu.hbs.repository.CustomerCancellationReasonRepository;
 import fu.hbs.service.dao.CustomerCancellationReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class CustomerCancellationReasonImpl implements CustomerCancellationReaso
     CustomerCancellationReasonRepository customerCancellationReasonRepository;
 
     @Override
-    public List<customerCancellationReasons> findAll() {
+    public List<CustomerCancellationReasons> findAll() {
         return customerCancellationReasonRepository.findAll();
     }
 }

@@ -117,6 +117,12 @@ public class RoomController {
             conflictingBookings = hotelBookingService.findBookingsByDates(checkIn, checkOut, numberOfPeople);
         }
 
+        if (conflictingBookings.getRoomCategories().isEmpty()) {
+            System.out.println(conflictingBookings);
+            model.addAttribute("error", "Không còn phòng nào trống trong khoảng thời gian này");
+
+        }
+
         List<DateInfoCategoryRoomPriceDTO> dataList = conflictingBookings.getDateInfoCategoryRoomPriceDTOS();
         int pageSize = 7; // Number of records per page
 

@@ -12,6 +12,7 @@
 
 package fu.hbs.controller;
 
+import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.entities.*;
@@ -25,10 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -53,6 +52,8 @@ public class BookingController {
     BookingRoomDetailsService bookingRoomDetailsService;
     @Autowired
     CustomerCancellationReasonService customerCancellationReasonService;
+    @Autowired
+    BankListService bankListService;
 
     @GetMapping("/room/addBooking")
     public String addBooking(
@@ -205,26 +206,41 @@ public class BookingController {
         return "customer/bookingDetail";
     }
 
+//    @PostMapping("/customer/cancelBooking")
+//    public String cancelBooking(@RequestParam("hotelBookingId") Long hotelBookingId,
+//                                @RequestParam("reason") String reason,
+//                                @RequestParam("otherReason") String otherReason,
+//                                @RequestParam("bank") String bank,
+//                                @RequestParam("account") String account,
+//                                @RequestParam("userName") String userName) {
+//        hotelBookingService.cancelBooking(hotelBookingId, reason, otherReason, bank, account, userName);
+//        return "customer/cancel-booking";
+//    }
+
     @PostMapping("/customer/cancelBooking")
-    public String cancelBooking(@RequestParam("hotelBookingId") Long hotelBookingId,
-                                @RequestParam("reason") String reason,
-                                @RequestParam("otherReason") String otherReason,
-                                @RequestParam("bank") String bank,
-                                @RequestParam("account") String account,
-                                @RequestParam("userName") String userName) {
-        hotelBookingService.cancelBooking(hotelBookingId, reason, otherReason, bank, account, userName);
-        return "customer/cancel-booking";
+    public String cancelBooking(@ModelAttribute CancellationFormDTO cancellationForm, Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
+        // Thực hiện hủy đặt phòng dựa trên hotelBookingId
+        hotelBookingService.cancelBooking(cancellationForm, authentication);
+        redirectAttributes.addAttribute("successMessage", "Bạn đã hủy thành công.");
+        model.addAttribute("successMessage", "Bạn đã hủy thành công.");
+        return "redirect:/customer/cancelBooking/" + cancellationForm.getHotelBookingId() + "?changeSuccess";
+
     }
+
 
     @GetMapping("/customer/cancelBooking/{hotelBookingId}")
     public String cancelBooking(Model model, Authentication authentication,
-                                @PathVariable Long hotelBookingId) {
+                                @PathVariable Long hotelBookingId, HttpSession session, RedirectAttributes redirectAttributes) {
         BookingDetailsDTO bookingDetailsDTO = bookingRoomDetailsService.getBookingDetails(authentication, hotelBookingId);
-        List<customerCancellationReasons> customerCancellationReasons = customerCancellationReasonService.findAll();
-
+        List<CustomerCancellationReasons> customerCancellationReasons = customerCancellationReasonService.findAll();
+        List<BankList> bankLists = bankListService.getAll();
         model.addAttribute("bookingDetailsDTO", bookingDetailsDTO);
         model.addAttribute("customerCancellationReasons", customerCancellationReasons);
+        model.addAttribute("bankLists", bankLists);
+        model.addAttribute("hotelBookingId", hotelBookingId);
 
+
+        session.setAttribute("bookingDetailsDTO", bookingDetailsDTO);
         return "customer/cancel-booking";
     }
 }

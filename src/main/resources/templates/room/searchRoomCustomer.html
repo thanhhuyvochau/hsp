@@ -48,10 +48,15 @@
 <div class="container booking-area" th:replace="~{searchRoom :: searchRoom}">
 
 </div>
+
 <div th:if="${error != null and error != ''}" class="alert alert-warning" role="alert">
     <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
 </div>
+
+
 <form method="get" th:action="@{/room/addBooking}">
+
+
     <div class="row">
         <div class="col-lg-10">
             <section class="room-section spad">

@@ -35,7 +35,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
             "WHERE (\n" +
             "(hb.check_in BETWEEN ?1 AND ?2 )\n" +
-            "OR (hb.check_out BETWEEN ?1 AND ?2 ))\n" +
+            "OR (hb.check_out BETWEEN ?1 AND ?2 )" +
+            " AND hb.status_id = 1 )\n" +
             ");", nativeQuery = true)
     List<Room> getAllRoom(Date checkIn, Date checkOut, int numberPerson);
 
@@ -48,7 +49,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "FROM booking_room_details brd\n" +
             "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
             "WHERE ((hb.check_in BETWEEN ?2 AND ?3 )\n" +
-            "OR (hb.check_out BETWEEN ?2 AND ?3 )));", nativeQuery = true)
+            "OR (hb.check_out BETWEEN ?2 AND ?3 ))" +
+            " AND hb.status_id = 1 );", nativeQuery = true)
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 }
