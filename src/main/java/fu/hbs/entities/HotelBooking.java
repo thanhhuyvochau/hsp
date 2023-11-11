@@ -43,6 +43,7 @@ public class HotelBooking {
     private Long hotelBookingId;
     private Long userId;
     private Long statusId;
+    private Long serviceId;
     private int totalRoom;
     private String name;
     private String email;

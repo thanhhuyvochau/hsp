@@ -12,6 +12,7 @@
  */
 package fu.hbs.entities;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -39,7 +40,10 @@ public class VnpayTransactions {
     @Column(name = "vnpay_id")
     private Long vnpayId;
     private Long hotelBookingId;
+    private Long paymentId;
     private String status;
+    private BigDecimal amount;
     private String transactionId;
     private Date createdDate;
+    private String vnpayName;
 }
