@@ -62,10 +62,14 @@
                 <!--                <input name="RoomCategoryId" hidden th:value="${cate.getRoomCategoryId()}">-->
                 <p class="text-danger m-0 fw-bold">ƯU ĐÃI ĐẶC BIỆT: </p>
                 <p class="">Bao gồm bữa sáng</p>
-                <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span>1</span> phòng,
-							<span>1</span> đêm,
-							<span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
-							trong giá.</span>
+                <th:block th:each="rcm : ${createBookingDTO.getRoomCategoryMap()}">
+                    <th:block th:if="${rcm.getKey() == cate.getRoomCategoryId()}">
+                        <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span
+                            th:text="${rcm.getValue()}"></span> phòng, <span
+                            th:text="${createBookingDTO.getDateInfoList().size()-1}"></span> đêm,
+                    <span th:text="${cate.getNumberPerson()}"> </span> người </span>
+                    </th:block>
+                </th:block>
 
 
             </div>
@@ -77,7 +81,6 @@
 
                             <th:block th:each="roomCount : ${entry.value}">
                                 <span th:value="${roomCount}" th:utext="${roomCount}"></span>
-
 
                             </th:block>
                         </th:block>
@@ -95,29 +98,27 @@
             </div>
 
             <div class="col p-3 text-end">
-                <th:block th:each="catePrice : ${createBookingDTO.getRoomCategoriesList()}">
-                    <th:block th:if="${catePrice.getRoomCategoryId()== cate.getRoomCategoryId()}">
-                        <th:block th:each="entry1 : ${createBookingDTO.getTotalPriceByCategoryId()}">
-                            <th:block th:each="entry : ${createBookingDTO.getRoomCategoryMap()}">
-                                <th:block th:if="${entry1.getKey() == cate.getRoomCategoryId() }">
-                                    <th:block th:if="${entry.getKey()== entry1.getKey()}">
+                <th:block th:each="entry : ${createBookingDTO.getRoomCategoryMap()}">
+                    <th:block th:if="${entry.getKey()== cate.getRoomCategoryId()}">
+                        <th:block th:if="${createBookingDTO.getTotalPriceByCategoryId().containsKey(entry.getKey())}">
+                            <p class="mb-0 fw-bold">Giá từng phòng
+                            </p>
+                            <span class="fw-normal"
+                                  th:text="${#numbers.formatDecimal(createBookingDTO.getTotalPriceByCategoryId().get(entry.getKey()), 0, 'COMMA', 0, 'POINT') + ' VND/'}">
+                               </span> <span
+                                th:text="${createBookingDTO.getDateInfoList().size()-1}+' Đêm'">
 
-                                        <p class="mb-0 fw-bold">Giá từng phòng
-                                        </p>
-                                        <p class="fw-normal"
-                                           th:text="${#numbers.formatDecimal(entry1.getValue(), 0, 'COMMA', 0, 'POINT') + ' VND/Đêm'}"></p>
-                                        <p class="mb-0 fw-bold">Tổng giá phòng
-                                        </p>
-                                        <p class="fw-normal"
-                                           th:text="${#numbers.formatDecimal(entry1.getValue().multiply(entry.getValue()), 0, 'COMMA', 0, 'POINT') + ' VND'}"></p>
+                            </span>
+                            <p class="mb-0 fw-bold">Tổng giá phòng
+                            </p>
+                            <p class="fw-normal"
+                               th:text="${#numbers.formatDecimal(createBookingDTO.getTotalPriceByCategoryId().get(entry.getKey()).multiply(entry.getValue()), 0, 'COMMA', 0, 'POINT') + ' VND'}">
+                                2.400.000</p>
 
-
-                                    </th:block>
-                                </th:block>
-                            </th:block>
                         </th:block>
                     </th:block>
                 </th:block>
+
             </div>
 
         </div>

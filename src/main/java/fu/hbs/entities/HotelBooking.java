@@ -51,6 +51,4 @@ public class HotelBooking {
     private BigDecimal totalPrice;
     private Date checkIn;
     private Date checkOut;
-
-
 }

@@ -15,6 +15,8 @@ package fu.hbs.service.impl;
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
 import fu.hbs.dto.HotelBookingDTO.RoomInDetailsDTO;
+import fu.hbs.dto.HotelBookingDTO.TotalPriceDTO;
+import fu.hbs.dto.HotelBookingDTO.UserInBookingDetailsDTO;
 import fu.hbs.entities.*;
 import fu.hbs.repository.*;
 import fu.hbs.service.dao.BookingRoomDetailsService;
@@ -59,7 +61,10 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
     RoomCategoriesRepository roomCategoriesRepository;
     @Autowired
     CategoryRoomPriceRepository categoryRoomPriceRepository;
-
+    @Autowired
+    RefundAccountRepository refundAccountRepository;
+    @Autowired
+    BankListRepository bankListRepository;
 
     @Override
     public BookingRoomDetails save(BookingRoomDetails bookingRoomDetails) {
@@ -70,6 +75,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
     @Override
     public BookingDetailsDTO getBookingDetails(Authentication authentication, Long hotelBookingId) {
         BookingDetailsDTO dto = new BookingDetailsDTO();
+
 
         // User's details
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -86,13 +92,13 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         // Booking details
         List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
         List<RoomInDetailsDTO> roomInDetailsDTOS = new ArrayList<>();
-        ;
 
         Room room = new Room();
         RoomCategories roomCategories = new RoomCategories();
         CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
         List<Room> rooms = new ArrayList<>();
         int count = 0;
+        //  distinct Category
         Set<RoomCategories> distinctRoomCategories = new HashSet<>();
 
         for (BookingRoomDetails item : bookingRoomDetails) {
@@ -102,56 +108,147 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
             distinctRoomCategories.add(roomCategories);
         }
 
+        List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
+
         for (RoomCategories roomCategory : distinctRoomCategories) {
             roomInDetailsDTOS.add(new RoomInDetailsDTO(room, roomCategory, categoryRoomPriceRepository.findByRoomCategoryId(roomCategory.getRoomCategoryId())));
         }
 
+        // Group rooms by room category
         Map<Long, List<Room>> groupedRooms = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
         for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
             Long categoryId = entry.getKey();
             List<Room> roomsWithSameCategory = entry.getValue();
         }
 
-//        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
-//        BigDecimal total_Price = BigDecimal.ZERO;
-//        Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
-//
-//        for (CategoryRoomPrice cpr : categoryRoomPrices) {
-//            BigDecimal totalForCategory = calculateTotalForCategory(cpr, dateInfoList);
-//            totalPriceByCategoryId.put(cpr.getRoomCategoryId(), totalForCategory);
-//
-//        }
-//
-//        // Lặp qua map 1 và kiểm tra xem khóa có tồn tại trong map 2 không
-//        for (Map.Entry<Long, Integer> entry1 : roomCategoryMap.entrySet()) {
-//            Long category = entry1.getKey();
-//            Integer roomCount = entry1.getValue();
-//
-//            if (totalPriceByCategoryId.containsKey(category)) {
-//                // Nếu khóa tồn tại trong map 2, lấy giá trị từ cả hai map
-//                BigDecimal totalPrice1 = totalPriceByCategoryId.get(category);
-//
-//                BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomCount));
-//
-//                total_Price = total_Price.add(totalPrice2);
-//
-//
-//            }
-//        }
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
+        System.out.println("dateInfoList" + dateInfoList.size());
+        BigDecimal total_Price = BigDecimal.ZERO;
+        Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
+        // tổng giá cho một CategoryRoomPrice theo Category
+        for (int i = 0; i < roomInDetailsDTOS.size(); i++) {
+            BigDecimal totalForCategory = calculateTotalForCategory(roomInDetailsDTOS.get(i).getCategoryRoomPrice(), dateInfoList);
+            totalPriceByCategoryId.put(roomInDetailsDTOS.get(i).getCategoryRoomPrice().getRoomCategoryId(), totalForCategory);
+        }
+        // CategoryRoomPrice * total Room
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
+            System.out.println("roomsWithSameCategory" + roomsWithSameCategory.size());
 
+            if (totalPriceByCategoryId.containsKey(categoryId)) {
+
+                BigDecimal totalPrice1 = totalPriceByCategoryId.get(categoryId);
+
+                BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomsWithSameCategory.size()));
+            }
+        }
+
+        dto.setTotalPriceByCategoryId(totalPriceByCategoryId);
         dto.setGroupedRooms(groupedRooms);
         dto.setBookingRoomDetails(roomInDetailsDTOS);
+        dto.setDateInfoList(dateInfoList);
 
         return dto;
     }
 
-    // Hàm tính tổng giá cho một CategoryRoomPrice dựa trên dateInfoList
+    @Override
+    public BookingDetailsDTO getBookingDetailsByUser(Long userId, Long hotelBookingId) {
+        BookingDetailsDTO dto = new BookingDetailsDTO();
+        // User
+        User user = userRepository.findByUserId(userId);
+        dto.setUser(user);
+
+        UserInBookingDetailsDTO userInBookingDetailsDTO = new UserInBookingDetailsDTO();
+        // RefundAccount details
+        RefundAccount refundAccount = refundAccountRepository.findAccountIdNew(user.getUserId());
+        userInBookingDetailsDTO.setUser(user);
+        userInBookingDetailsDTO.setRefundAccount(refundAccount);
+        BankList bankList = bankListRepository.findByBankId(refundAccount.getBankId());
+
+        userInBookingDetailsDTO.setBankList(bankList);
+
+        dto.setUserInBookingDetailsDTO(userInBookingDetailsDTO);
+
+
+        // Hotel booking
+        HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
+
+        LocalDate checkIn = hotelBooking.getCheckIn().toLocalDate();
+        LocalDate checkOut = hotelBooking.getCheckOut().toLocalDate();
+
+        dto.setHotelBooking(hotelBooking);
+        // Booking details
+        List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        List<RoomInDetailsDTO> roomInDetailsDTOS = new ArrayList<>();
+
+        Room room = new Room();
+        RoomCategories roomCategories = new RoomCategories();
+        CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
+        List<Room> rooms = new ArrayList<>();
+        int count = 0;
+        Set<RoomCategories> distinctRoomCategories = new HashSet<>();
+
+        // Distinct RoomCategory
+        for (BookingRoomDetails item : bookingRoomDetails) {
+            room = roomRepository.findById(item.getRoomId()).get();
+            rooms.add(room);
+            roomCategories = roomCategoriesRepository.findByRoomCategoryId(item.getRoomCategoryId());
+            distinctRoomCategories.add(roomCategories);
+        }
+
+        List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
+
+        for (RoomCategories roomCategory : distinctRoomCategories) {
+            roomInDetailsDTOS.add(new RoomInDetailsDTO(room, roomCategory, categoryRoomPriceRepository.findByRoomCategoryId(roomCategory.getRoomCategoryId())));
+        }
+
+        // Group rooms by room category
+        Map<Long, List<Room>> groupedRooms = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
+        }
+
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
+        System.out.println("dateInfoList" + dateInfoList.size());
+        BigDecimal total_Price = BigDecimal.ZERO;
+        Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
+
+        // tổng giá cho một CategoryRoomPrice theo Category
+        for (int i = 0; i < roomInDetailsDTOS.size(); i++) {
+            BigDecimal totalForCategory = calculateTotalForCategory(roomInDetailsDTOS.get(i).getCategoryRoomPrice(), dateInfoList);
+            totalPriceByCategoryId.put(roomInDetailsDTOS.get(i).getCategoryRoomPrice().getRoomCategoryId(), totalForCategory);
+        }
+        // CategoryRoomPrice * total Room
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
+            System.out.println("roomsWithSameCategory" + roomsWithSameCategory.size());
+
+            if (totalPriceByCategoryId.containsKey(categoryId)) {
+
+                BigDecimal totalPrice1 = totalPriceByCategoryId.get(categoryId);
+
+                BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomsWithSameCategory.size()));
+            }
+        }
+
+        dto.setTotalPriceByCategoryId(totalPriceByCategoryId);
+        dto.setGroupedRooms(groupedRooms);
+        dto.setBookingRoomDetails(roomInDetailsDTOS);
+        dto.setDateInfoList(dateInfoList);
+
+        return dto;
+    }
+
+    //  tổng giá cho một CategoryRoomPrice dựa trên dateInfoList
     public BigDecimal calculateTotalForCategory(CategoryRoomPrice
                                                         cpr, List<DateInfoCategoryRoomPriceDTO> dateInfoList) {
         BigDecimal totalForCategory = BigDecimal.ZERO;
-//        int daysBetween = calculateDaysBetween(dateInfoList.getDate(), endDate.getDate());
-        int daysBetween = dateInfoList.size(); //
+
+        int daysBetween = dateInfoList.size();
 
         for (int i = 0; i < daysBetween; i++) {
             BigDecimal multiplier = BigDecimal.ONE; // Mặc định là 1
