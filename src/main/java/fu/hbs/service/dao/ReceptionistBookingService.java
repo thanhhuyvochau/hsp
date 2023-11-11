@@ -2,6 +2,7 @@ package fu.hbs.service.dao;
 
 import java.util.List;
 
+import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
 import org.springframework.data.domain.Page;
 
 import fu.hbs.entities.HotelBooking;
@@ -19,7 +20,7 @@ public interface ReceptionistBookingService {
 
 	List<HotelBooking> findAllWithStatusOne();
 
-
+	public void createHotelBookingByReceptionist(CreateHotelBookingDTO bookingRequest);
 
 
 

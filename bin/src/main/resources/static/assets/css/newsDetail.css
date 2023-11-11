@@ -1,0 +1,15 @@
+.box-head{
+    text-align: center;
+}
+
+h3{
+    padding-top: 20px;
+}
+
+.h7{
+    font-size: medium;
+    color: var(--text-black);
+    line-height: 1.625rem;
+    padding-right: 300px;
+    text-align: justify;
+}

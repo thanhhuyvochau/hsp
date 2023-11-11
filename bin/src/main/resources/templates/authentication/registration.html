@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./assets/css/login.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+	<!-- Fonts -->
+	<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<title>Đăng ký</title>
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="container main">
+			<div class="row">
+				<div class="col-md-6 side-image">
+
+
+					<img src="./assets/img/login/hotelLogin.jpg" alt="">
+
+				</div>
+				<div class="col-md-6 right">
+
+					<div class="input-box">
+						<div th:if="${param.success}">
+							<div class="alert alert-success">Đăng ký thành công! Giờ bạn có thể đăng nhập.</div>
+						</div>
+
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">Đăng ký thất bại! Hãy kiểm tra lại thông tin và thử lại lần
+								nữa.</div>
+						</div>
+						<p th:text="${accountDetail}"></p>
+
+						<header>Đăng ký nhanh chóng và dễ dàng</header>
+						<form th:action="@{/registration}" method="post" th:object="${userdto}">
+
+							<div class="input-field">
+								<input type="text" id="user_name" placeholder="Tên người dùng" class="input"
+									name="user-name" minlength="3" maxlength="30" th:field="*{userName}" required
+									autofocus>
+
+							</div>
+							<div class="input-field">
+								<input type="text" class="input" id="email" placeholder="Email" required="" name="email"
+									maxlength="50" minlength="5" th:field="*{userEmail}" autocomplete="off">
+
+							</div>
+							<div class="input-field">
+								<p id="email-error" style="color: red;"></p>
+							</div>
+
+
+							<div class="input-field">
+								<input th:field="*{userPassword}" minlength="8" maxlength="30" name="password"
+									type="password" class="input" id="password" placeholder="Mật khẩu" required=""
+									autocomplete="off">
+
+							</div>
+							<div class="input-field">
+								<input type="password" class="input" id="password2" placeholder="Nhập lại mật khẩu"
+									th:field="*{CheckPass}" minlength="8" maxlength="30" name="password" required="">
+
+							</div>
+							<div class="input-field">
+								<p id="checkpass-error" style="color: red;"></p>
+							</div>
+							<div th:if="${param.checkpass}">
+								<div class="alert alert-danger"> Mật khẩu không giống nhau! Hãy kiểm tra lại.</div>
+							</div>
+
+							<div>
+
+							<div>
+								<p id="result2"></p>
+								<p id="message"></p>
+							</div>
+							<div class="input-field">
+
+								<input id="submit-button" type="submit" class="submit" disabled value="Đăng ký">
+							</div>
+							<div class="signin">
+								<span>Đã có tài khoản ? <a href="/login">Đăng nhập ở đây</a></span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script crossorigin="anonymous" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		var submitButton = document.getElementById("submit-button");
+		document.getElementById("email").addEventListener("input", function () {
+			var email = this.value;
+			var pattern = /^[a-zA-Z0-9!#$%&'*+/=?^`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+			if (!pattern.test(email)) {
+				document.getElementById("email-error").textContent = "Email không đúng định dạng.";
+				submitButton.disabled = true;
+			} else {
+				document.getElementById("email-error").textContent = "";
+				submitButton.disabled = false;
+			}
+		});
+
+
+		$('#password, #password2').on('keyup', function () {
+			if ($('#password').val() === $('#password2').val()) {
+				$('#message').html('Password Matching').css('color', 'green');
+				document.getElementById("submit").disabled = false;
+			} else {
+				$('#message').html('Password not Matching').css('color', 'red');
+				document.getElementById("submit").disabled = true;
+			}
+
+		});
+	</script>
+</body>
+
+</html>

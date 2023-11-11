@@ -79,5 +79,11 @@ public class ApplicationExceptionHandler {
         return "errorPage"; // Create an error page for displaying the error message.
     }
 
+    @ExceptionHandler(NotEnoughRoomAvalaibleException.class)
+    public String handleNotEnoughRoomAvalaibleException(Model model, NotEnoughRoomAvalaibleException ex) {
+        model.addAttribute("error", ex.getMessage());
+        return "errorPage"; // Create an error page for displaying the error message.
+    }
+
 
 }

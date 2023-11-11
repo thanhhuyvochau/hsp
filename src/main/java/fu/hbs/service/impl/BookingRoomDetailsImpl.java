@@ -332,5 +332,11 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
             return 2; // weekend
         }
     }
+
+    @Override
+    public List<BookingRoomDetails> getBookingDetailsByHotelBookingId(Long hotelBookingId) {
+        List<BookingRoomDetails> bookingRoomDetailsList = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        return bookingRoomDetailsList;
+    }
 }
 
