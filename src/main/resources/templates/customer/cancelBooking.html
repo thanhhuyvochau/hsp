@@ -61,27 +61,28 @@
     </div>
     <h4>Chi tiết đặt phòng</h4>
     <div class="row bg-light-subtle border m-0 shadow"
-         th:each="room, iteration : ${session.bookingDetailsDTO.getBookingRoomDetails()}"
-    >
-
-
-        <div class="col-6 p-3"
-        >
+         th:each="room, iteration : ${bookingDetailsDTO.getBookingRoomDetails()}">
+        <div class="col-6 p-3">
             <p class="fw-bold">Loại phòng: <span class="fw-normal"
                                                  th:text="${room.getRoomCategories().getRoomCategoryName()}">Phòng đơn</span>
             </p>
             <p class="text-danger m-0 fw-bold">ƯU ĐÃI ĐẶC BIỆT: </p>
             <p class="">Bao gồm bữa sáng</p>
-            <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span>1</span> phòng, <span>1</span> đêm,
-                    <span>2</span> người lớn, <span>1</span> trẻ em đã bao gồm
-                    trong giá.</span>
+            <th:block th:each="r : ${bookingDetailsDTO.getGroupedRooms()}">
+                <th:block th:if="${r.getKey() == room.getRoomCategories().getRoomCategoryId()}">
+                    <P class="fw-bold mb-0">Chi tiết:</P> <span class="fw-normal"><span
+                        th:text="${r.getValue().size()}"></span> phòng, <span
+                        th:text="${bookingDetailsDTO.getDateInfoList().size()-1}"></span> đêm,
+                    <span th:text="${room.getRoomCategories().getNumberPerson()}"> </span> người </span>
+                </th:block>
+            </th:block>
         </div>
         <div class="col-2 p-3 align-content-between align-middle">
             <p class="mb-0">Số lượng phòng</p>
 
-            <th:block th:each="r : ${session.bookingDetailsDTO.getGroupedRooms()}">
+            <th:block th:each="r : ${bookingDetailsDTO.getGroupedRooms()}">
                 <th:block th:if="${r.getKey() == room.getRoomCategories().getRoomCategoryId()}">
-            <span class="form-select mb-3" aria-label="Select example"
+            <span class="mb-3" aria-label="Select example"
                   th:text="${r.getValue().size()}">
 
             </span>
@@ -91,20 +92,31 @@
             <p class="mb-0">Số lượng khách
                 <i class="bi bi-exclamation-circle-fill" data-bs-container="body" data-bs-toggle="popover"
                    data-bs-placement="top"
-                   data-bs-content="Từ 0 đến 12 tuổi được miễn phí nếu sử dụng giường có sẵn."
+                   data-bs-content="Từ 2 đến 12 tuổi được miễn phí nếu sử dụng giường có sẵn."
                    data-bs-trigger="hover"></i>
             </p>
-            <span class="form-select" aria-label="Default select example" disabled
+            <span class="" aria-label="Default select example" disabled
                   th:text="${room.getRoomCategories().getNumberPerson()}">
             </span>
         </div>
-        <div class="col p-3 text-end">
-            <p class="fw-bold">Giá từng phòng: <span class="fw-normal">1.200.000</span></p>
-            <p class="fw-bold">Tổng giá phòng: <span class="fw-normal">2.400.000</span></p>
-            <p>Chính sách đặt phòng
-                <i class="bi bi-exclamation-circle-fill" data-bs-container="body" data-bs-toggle="popover"
-                   data-bs-placement="top" data-bs-html="true"
-                   data-bs-content="Hủy: Nếu hủy hoặc thay đổi trước ngày nhận phòng, sẽ trừ 10% tổng hoá đơn phải thanh toán.
+        <th:block th:each="gr : ${bookingDetailsDTO.getGroupedRooms()}">
+            <th:block th:if="${gr.getKey() == room.getRoomCategories().getRoomCategoryId()}">
+                <th:block th:if="${bookingDetailsDTO.getTotalPriceByCategoryId().containsKey(gr.getKey())}">
+                    <div class="col p-3 text-end">
+                        <p class="fw-bold">Giá từng phòng: <span class="fw-normal"
+                                                                 th:text="${#numbers.formatDecimal(bookingDetailsDTO.getTotalPriceByCategoryId().get(gr.getKey()), 0, 'COMMA', 0, 'POINT') + ' VND/'}">1.200.000</span>
+                            <span
+                                    th:text="${bookingDetailsDTO.getDateInfoList().size()-1}+' Đêm'">
+
+                            </span>
+                        </p>
+                        <p class="fw-bold">Tổng giá phòng: <span class="fw-normal"
+                                                                 th:text="${#numbers.formatDecimal(bookingDetailsDTO.getTotalPriceByCategoryId().get(gr.getKey()).multiply(gr.getValue().size()), 0, 'COMMA', 0, 'POINT') + ' VND'}">2.400.000</span>
+                        </p>
+                        <p>Chính sách đặt phòng
+                            <i class="bi bi-exclamation-circle-fill" data-bs-container="body" data-bs-toggle="popover"
+                               data-bs-placement="top" data-bs-html="true"
+                               data-bs-content="Hủy: Nếu hủy hoặc thay đổi trước ngày nhận phòng, sẽ trừ 10% tổng hoá đơn phải thanh toán.
 
           <br><br>Thanh toán: Thanh toán toàn bộ hoặc đặt cọc 50% giá trị tiền đặt phòng..
 
@@ -115,10 +127,12 @@
           <br><br>Trả phòng: 12:00
 
           <br><br>Chính sách khác: Giá phòng 2 người lớn và 1 trẻ em dưới 12 tuổi. Trẻ em từ 12 tuổi trở lên tính như người lớn."
-                   data-bs-trigger="hover"></i>
-            </p>
-        </div>
-
+                               data-bs-trigger="hover"></i>
+                        </p>
+                    </div>
+                </th:block>
+            </th:block>
+        </th:block>
     </div>
     <form id="cancellationForm">
         <input th:value="${hotelBookingId}" name="hotelBookingId" type="hidden">
@@ -183,7 +197,9 @@
             </div>
         </div>
         <div class="row">
-            <div class=" col text-end"><a href="#" class="btn btn-dark ">Quay lại</a></div>
+            <div class=" col text-end"><a th:href="@{'/customer/cancelBooking/'+${hotelBookingId}}"
+                                          class="btn btn-dark ">Quay
+                lại</a></div>
             <div class="col text-start">
                 <a href="" class="btn btn-dark" id="cancelButton" disabled onclick="confirmCancellation()">Xác nhận
                     huỷ</a>

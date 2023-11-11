@@ -272,6 +272,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
 
+        // Price theo Category
         for (RoomCategories roomCategory : roomCategoriesList) {
             CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.getCategoryId(roomCategory.getRoomCategoryId());
             categoryRoomPrices.add(categoryRoomPrice);
@@ -311,6 +312,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         createBookingDTO.setCheckOut(checkOut);
         createBookingDTO.setRoomCategoryMap(roomCategoryMap);
         createBookingDTO.setTotalPriceByCategoryId(totalPriceByCategoryId);
+        createBookingDTO.setDateInfoList(dateInfoList);
 
         return createBookingDTO;
 
@@ -342,22 +344,6 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         customerCancellation.setStatus(false);
         customerCancellationRepository.save(customerCancellation);
     }
-
-//    @Override
-//    public void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName) {
-//        // Reason
-//        CustomerCancellationReasons cancellationReason = new CustomerCancellationReasons();
-//        cancellationReason.setReasonDescription(reason);
-//        cancellationReason = customerCancellationReasonRepository.save(cancellationReason);
-//
-//        // Cancellation
-//        CustomerCancellation customerCancellation = new CustomerCancellation();
-//        customerCancellation.setHotelBookingId(hotelBookingId);
-//        customerCancellation.setCancelTime((java.sql.Date) new Date());
-//        customerCancellation.setReasonId(cancellationReason.getReasonId());
-//        customerCancellation.setOtherReason(otherReason);
-//        customerCancellationRepository.save(customerCancellation);
-//    }
 
 
     // Hàm tính tổng giá cho một CategoryRoomPrice dựa trên dateInfoList

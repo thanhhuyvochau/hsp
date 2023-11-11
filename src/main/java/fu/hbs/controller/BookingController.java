@@ -68,7 +68,6 @@ public class BookingController {
 //        LocalDate inputDate = LocalDate.parse(checkIn);
 //        LocalDate inputDate1 = LocalDate.parse(checkOut);
 
-
         CreateBookingDTO createBookingDTO = hotelBookingService.createBooking(
                 roomCategoryNames, selectedRoomCategories, checkIn, checkOut, session);
 
@@ -151,7 +150,7 @@ public class BookingController {
                     // Tăng biến đếm số phòng đã thêm
                     roomsAdded++;
                 } else {
-                    break; // Đã thêm đủ số lượng phòng cần thiết, thoát khỏi vòng lặp
+                    break;
                 }
 
             }
@@ -206,20 +205,9 @@ public class BookingController {
         return "customer/bookingDetail";
     }
 
-//    @PostMapping("/customer/cancelBooking")
-//    public String cancelBooking(@RequestParam("hotelBookingId") Long hotelBookingId,
-//                                @RequestParam("reason") String reason,
-//                                @RequestParam("otherReason") String otherReason,
-//                                @RequestParam("bank") String bank,
-//                                @RequestParam("account") String account,
-//                                @RequestParam("userName") String userName) {
-//        hotelBookingService.cancelBooking(hotelBookingId, reason, otherReason, bank, account, userName);
-//        return "customer/cancel-booking";
-//    }
 
     @PostMapping("/customer/cancelBooking")
     public String cancelBooking(@ModelAttribute CancellationFormDTO cancellationForm, Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
-        // Thực hiện hủy đặt phòng dựa trên hotelBookingId
         hotelBookingService.cancelBooking(cancellationForm, authentication);
         redirectAttributes.addAttribute("successMessage", "Bạn đã hủy thành công.");
         model.addAttribute("successMessage", "Bạn đã hủy thành công.");
@@ -241,6 +229,6 @@ public class BookingController {
 
 
         session.setAttribute("bookingDetailsDTO", bookingDetailsDTO);
-        return "customer/cancel-booking";
+        return "customer/cancelBooking";
     }
 }

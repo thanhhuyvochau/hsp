@@ -1,5 +1,6 @@
 package fu.hbs.dto.HotelBookingDTO;
 
+import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.entities.Room;
 import fu.hbs.entities.RoomCategories;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,5 @@ public class CreateBookingDTO {
     private int totalDay;
     private Map<Long, Integer> roomCategoryMap;
     private Map<Long, BigDecimal> totalPriceByCategoryId;
+    private List<DateInfoCategoryRoomPriceDTO> dateInfoList;
 }

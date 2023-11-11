@@ -45,10 +45,12 @@ public class LoginController {
     @GetMapping("/login")
     public String loginForm(Authentication action) {
         if (action != null) {
+
             return "redirect:/homepage";
         }
         return "authentication/login";
     }
+//    public String
 
     /**
      * Handles the rendering of the homepage based on the user's role.
@@ -59,45 +61,44 @@ public class LoginController {
      * @return The view of the homepage based on the user's role.
      */
     @GetMapping("/homepage")
-    public String index(Authentication action, Model model, HttpSession session) {
-        if (action != null) {
-            UserDetails user = (UserDetails) action.getPrincipal();
+    public String homepage(Authentication authentication, Model model, HttpSession session) {
+        if (authentication != null) {
+            UserDetails user = (UserDetails) authentication.getPrincipal();
             System.out.println(user);
+
             for (GrantedAuthority authority : user.getAuthorities()) {
-                if (authority.getAuthority().equalsIgnoreCase("ADMIN")) {
+                String authorityName = authority.getAuthority();
+
+                if (authorityName.equalsIgnoreCase("ADMIN")) {
                     System.out.println("ADMIN");
                     model.addAttribute("accountDetail", user.getUsername());
                     return "homepage";
-                }
-                if (authority.getAuthority().equalsIgnoreCase("MANAGEMENT")) {
+                } else if (authorityName.equalsIgnoreCase("MANAGEMENT")) {
                     System.out.println("Management");
-                    model.addAttribute("accountDetail", user);
-                    return "homepage";
-                }
-                if (authority.getAuthority().equalsIgnoreCase("RECEPTIONISTS")) {
-                    System.out.println("Receptionists");
-                    model.addAttribute("accountDetail", user);
-                    return "homepage";
-                }
-                if (authority.getAuthority().equalsIgnoreCase("HOUSEKEEPING")) {
-                    System.out.println("Housekeeping");
-                    model.addAttribute("accountDetail", user);
-                    return "homepage";
-                }
-                if (authority.getAuthority().equalsIgnoreCase("ACCOUNTING")) {
-                    System.out.println("Accounting");
-                    model.addAttribute("accountDetail", user);
-                    return "homepage";
-                }
-                if (authority.getAuthority().equalsIgnoreCase("CUSTOMER")) {
                     User user1 = userService.getUserbyEmail(user.getUsername());
-                    session.setAttribute("accountDetail", user);
+                    session.setAttribute("accountDetail", user.getUsername());
+                    session.setAttribute("name", user1.getName());
+                    return "redirect:/management/listRefund";
+                } else if (authorityName.equalsIgnoreCase("RECEPTIONISTS")) {
+                    System.out.println("Receptionists");
+                    model.addAttribute("accountDetail", user.getUsername());
+                    return "receptionistsHomePage";
+                } else if (authorityName.equalsIgnoreCase("HOUSEKEEPING")) {
+                    System.out.println("Housekeeping");
+                    model.addAttribute("accountDetail", user.getUsername());
+                    return "housekeepingHomePage";
+                } else if (authorityName.equalsIgnoreCase("ACCOUNTING")) {
+                    System.out.println("Accounting");
+                    model.addAttribute("accountDetail", user.getUsername());
+                    return "accountingHomePage";
+                } else if (authorityName.equalsIgnoreCase("CUSTOMER")) {
+                    User user1 = userService.getUserbyEmail(user.getUsername());
+                    session.setAttribute("accountDetail", user.getUsername());
                     session.setAttribute("name", user1.getName());
                     return "homepage";
                 }
             }
-
         }
-        return "redirect:homepage";
+        return "redirect:/login";
     }
 }

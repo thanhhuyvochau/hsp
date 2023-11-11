@@ -14,4 +14,5 @@ public class CancellationFormDTO {
     private String otherReason;
     private String accountNumber;
     private String accountName;
+    private String refundAmount;
 }
