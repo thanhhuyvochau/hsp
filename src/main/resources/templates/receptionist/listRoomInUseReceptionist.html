@@ -33,6 +33,20 @@
 	<script src="/assets/js/manager.js"></script>
 	<link rel="stylesheet" href="/assets/css/header-footer.css">
 	<link rel="stylesheet" href="/assets/css/header_footer_style.css">
+
+	<!-- Include Bootstrap-datepicker CSS -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+	<!-- Include Bootstrap-datepicker JS -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+	<!-- Include Bootstrap-datepicker localization for Vietnamese -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.vi.min.js"></script>
+
+
 </head>
 
 <body>
@@ -54,7 +68,7 @@
 					<a href="./createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt phòng</a>
 				</li>
 				<li>
-					<a href="#"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả phòng</a>
+					<a href="./checkOutReceptionist"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả phòng</a>
 				</li>
 				<li>
 					<a href="./listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử dụng</a>
@@ -90,7 +104,6 @@
 					<button class=" btn bi-person-circle " style="font-size: 2em;"></button>
 				</div>
 			</nav>
-
 			<div class="table-responsive">
 				<p class="fw-bold"> Các yêu cầu hoàn tiền</p>
 				<table id="bookingTable" class="table table-striped">
@@ -120,9 +133,10 @@
 							<td th:text="${hotelbooking.totalPrice}"></td>
 							<td th:text="${hotelbooking.statusId}"></td>
 							<td>
-								<button type="button" class="btn btn-dark"
+								<button type="button" id="btn-detail" class="btn btn-dark"
 									th:attr="data-booking-id=${hotelbooking.hotelBookingId}">Chi tiết</button>
-
+								<button type="button" id="btn-checkout" class="btn btn-dark"
+									th:attr="data-booking-id=${hotelbooking.hotelBookingId}">Check Out</button>
 
 							</td>
 						</tr>
@@ -174,7 +188,7 @@
 				"searching": true
 			});
 
-			$('#bookingTable').on('click', '.btn-dark', function () {
+			$('#bookingTable').on('click', '#btn-detail', function () {
 				var data = table.row($(this).parents('tr')).data();
 
 				$("#customerName").text(data[1]);
@@ -195,6 +209,8 @@
 			$('#close').on('click', function () {
 				$('#bookingDetailsModal').modal('hide')
 			});
+			// Handle the click event on the "Check Out" button
+			
 		});
 
 	</script>

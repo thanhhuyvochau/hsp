@@ -42,7 +42,18 @@ public class ReceptionistBookingController {
         bookingService.save(booking);
         return "redirect:/listBookingReceptionist";
     }
+    @GetMapping("/checkout-receptionist")
+    public String checkoutReceptionist(@RequestParam("bookingId") Long bookingId, Model model) {
+        // Retrieve booking details based on the bookingId
+        // Replace the following line with your actual logic to fetch booking details
+        HotelBooking hotelBooking = bookingService.findById(bookingId);
 
+        // Add booking details to the model
+        model.addAttribute("hotelBooking", hotelBooking);
+
+        // Return the view name for checkout page
+        return "receptionist/checkoutReceptionist";
+    }
     @GetMapping("/receptionist/listBookingReceptionist")
     public String listBooking(Model model) {
         // Sử dụng service để lấy danh sách đặt trước
@@ -103,6 +114,11 @@ public class ReceptionistBookingController {
         return "receptionist/bookingHistoryReceptionist";
     }
 
+    @GetMapping("receptionist/checkOutReceptionist")
+    public String checkOutReceptionist(Model model) {
+        
+        return "receptionist/checkOutReceptionist";
+    }
     
     @GetMapping("receptionist/createRoomReceptionist")
     public String createRoomReceptionist(Model model) {

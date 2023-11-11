@@ -1,93 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check Out Receptionist</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lễ tân</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+		integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+		integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+		crossorigin="anonymous"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+	<script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
+	<link rel="stylesheet" href="/assets/css/sidebar.css">
+	<script src="/assets/js/sidebar.js"></script>
+	<script src="/assets/js/manager.js"></script>
+	<link rel="stylesheet" href="/assets/css/header-footer.css">
+	<link rel="stylesheet" href="/assets/css/header_footer_style.css">
 
-    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+	<!-- Include Bootstrap-datepicker CSS -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
-    <link rel="stylesheet" href="/assets/css/checkInReceptionist.css">
-    <script src="/assets/js/main.js"></script>
+	<!-- Include Bootstrap-datepicker JS -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+	<!-- Include Bootstrap-datepicker localization for Vietnamese -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.vi.min.js"></script>
+
 
 </head>
 
-<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
+<body>
 
-    <div class="wrapper">
+	<body data-bs-target=".navbar" data-bs-offset="100"></body>
+	<div class="wrapper">
+		<!-- Sidebar Holder -->
+		<nav id="sidebar">
+			<div class="sidebar-header border-bottom">
+				<img src="/assets/img/Orilogo.png" class="img-fluid">
+			</div>
 
-        <aside id="sidebar">
-            <div class="h-100">
-                <div class="sidebar-logo">
-                    <img src="./images/Orilogo.png" alt="" width="180" height="80"
-                        class="d-inline-block align-text-top">
-                </div>
-                <!-- Sidebar Navigation -->
-                <ul class="sidebar-nav">
-                    <li class="sidebar-header fw-bold">
-                        Lễ tân
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-regular fa-rectangle-list"></i>
-                            Danh sách phòng
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-solid fa-check-double"></i>
-                            Đặt phòng
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            Trả phòng
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-solid fa-house-user"></i>
-                            Phòng đang sử dụng
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-solid fa-bell"></i>
-                            Đặt trước
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="fa-solid fa-clipboard"></i>
-                            Lịch sử đặt phòng
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </aside>
+			<ul class="list-unstyled components border-bottom">
+				<p class="border-bottom fw-bold"><i class="bi bi-person-badge-fill pe-2"></i>Lễ tân</p>
+				<li>
+					<a href="#"><i class="fa-regular fa-rectangle-list pe-2"></i>Danh sách phòng</a>
+				</li>
+				<li>
+					<a href="./createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt phòng</a>
+				</li>
+				<li>
+					<a href="./checkOutReceptionist"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả phòng</a>
+				</li>
+				<li>
+					<a href="./listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử dụng</a>
+				</li>
+				<li>
+					<a href="./listBookingReceptionist"><i class="fa-solid fa-bell pe-2"></i>Đặt trước</a>
+				</li>
+				<li>
+					<a href="./listHistoryBooking"><i class="fa-solid fa-clipboard pe-2"></i>Lịch sử đặt phòng</a>
+				</li>
+			</ul>
 
-        <div class="main">
-            <nav class="navbar navbar-expand px-3 border-bottom">
-                <!-- Button for sidebar toggle -->
-                <button type="button" class="bi bi-person-circle "></button>
-            </nav>
+		</nav>
+
+		<!-- Page Content Holder -->
+		<div id="content">
+
+			<nav class="navbar navbar-expand-lg shadow ">
+				<div class="container-fluid">
+
+					<button type="button" id="sidebarCollapse" class="navbar-btn">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+					<button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+						data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+						<i class="fas fa-align-justify"></i>
+					</button>
+
+
+					<button class=" btn bi-person-circle " style="font-size: 2em;"></button>
+				</div>
+			</nav>
             <main class="content px-3 py-2">
                 <div class="container">
                     <div class="row mt-3">
