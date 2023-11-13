@@ -33,6 +33,8 @@ public class CreateHotelBookingDTO {
     private String phone;
     private Date checkIn;
     private Date checkOut;
+    private String notes;
+    private Long paymentTypeId = 1L;
     private List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
 }
 

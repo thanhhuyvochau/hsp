@@ -12,16 +12,21 @@
 
 package fu.hbs.controller;
 
+import com.google.gson.Gson;
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
+import fu.hbs.dto.HotelBookingDTO.SearchingResultRoomDTO;
+import fu.hbs.dto.HotelBookingDTO.SearchingRoomDTO;
 import fu.hbs.entities.*;
 import fu.hbs.service.dao.*;
+import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.service.dao.RoomService;
 import fu.hbs.service.impl.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -97,10 +102,6 @@ public class BookingController {
         CreateBookingDTO createBookingDTO = (CreateBookingDTO) session.getAttribute("createBookingDTO");
         List<RoomCategories> roomCategories = createBookingDTO.getRoomCategoriesList();
         Map<Long, Integer> roomCategoryMap = createBookingDTO.getRoomCategoryMap();
-
-        List<BookingRoomDetails> bookingRoomDetailsList = new ArrayList<>();
-
-
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
@@ -230,5 +231,13 @@ public class BookingController {
 
         session.setAttribute("bookingDetailsDTO", bookingDetailsDTO);
         return "customer/cancelBooking";
+    }
+
+    @PostMapping("/search-room")
+    public ResponseEntity<String> searchRoomForBooking(@RequestBody SearchingRoomDTO searchingRoomDTO) {
+        SearchingResultRoomDTO searchingRoomForBooking = this.roomService.getSearchingRoomForBooking(searchingRoomDTO.getCategoryId(), searchingRoomDTO.getCheckIn(), searchingRoomDTO.getCheckOut());
+        Gson gson = new Gson();
+        String json = gson.toJson(searchingRoomForBooking);
+        return ResponseEntity.ok(json);
     }
 }

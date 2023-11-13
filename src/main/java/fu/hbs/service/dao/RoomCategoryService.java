@@ -29,4 +29,5 @@ public interface RoomCategoryService {
 
 
     RoomCategories deleteByRoomCategoryId(Long id);
+
 }

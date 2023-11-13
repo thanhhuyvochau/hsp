@@ -53,4 +53,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             " AND hb.status_id = 1 );", nativeQuery = true)
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
+
+    List<Room> findAllByRoomCategoryId(Long roomCategoryId);
+
 }

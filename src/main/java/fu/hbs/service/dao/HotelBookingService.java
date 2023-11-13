@@ -2,9 +2,12 @@ package fu.hbs.service.dao;
 
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingAvailable;
+import fu.hbs.dto.HotelBookingDTO.CheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
+import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.HotelBooking;
+import fu.hbs.entities.RoomService;
 import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
@@ -35,4 +38,7 @@ public interface HotelBookingService {
 
     //    void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName);
     void cancelBooking(CancellationFormDTO cancellationFormDTO, Authentication authentication);
+
+
+//    List<RoomBookingServiceDTO> getAllUsedRoomServices(Long hotelBookingId);
 }

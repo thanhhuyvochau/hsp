@@ -2,14 +2,18 @@ package fu.hbs.service.impl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fu.hbs.dto.HotelBookingDTO.CheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDetailDTO;
-import fu.hbs.entities.BookingRoomDetails;
-import fu.hbs.entities.Room;
+import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
+import fu.hbs.entities.*;
 import fu.hbs.exceptionHandler.NotEnoughRoomAvalaibleException;
 import fu.hbs.repository.BookingRoomDetailsRepository;
 import fu.hbs.repository.RoomRepository;
@@ -17,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import fu.hbs.entities.HotelBooking;
-import fu.hbs.entities.RoomStatus;
 import fu.hbs.repository.HotelBookingRepository;
 import fu.hbs.repository.RoomStatusRepository;
 import fu.hbs.service.dao.ReceptionistBookingService;
@@ -34,6 +36,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
     @Autowired
     private RoomRepository roomRepository;
+
     @Override
     public List<HotelBooking> findAll() {
         return bookingRepository.findAll();
@@ -150,4 +153,29 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return totalPrice;
     }
 
+    @Override
+    public boolean checkout(CheckoutDTO checkoutDTO) {
+        Optional<HotelBooking> hotelBookingOptional = bookingRepository.findById(checkoutDTO.getHotelBookingId());
+        if (hotelBookingOptional.isPresent()) {
+            // Create VnPay transaction
+            HotelBooking hotelBooking = hotelBookingOptional.get();
+            VnpayTransactions transactions = new VnpayTransactions();
+            transactions.setTransactionId("");
+            transactions.setStatus("Thành công");
+            transactions.setAmount(checkoutDTO.getTotalPrice());
+            LocalDate localDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+            Date date = Date.valueOf(localDate);
+            transactions.setCreatedDate(date);
+            transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
+
+            List<RoomBookingServiceDTO> roomBookingServiceDTOS = checkoutDTO.getRoomBookingServiceDTOS();
+            for (RoomBookingServiceDTO roomBookingServiceDTO : roomBookingServiceDTOS) {
+                Long roomServiceId = roomBookingServiceDTO.getRoomServiceId();
+                int quantity = roomBookingServiceDTO.getQuantity();
+
+            }
+        }
+
+        return false;
+    }
 }

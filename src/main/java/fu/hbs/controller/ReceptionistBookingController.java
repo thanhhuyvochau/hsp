@@ -1,14 +1,19 @@
 package fu.hbs.controller;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
-import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
-import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDetailDTO;
+import fu.hbs.dto.HotelBookingDTO.*;
+import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.BookingRoomDetails;
-import fu.hbs.service.dao.BookingRoomDetailsService;
+import fu.hbs.entities.PaymentType;
+import fu.hbs.entities.RoomService;
+import fu.hbs.service.dao.*;
+import fu.hbs.service.impl.VNPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fu.hbs.entities.HotelBooking;
 import fu.hbs.repository.HotelBookingRepository;
 import fu.hbs.repository.RoomStatusRepository;
-import fu.hbs.service.dao.ReceptionistBookingService;
 
 @Controller
 public class ReceptionistBookingController {
@@ -40,6 +44,17 @@ public class ReceptionistBookingController {
     private RoomStatusRepository roomStatusRepository;
     @Autowired
     private BookingRoomDetailsService bookingRoomDetailsService;
+    @Autowired
+    private HotelBookingService hotelBookingService;
+    @Autowired
+    private ServiceService roomServiceService;
+
+    @Autowired
+    private PaymentTypeService paymentTypeService;
+    @Autowired
+    private VNPayService vnPayService;
+    @Autowired
+    private RoomCategoryService roomCategoryService;
 
     @GetMapping("/create")
     public String createBooking(Model model) {
@@ -47,7 +62,7 @@ public class ReceptionistBookingController {
         return "booking/create";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/receptionist-save-booking")
     public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest) {
         bookingService.createHotelBookingByReceptionist(bookingRequest);
         return "redirect:/listBookingReceptionist";
@@ -88,27 +103,56 @@ public class ReceptionistBookingController {
         // Replace the following line with your actual logic to fetch booking details
         HotelBooking hotelBooking = bookingService.findById(bookingId);
         List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
-
+        List<RoomService> roomServiceList = roomServiceService.getAllServices();
+        List<PaymentType> paymentTypes = paymentTypeService.getAllPaymentType();
+//        List<RoomBookingServiceDTO> usageRoomServices = hotelBookingService.getAllUsedRoomServices(bookingId);
+        CheckoutDTO checkoutDTO = new CheckoutDTO();
         // Add booking details to the model
         model.addAttribute("hotelBooking", hotelBooking);
         model.addAttribute("bookingDetailsList", bookingDetailsList);
+        model.addAttribute("roomServiceList", roomServiceList);
+        model.addAttribute("checkoutDTO", checkoutDTO);
+        model.addAttribute("paymentTypes", paymentTypes)
+        ;//        model.addAttribute("usageRoomServices", usageRoomServices);
         // Return the view name for checkout page
         return "receptionist/checkoutReceptionist";
     }
 
-    @PostMapping("/checkout-receptionist")
-    public String saveCheckoutReceptionist(@RequestParam("bookingId") Long bookingId, Model model) {
+    @PostMapping("/checkout-payment")
+    public String checkoutPaymentReceptionist(@ModelAttribute("checkoutDTO") CheckoutDTO checkoutDTO, Model model, HttpServletRequest request) {
         // Retrieve booking details based on the bookingId
         // Replace the following line with your actual logic to fetch booking details
-        HotelBooking hotelBooking = bookingService.findById(bookingId);
-        model.getAttribute("hotelBooking");
+        HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
+        List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
+        // Sử lý thanh toán luôn
+        if (checkoutDTO.getPaymentTypeId() == 1) {
+
+
+        } else {
+
+        }
+        // Add booking details to the model
+        model.addAttribute("hotelBooking", hotelBooking);
+        model.addAttribute("bookingDetailsList", bookingDetailsList);
+
+        BigDecimal totalPrice = checkoutDTO.getTotalPrice();
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+//        String vnpayUrl = vnPayService.createOrder(totalPrice, hotelBooking.getHotelBookingId(), baseUrl);
+        return "redirect:";
+    }
+
+    @PostMapping("/handle-payment")
+    public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO") CheckoutDTO checkoutDTO, Model model) {
+        // Retrieve booking details based on the bookingId
+        // Replace the following line with your actual logic to fetch booking details
+        HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
         List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
 
         // Add booking details to the model
         model.addAttribute("hotelBooking", hotelBooking);
         model.addAttribute("bookingDetailsList", bookingDetailsList);
         // Return the view name for checkout page
-        return "receptionist/checkoutReceptionist";
+        return "customer/orderCustomer";
     }
 
     @GetMapping("/receptionist/listBookingReceptionist")
@@ -180,7 +224,10 @@ public class ReceptionistBookingController {
 
     @GetMapping("receptionist/createRoomReceptionist")
     public String createRoomReceptionist(Model model) {
-
+        List<ViewRoomCategoryDTO> categories = roomCategoryService.getAllRoom();
+        model.addAttribute("booking", new CreateHotelBookingDTO());
+        model.addAttribute("categories", categories);
+        model.addAttribute("searchingModel", new SearchingRoomDTO());
         return "receptionist/createRoomReceptionist";
     }
 }

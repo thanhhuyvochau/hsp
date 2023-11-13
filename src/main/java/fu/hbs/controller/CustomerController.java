@@ -17,6 +17,7 @@ package fu.hbs.controller;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.entities.*;
 import fu.hbs.service.dao.*;
+import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.service.dao.RoomService;
 import fu.hbs.service.impl.VNPayService;
 import org.springframework.beans.factory.annotation.Autowired;

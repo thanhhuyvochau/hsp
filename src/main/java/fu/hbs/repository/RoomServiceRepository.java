@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2023, FPT University 
+ * Copyright (C) 2023, FPT University
  * SEP490 - SEP490_G77
- * HBS 
- * Hotel Booking System 
+ * HBS
+ * Hotel Booking System
  *
  * Record of change:
  * DATE          Version    Author           DESCRIPTION
@@ -20,7 +20,9 @@ import fu.hbs.entities.RoomService;
 
 @Repository
 public interface RoomServiceRepository extends JpaRepository<RoomService, Long> {
-	List<RoomService> findByServiceNameContaining(String serviceName);
+    List<RoomService> findByServiceNameContaining(String serviceName);
 
-	RoomService findByServiceId(Long serviceId);
+    RoomService findByServiceId(Long serviceId);
+
+    List<RoomService> getAllByServiceIdIn(List<Long> serviceIds);
 }

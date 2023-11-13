@@ -17,10 +17,12 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
+import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.*;
 import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import fu.hbs.repository.*;
@@ -76,6 +78,11 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     @Autowired
     RefundAccountRepository refundAccountRepository;
     StringDealer stringDealer;
+    @Autowired
+    private HotelBookingServiceRepository hotelBookingServiceRepository;
+
+    @Autowired
+    private RoomServiceRepository roomServiceRepository;
 
     public HotelBookingServiceImpl() {
         this.stringDealer = new StringDealer();
@@ -436,4 +443,26 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         }
     }
 
+//    @Override
+//    public List<RoomBookingServiceDTO> getAllUsedRoomServices(Long hotelBookingId) {
+//        List<fu.hbs.entities.HotelBookingService> hotelBookingServices = hotelBookingServiceRepository.getAllByHotelBookingId(hotelBookingId);
+//
+//        List<Long> allUseRoomServiceIds = hotelBookingServices.stream().map(fu.hbs.entities.HotelBookingService::getServiceId).distinct().collect(Collectors.toList());
+//        List<RoomService> roomServices = roomServiceRepository.getAllByServiceId(allUseRoomServiceIds);
+//        Map<Long, RoomService> roomServiceMap = roomServices.stream().collect(Collectors.toMap(RoomService::getServiceId, Function.identity()));
+//        Map<Long, RoomBookingServiceDTO> roomBookingServiceDTOMap = new HashMap<>();
+//        for (fu.hbs.entities.HotelBookingService hotelBookingService : hotelBookingServices) {
+//            RoomService roomService = roomServiceMap.get(hotelBookingService.getServiceId());
+//            RoomBookingServiceDTO roomBookingServiceDTO = roomBookingServiceDTOMap.get(hotelBookingService.getServiceId());
+//            if (roomBookingServiceDTO == null) {
+//                roomBookingServiceDTO = new RoomBookingServiceDTO();
+//                roomBookingServiceDTO.setQuantity(1);
+//                roomBookingServiceDTO.setRoomService(roomService);
+//            } else {
+//                roomBookingServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity() + 1);
+//            }
+//        }
+//
+//        return (List<RoomBookingServiceDTO>) roomBookingServiceDTOMap.values();
+//    }
 }

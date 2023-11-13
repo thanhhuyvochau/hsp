@@ -42,8 +42,8 @@ public class VnpayTransactions {
     private Long hotelBookingId;
     private Long paymentId;
     private String status;
-    private BigDecimal amount;
-    private String transactionId;
+    private BigDecimal amount = BigDecimal.ZERO;
+    private String transactionId = "";
     private Date createdDate;
-    private String vnpayName;
+    private String vnpayName = "";
 }
