@@ -94,7 +94,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         hotelBooking.setCheckOut(checkOut);
 
         // Calculate total room number
-        Optional<Integer> totalRoomNumberOp = bookingRequest.getBookingDetails().stream().map(bookingDetailRequest -> bookingDetailRequest.getRoomNumber()).reduce(Integer::sum);
+        Optional<Integer> totalRoomNumberOp = bookingRequest.getBookingDetails().stream().map(CreateHotelBookingDetailDTO::getRoomNumber).reduce(Integer::sum);
         totalRoomNumberOp.ifPresent(hotelBooking::setTotalRoom);
 
         // Save to get id before create Booking Details

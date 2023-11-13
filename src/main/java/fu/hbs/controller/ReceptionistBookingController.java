@@ -92,7 +92,7 @@ public class ReceptionistBookingController {
         bookingDetails.add(bookingDetailDTO1);
         bookingDetails.add(bookingDetailDTO2);
 
-        hotelBookingDTO.setBookingDetails(bookingDetails);
+//        hotelBookingDTO.setBookingDetails(bookingDetails);
         bookingService.createHotelBookingByReceptionist(hotelBookingDTO);
         return "redirect:/listBookingReceptionist";
     }
@@ -225,7 +225,9 @@ public class ReceptionistBookingController {
     @GetMapping("receptionist/createRoomReceptionist")
     public String createRoomReceptionist(Model model) {
         List<ViewRoomCategoryDTO> categories = roomCategoryService.getAllRoom();
-        model.addAttribute("booking", new CreateHotelBookingDTO());
+        CreateHotelBookingDTO attributeValue = new CreateHotelBookingDTO();
+        attributeValue.setBookingDetails(new ArrayList<>());
+        model.addAttribute("booking", attributeValue);
         model.addAttribute("categories", categories);
         model.addAttribute("searchingModel", new SearchingRoomDTO());
         return "receptionist/createRoomReceptionist";
