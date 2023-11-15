@@ -50,6 +50,7 @@ public class HotelBooking {
     private String address;
     private String phone;
     private BigDecimal totalPrice;
+    private BigDecimal depositPrice;
     private Date checkIn;
     private Date checkOut;
 }
