@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.service.dao.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +70,10 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
     @Override
     public RoomCategories deleteByRoomCategoryId(Long id) {
         return roomCategoriesRepository.deleteByRoomCategoryId(id);
+    }
+
+    @Override
+    public List<RoomCategories> getAllRoomCategories() {
+        return roomCategoriesRepository.findAll();
     }
 }

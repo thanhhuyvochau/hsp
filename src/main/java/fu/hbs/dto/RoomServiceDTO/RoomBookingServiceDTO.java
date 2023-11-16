@@ -2,24 +2,34 @@ package fu.hbs.dto.RoomServiceDTO;
 
 import fu.hbs.entities.RoomBookingServices;
 import fu.hbs.entities.RoomService;
+import fu.hbs.utils.BookingUtil;
+import lombok.*;
 
+import java.math.BigDecimal;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomBookingServiceDTO {
-    private Long roomServiceId;
+    private Long serviceId;
+    private String serviceName;
+    private BigDecimal servicePrice;
+    private String serviceDes;
+    private String serviceNote;
+    private Boolean status;
+    private String serviceImage;
     private int quantity;
+    private BigDecimal pricePer = BigDecimal.ZERO;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    public Long getRoomServiceId() {
-        return roomServiceId;
-    }
-
-    public void setRoomServiceId(Long roomServiceId) {
-        this.roomServiceId = roomServiceId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public static RoomBookingServiceDTO valueOf(RoomService roomService, int quantity) {
+        return new RoomBookingServiceDTO(roomService.getServiceId(),
+                roomService.getServiceName(),
+                roomService.getServicePrice(),
+                roomService.getServiceDes(),
+                roomService.getServiceNote(),
+                roomService.getStatus(),
+                roomService.getServiceImage(),
+                quantity, roomService.getServicePrice(), BookingUtil.calculateTotalPriceOfUseService(roomService, quantity));
     }
 }

@@ -465,4 +465,9 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 //
 //        return (List<RoomBookingServiceDTO>) roomBookingServiceDTOMap.values();
 //    }
+
+    @Override
+    public HotelBooking findById(Long id) {
+        return hotelBookingRepository.findById(id).orElse(null);
+    }
 }

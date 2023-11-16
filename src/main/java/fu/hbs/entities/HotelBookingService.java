@@ -31,6 +31,6 @@ public class HotelBookingService {
     private Long hotelBookingId;
     private Long roomId;
     private Long serviceId;
-
+    private int quantity;
 
 }

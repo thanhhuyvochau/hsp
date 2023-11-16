@@ -30,4 +30,6 @@ public interface RoomCategoryService {
 
     RoomCategories deleteByRoomCategoryId(Long id);
 
+    List<RoomCategories> getAllRoomCategories();
+
 }

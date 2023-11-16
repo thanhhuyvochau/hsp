@@ -2,9 +2,8 @@ package fu.hbs.service.dao;
 
 import java.util.List;
 
-import fu.hbs.dto.HotelBookingDTO.CheckoutDTO;
+import fu.hbs.dto.HotelBookingDTO.ViewCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
-import org.springframework.data.domain.Page;
 
 import fu.hbs.entities.HotelBooking;
 
@@ -23,7 +22,7 @@ public interface ReceptionistBookingService {
 
     public void createHotelBookingByReceptionist(CreateHotelBookingDTO bookingRequest);
 
-    boolean checkout(CheckoutDTO checkoutDTO);
+    boolean checkout(ViewCheckoutDTO checkoutDTO);
 
 
 }
