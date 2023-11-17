@@ -41,6 +41,7 @@ public class Room {
     private Long roomId;
     private Long roomImageId;
     private Long roomCategoryId;
+    private Long roomStatusId;
     private Long serviceId;
     private String description;
     private float discount;
