@@ -34,8 +34,8 @@ import lombok.ToString;
 public class RoomStatus {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "status_id")
-	private Long statusId;
+	@Column(name = "room_status_id")
+	private Long roomStatusId;
 	private String statusName;
 
 }
