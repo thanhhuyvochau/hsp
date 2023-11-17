@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Data
 public class ViewCheckoutDTO {
@@ -23,58 +22,17 @@ public class ViewCheckoutDTO {
     private String email;
     private String address;
     private String phone;
-    private BigDecimal totalPrice;
-    private BigDecimal depositPrice;
+    private BigDecimal totalRoomPrice = BigDecimal.ZERO;
+    private BigDecimal depositPrice = BigDecimal.ZERO;
     private Date checkIn;
     private Date checkOut;
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
-
-
+    private BigDecimal totalServicePrice = BigDecimal.ZERO;
     private List<CheckoutBookingDetailsDTO> bookingDetails = new ArrayList<>();
     private List<RoomBookingServiceDTO> roomBookingServiceDTOS = new ArrayList<>();
-    private BigDecimal surcharge = BigDecimal.ZERO;
-
-
-    public Long getHotelBookingId() {
-        return hotelBookingId;
-    }
-
-    public void setHotelBookingId(Long hotelBookingId) {
-        this.hotelBookingId = hotelBookingId;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public List<RoomBookingServiceDTO> getRoomBookingServiceDTOS() {
-        return roomBookingServiceDTOS;
-    }
-
-    public void setRoomBookingServiceDTOS(List<RoomBookingServiceDTO> roomBookingServiceDTOS) {
-        this.roomBookingServiceDTOS = roomBookingServiceDTOS;
-    }
-
-    public BigDecimal getSurcharge() {
-        return surcharge;
-    }
-
-    public void setSurcharge(BigDecimal surcharge) {
-        this.surcharge = surcharge;
-    }
-
-    public Long getPaymentTypeId() {
-        return paymentTypeId;
-    }
-
-    public void setPaymentTypeId(Long paymentTypeId) {
-        this.paymentTypeId = paymentTypeId;
-    }
+    private BigDecimal prepay = BigDecimal.ZERO;
+    private BigDecimal taxPrice = BigDecimal.ZERO;
 
     public static ViewCheckoutDTO valueOf(HotelBooking hotelBooking,
                                           List<BookingRoomDetails> bookingRoomDetails,
@@ -97,9 +55,6 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
-        viewCheckoutDto.setTotalPrice(hotelBooking.getTotalPrice());
-
-
         List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(categoryId -> {
             RoomCategories roomCategory = roomCategoriesMap.get(categoryId);
             return roomCategory;
@@ -121,7 +76,15 @@ public class ViewCheckoutDTO {
             RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, usedBookingService.getQuantity());
             viewCheckoutDto.getRoomBookingServiceDTOS().add(roomBookingServiceDTO);
         }
+        BigDecimal totalRoomPrice = viewCheckoutDto.getBookingDetails().stream()
+                .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()), BigDecimal::add);
+        BigDecimal totalHotelServicePrice = viewCheckoutDto.getRoomBookingServiceDTOS().stream()
+                .reduce(BigDecimal.ZERO, (subTotal, useHotelService) -> subTotal.add(useHotelService.getTotalPrice()), BigDecimal::add);
 
+
+        viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
+        viewCheckoutDto.setTotalServicePrice(totalHotelServicePrice);
+        viewCheckoutDto.setPrepay(BigDecimal.ZERO);
         return viewCheckoutDto;
     }
 }

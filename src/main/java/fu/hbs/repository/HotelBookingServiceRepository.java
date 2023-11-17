@@ -11,5 +11,6 @@ import java.util.List;
 public interface HotelBookingServiceRepository extends JpaRepository<HotelBookingService, Long> {
     List<HotelBookingService> getAllByHotelBookingId(Long id);
 
+    boolean deleteAllByHotelBookingId(Long hotelId);
 
 }

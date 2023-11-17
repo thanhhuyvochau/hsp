@@ -90,7 +90,7 @@
             box-sizing: border-box;
             color: #fff;
             display: inline-block;
-            font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+            font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
             font-weight: 600;
             line-height: 20px;
             padding: 6px 14px;
@@ -135,7 +135,7 @@
 <body>
 
 <!--	<body data-bs-target=".navbar" data-bs-offset="100"></body>-->
-<div class="wrapper">
+<form th:action="@{/receptionist/checkOutReceptionist}" method="post" th:object="${saveCheckoutDTO}" class="wrapper">
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header border-bottom">
@@ -278,7 +278,8 @@
                         <h4 class="fw-bold">Dịch vụ đang dùng:</h4>
                     </div>
                     <div class="d-flex flex-column">
-                        <table class="table table-striped table-hover border align-baseline text-center">
+                        <table id="use-service-table"
+                               class="table table-striped table-hover border align-baseline text-center">
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col">STT</th>
@@ -323,19 +324,25 @@
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
-                                <div class="col text-end"><a>6.400.000</a></div>
+                                <div class="col text-end"><a id="room-price"
+                                                             th:text="${viewCheckoutDTO.getTotalRoomPrice()}"></a></div>
                             </div>
                             <div class="row me-4 mt-2">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Giá dịch vụ:</h6>
                                 </div>
-                                <div class="col text-end"><a>800.000</a></div>
+                                <div class="col text-end"><a id="service-price"
+                                                             th:text="${viewCheckoutDTO.getTotalServicePrice()}">800.000</a>
+                                </div>
                             </div>
                             <div class="row me-4 mt-2">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold mt-2">Phụ phí(nếu có):</h6>
                                 </div>
-                                <div class="d-flex justify-content-end w-25 mt-1"><input type="input" id=""
+                                <div class="d-flex justify-content-end w-25 mt-1"><input pattern="[1-9]\d*|0\.\d+"
+                                                                                         type="text"
+                                                                                         id="surcharge-price"
+                                                                                         th:field="*{surcharge}"
                                                                                          class="form-control w-50 mb-4 text-end">
                                 </div>
                             </div>
@@ -343,25 +350,26 @@
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Thuế(10%):</h6>
                                 </div>
-                                <div class="col text-end"><a>640.000</a></div>
+                                <div class="col text-end"><a id="tax-price"></a></div>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Tổng giá:</h6>
                                 </div>
-                                <div class="col text-end"><a>7.040.000</a></div>
+                                <div class="col text-end"><a id="total-price"></a></div>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Đã thanh toán:</h6>
                                 </div>
-                                <div class="col text-end"><a>3.520.000</a></div>
+                                <div class="col text-end"><a id="prepay-price"
+                                                             th:text="${viewCheckoutDTO.getPrepay()}"></a></div>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Còn lại:</h6>
                                 </div>
-                                <div class="col text-end"><span class="fw-bold">3.520.000</span>
+                                <div class="col text-end"><span id="remain-price" class="fw-bold"></span>
                                 </div>
                             </div>
                         </div>
@@ -374,7 +382,7 @@
                                 style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;">Quay
                             lại
                         </button>
-                        <button type="button" class="btn btn-dark" style="margin-right: 2rem; margin-top:
+                        <button type="submit" class="btn btn-dark" style="margin-right: 2rem; margin-top:
                                 2rem;margin-bottom: 2rem;">Check-out
                         </button>
                     </div>
@@ -382,7 +390,7 @@
             </div>
             <div id="overlay" class="overlay">
                 <div class="overlay__content" role="dialog">
-                    <table id="dataTable" class="table">
+                    <table id="service-table" class="table">
                         <thead>
                         <tr>
                             <th>STT</th>
@@ -390,20 +398,28 @@
                             <th>Đơn giá</th>
                             <th>Số lượng</th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr th:each="service, iStat : ${roomServices}">
+                        <tbody id="service-data">
+                        <tr th:id="${'service-row-'+iStat.index}" th:each="service, iStat : ${roomServices}">
                             <td th:text="${iStat.index + 1}"></td>
-                            <td th:text="${service.getServiceName()}"></td>
-                            <td th:text="${service.getServicePrice()}"></td>
+                            <td th:id="${'service-name-'+iStat.index}" th:text="${service.getServiceName()}"></td>
+                            <td th:id="${'service-price-'+iStat.index}" th:text="${service.getServicePrice()}"></td>
                             <td>
                                 <label>
-                                    <input type="number">
+                                    <input th:id="${'service-quantity-'+iStat.index}" id="quantity" type="number">
                                 </label>
                             </td>
+                            <td id="">
+                                <button type="button"
+                                        th:onclick="'addHotelService(\'' + ${iStat.index} + '\');'"
+                                        class="btn btn-danger">Thêm
+                                </button>
+                            </td>
                             <td>
-                                <button class="btn btn-danger">Thêm</button>
+                                <input type="hidden" th:id="${'service-id-'+iStat.index}"
+                                       th:value="${service.getServiceId()}">
                             </td>
                         </tr>
                         <!-- Add more data rows as needed -->
@@ -416,8 +432,16 @@
             </div>
         </main>
     </div>
-
-</div>
+    <input type="hidden" th:value="${viewCheckoutDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
+    <div id="service-used-container">
+        <div th:each=" useService, iStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
+            <input th:value="${useService.getServiceId()}" type="hidden"
+                   th:field="*{hotelServices[${iStat.index}].serviceId}">
+            <input th:value="${useService.getQuantity()}" type="hidden"
+                   th:field="*{hotelServices[${iStat.index}].quantity}">
+        </div>
+    </div>
+</form>
 
 
 </body>
@@ -425,7 +449,62 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
-<script>
+<script th:inline="javascript">
+    let selectRoomCount = 1;
+
+    function addHotelService(rowID) {
+        let $serviceID = $('#service-id-' + rowID);
+        let $quantity = $('#service-quantity-' + rowID);
+        let name = $('#service-name-' + rowID).text();
+        let price = $('#service-price-' + rowID).text();
+        let serviceId = $serviceID.val();
+        let quantity = $quantity.val();
+        let container = document.getElementById('service-used-container');
+        let index = container.children.length; // Get the current index
+        let detailDiv = document.createElement('div');
+
+        detailDiv.innerHTML = `
+            <input value="${serviceId}" type="hidden"
+                   name="hotelServices[${index}].serviceId">
+            <input value="${quantity}" type="hidden"
+                   name="hotelServices[${index}].quantity">
+        `;
+        container.appendChild(detailDiv);
+        updateUseServiceView(serviceId, name, quantity, price);
+    }
+
+    function updateUseServiceView(serviceId, serviceName, quantity, pricePer) {
+        // Select the table body
+        const tbody = $("#use-service-table > tbody");
+        var index = selectRoomCount - 1;
+        // Update the table with new data
+        var row = $("<tr></tr>");
+        row.id = 'input-service-id-' + serviceId;
+        row.append("<th scope='row'>" + selectRoomCount + "</th>");
+        row.append("<td>" + serviceName + "</td>");
+        // Add other columns based on room properties
+
+        // Example columns for demonstration, replace with actual data
+        row.append("<td>" + quantity + "</td>");
+        row.append("<td>" + pricePer + "</td>");
+        row.append("<td>" + pricePer * quantity + "</td>");
+
+        const buttonColumn = $("<td></td>");
+        const addButton = $("<button></button>")
+            .addClass("btn button btn-dark")
+            .html("<i class='bi bi-trash'></i>")
+            .on("click", function () {
+                console.log("Click Delete");
+                // Add your logic here for button click
+            });
+        buttonColumn.append(addButton);
+
+        row.append(buttonColumn);
+        // Append the row to the table body
+        tbody.append(row);
+        selectRoomCount++;
+        calculateTax();
+    }
 
     $(document).ready(function () {
         // Initialize DataTable
@@ -435,7 +514,8 @@
         });
 
         $("#confirm-overlay-btn").click(function () {
-
+            pattern = "[1-9]\d*|0\.\d+"
+            $("#overlay").css("display", "none");
         });
         $("#close-overlay-btn").click(function () {
             $("#overlay").css("display", "none");
@@ -444,7 +524,50 @@
         $(".modal-content").click(function (e) {
             e.stopPropagation(); // Prevent modal close on modal content click
         });
+
+        $("#surcharge-price").change(function (e) {
+            calculateTax();
+        });
+
+        $('#surcharge-price').on('input', function () {
+            var inputValue = $(this).val();
+            // Use a regular expression to allow only positive numbers
+            var isValid = /^\d*\.?\d+$/.test(inputValue);
+
+            if (!isValid) {
+                // If the input is not a valid number, clear the input field
+                $(this).val('');
+            }
+        });
+
+        calculateTax()
     });
+
+    function calculateTax() {
+        let $room = $("#room-price");
+        let $service = $("#service-price");
+        let $surcharge = $("#surcharge-price");
+        let $tax = $("#tax-price");
+        let $total = $("#total-price");
+        let $remain = $("#remain-price");
+        let $prepay = $("#prepay-price");
+        let roomPrice = $room.text();
+        let servicePrice = $service.text();
+        let surchargePrice = $surcharge.val();
+        let taxPrice = $tax.text();
+        let totalPrice = $total.text();
+        let remainPrice = $remain.text();
+        let prepayPrice = $prepay.text();
+
+        taxPrice = (Number(roomPrice) + Number(servicePrice) + Number(surchargePrice)) * 0.1;
+        totalPrice = Number(roomPrice) + Number(servicePrice) + Number(surchargePrice) + Number(taxPrice);
+        remainPrice = Number(totalPrice) - Number(prepayPrice);
+
+        $tax.text(taxPrice);
+        $total.text(totalPrice);
+        $remain.text(remainPrice);
+    }
+
 
 </script>
 </html>

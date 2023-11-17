@@ -2,6 +2,7 @@ package fu.hbs.service.dao;
 
 import java.util.List;
 
+import fu.hbs.dto.HotelBookingDTO.SaveCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
 
@@ -22,7 +23,7 @@ public interface ReceptionistBookingService {
 
     public void createHotelBookingByReceptionist(CreateHotelBookingDTO bookingRequest);
 
-    boolean checkout(ViewCheckoutDTO checkoutDTO);
+    boolean checkout(SaveCheckoutDTO saveCheckoutDTO);
 
 
 }

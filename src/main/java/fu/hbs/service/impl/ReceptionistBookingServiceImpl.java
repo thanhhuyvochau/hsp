@@ -9,21 +9,19 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fu.hbs.dto.HotelBookingDTO.ViewCheckoutDTO;
-import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
-import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDetailDTO;
+import fu.hbs.dto.HotelBookingDTO.*;
 import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.*;
 import fu.hbs.exceptionHandler.NotEnoughRoomAvalaibleException;
-import fu.hbs.repository.BookingRoomDetailsRepository;
-import fu.hbs.repository.RoomRepository;
+import fu.hbs.repository.*;
+import fu.hbs.utils.BookingUtil;
+import fu.hbs.utils.RandomKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fu.hbs.repository.HotelBookingRepository;
-import fu.hbs.repository.RoomStatusRepository;
 import fu.hbs.service.dao.ReceptionistBookingService;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ReceptionistBookingServiceImpl implements ReceptionistBookingService {
     @Autowired
     private HotelBookingRepository bookingRepository;
@@ -34,6 +32,12 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
     @Autowired
     private RoomRepository roomRepository;
+
+    @Autowired
+    private HotelBookingServiceRepository hotelBookingServiceRepository;
+
+    @Autowired
+    private VnpayTransactionsRepository vnpayTransactionsRepository;
 
     @Override
     public List<HotelBooking> findAll() {
@@ -152,28 +156,58 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     @Override
-    public boolean checkout(ViewCheckoutDTO checkoutDTO) {
-        Optional<HotelBooking> hotelBookingOptional = bookingRepository.findById(checkoutDTO.getHotelBookingId());
+    public boolean checkout(SaveCheckoutDTO saveCheckoutDTO) {
+        Optional<HotelBooking> hotelBookingOptional = bookingRepository.findById(saveCheckoutDTO.getHotelBookingId());
         if (hotelBookingOptional.isPresent()) {
             // Create VnPay transaction
             HotelBooking hotelBooking = hotelBookingOptional.get();
+            List<SaveCheckoutHotelServiceDTO> hotelBookingServices = saveCheckoutDTO.getHotelServices();
+            hotelBookingServiceRepository.deleteAllByHotelBookingId(hotelBooking.getHotelBookingId());
+            Map<Long, RoomService> allRoomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
+
+
+            BigDecimal servicePrice = BigDecimal.ZERO;
+            List<HotelBookingService> hotelBookingServiceList = new ArrayList<>();
+            for (SaveCheckoutHotelServiceDTO hotelBookingService : hotelBookingServices) {
+                RoomService roomService = allRoomServiceAsMap.get(hotelBookingService.getServiceId());
+                servicePrice = servicePrice.add(roomService.getServicePrice().multiply(BigDecimal.valueOf(hotelBookingService.getQuantity())));
+
+                HotelBookingService newHotelBookingService = new HotelBookingService();
+                newHotelBookingService.setHotelBookingId(hotelBooking.getHotelBookingId());
+                newHotelBookingService.setServiceId(roomService.getServiceId());
+                newHotelBookingService.setQuantity(hotelBookingService.getQuantity());
+                hotelBookingServiceList.add(newHotelBookingService);
+            }
+
+
+            BigDecimal roomPrice = BigDecimal.ZERO;
+            List<BookingRoomDetails> allByHotelBookingId = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBooking.getHotelBookingId());
+            Date checkIn = hotelBooking.getCheckIn();
+            for (BookingRoomDetails bookingRoomDetail : allByHotelBookingId) {
+                BigDecimal price = BookingUtil.calculatePriceBetweenDate(checkIn, hotelBooking.getCheckOut(), bookingRoomDetail.getRoomCategoryId());
+                roomPrice = roomPrice.add(price);
+            }
+
+            hotelBooking.setCheckIn(checkIn);
+
+
+            BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
+            BigDecimal totalPrice = servicePrice.add(roomPrice).add(taxPrice);
+
             VnpayTransactions transactions = new VnpayTransactions();
-            transactions.setTransactionId("");
+            transactions.setTransactionId(RandomKey.generateRandomKey());
             transactions.setStatus("Thành công");
-            transactions.setAmount(checkoutDTO.getTotalPrice());
+            transactions.setAmount(totalPrice);
             LocalDate localDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
             Date date = Date.valueOf(localDate);
             transactions.setCreatedDate(date);
             transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
 
-            List<RoomBookingServiceDTO> roomBookingServiceDTOS = checkoutDTO.getRoomBookingServiceDTOS();
-//            for (RoomBookingServiceDTO roomBookingServiceDTO : roomBookingServiceDTOS) {
-//                Long roomServiceId = roomBookingServiceDTO.getRoomServiceId();
-//                int quantity = roomBookingServiceDTO.getQuantity();
-//
-//            }
+            vnpayTransactionsRepository.save(transactions);
+            hotelBookingServiceRepository.saveAll(hotelBookingServiceList);
+            bookingRepository.save(hotelBooking);
+            return true;
         }
-
         return false;
     }
 }
