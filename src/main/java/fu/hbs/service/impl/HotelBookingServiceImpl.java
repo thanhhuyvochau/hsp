@@ -97,7 +97,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
+            roomStatus = roomStatusRepository.findByRoomStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
@@ -212,7 +212,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
+            roomStatus = roomStatusRepository.findByRoomStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());

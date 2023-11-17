@@ -243,6 +243,7 @@ public class ReceptionistBookingController {
         return "receptionist/checkOutReceptionist";
     }
 
+
     @PostMapping("receptionist/checkOutReceptionist")
     public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO) {
         bookingService.checkout(checkoutDTO);
