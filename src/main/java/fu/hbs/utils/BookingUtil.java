@@ -36,8 +36,8 @@ public class BookingUtil {
                 .count();
     }
 
-    public static BigDecimal calculatePriceBetweenDate(Date checkIn, Date checkout, Long categoryId) {
-        long diffInDays = checkIn.toLocalDate().until(checkout.toLocalDate(), ChronoUnit.DAYS);
+    public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId) {
+        long diffInDays = checkIn.until(checkout, ChronoUnit.DAYS);
         BigDecimal pricePer = getPriceOfRoom(categoryId);
         return pricePer.multiply(BigDecimal.valueOf(diffInDays));
     }

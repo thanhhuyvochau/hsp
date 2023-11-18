@@ -28,9 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,8 +83,8 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         // Hotel booking
         HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
 
-        LocalDate checkIn = hotelBooking.getCheckIn().toLocalDate();
-        LocalDate checkOut = hotelBooking.getCheckOut().toLocalDate();
+        LocalDate checkIn = LocalDateTime.ofInstant(hotelBooking.getCheckIn(), ZoneOffset.UTC).toLocalDate();
+        LocalDate checkOut = LocalDateTime.ofInstant(hotelBooking.getCheckOut(), ZoneOffset.UTC).toLocalDate();
 
         dto.setHotelBooking(hotelBooking);
         // Booking details
@@ -175,8 +173,8 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         // Hotel booking
         HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
 
-        LocalDate checkIn = hotelBooking.getCheckIn().toLocalDate();
-        LocalDate checkOut = hotelBooking.getCheckOut().toLocalDate();
+        LocalDate checkIn = LocalDateTime.ofInstant(hotelBooking.getCheckIn(), ZoneOffset.UTC).toLocalDate();
+        LocalDate checkOut = LocalDateTime.ofInstant(hotelBooking.getCheckOut(), ZoneOffset.UTC).toLocalDate();
 
         dto.setHotelBooking(hotelBooking);
         // Booking details

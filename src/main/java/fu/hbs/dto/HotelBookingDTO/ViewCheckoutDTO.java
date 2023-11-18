@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,8 @@ public class ViewCheckoutDTO {
     private String phone;
     private BigDecimal totalRoomPrice = BigDecimal.ZERO;
     private BigDecimal depositPrice = BigDecimal.ZERO;
-    private Date checkIn;
-    private Date checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;

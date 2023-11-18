@@ -9,6 +9,7 @@ import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +30,8 @@ public interface HotelBookingService {
     public CreateBookingDTO createBooking(
             List<Long> roomCategoryNames,
             List<Integer> selectedRoomCategories,
-            LocalDate checkIn,
-            LocalDate checkOut,
+            Instant checkIn,
+            Instant checkOut,
             HttpSession session);
 
     //    void cancelBooking(Long hotelBookingId, String reason, String otherReason, String bank, String account, String userName);

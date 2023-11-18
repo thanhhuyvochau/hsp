@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class ViewHotelBookingDTO {
     private User user;
     private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;
-    private Date checkIn;
-    private Date checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
 
 }

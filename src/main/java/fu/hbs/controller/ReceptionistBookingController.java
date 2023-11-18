@@ -79,8 +79,8 @@ public class ReceptionistBookingController {
         hotelBookingDTO.setEmail("john.doe@example.com");
         hotelBookingDTO.setAddress("123 Main Street");
         hotelBookingDTO.setPhone("123-456-7890");
-        hotelBookingDTO.setCheckIn(Date.valueOf("2023-11-15"));
-        hotelBookingDTO.setCheckOut(Date.valueOf("2023-11-20"));
+//        hotelBookingDTO.setCheckIn(Date.valueOf("2023-11-15"));
+//        hotelBookingDTO.setCheckOut(Date.valueOf("2023-11-20"));
         // Create sample data for CreateHotelBookingDetailDTO
         CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
         bookingDetailDTO1.setRoomCategoryId(1L);

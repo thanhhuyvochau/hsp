@@ -35,10 +35,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -67,17 +68,20 @@ public class BookingController {
 
             Model model, HttpSession session) {
 
-        LocalDate checkIn = (LocalDate) session.getAttribute("defaultDate");
-        LocalDate checkOut = (LocalDate) session.getAttribute("defaultDate1");
+        Instant checkIn = (Instant) session.getAttribute("defaultDate");
+        Instant checkOut = (Instant) session.getAttribute("defaultDate1");
 
 //        LocalDate inputDate = LocalDate.parse(checkIn);
 //        LocalDate inputDate1 = LocalDate.parse(checkOut);
 
         CreateBookingDTO createBookingDTO = hotelBookingService.createBooking(
                 roomCategoryNames, selectedRoomCategories, checkIn, checkOut, session);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", Locale.ENGLISH);
+        String checkinFormated = formatter.format(checkIn.atZone(ZoneId.of("UTC")));
+        String checkoutFormated = formatter.format(checkOut.atZone(ZoneId.of("UTC")));
 
-        model.addAttribute("checkIn", checkIn.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
-        model.addAttribute("checkOut", checkOut.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM , yyyy")));
+        model.addAttribute("checkIn", checkinFormated);
+        model.addAttribute("checkOut", checkoutFormated);
         model.addAttribute("createBookingDTO", createBookingDTO);
         session.setAttribute("createBookingDTO", createBookingDTO);
 
@@ -120,8 +124,8 @@ public class BookingController {
 
         HotelBooking hotelBooking = new HotelBooking();
         hotelBooking.setUserId(user.getUserId());
-        hotelBooking.setCheckIn(Date.valueOf(createBookingDTO.getCheckIn()));
-        hotelBooking.setCheckOut(Date.valueOf(createBookingDTO.getCheckOut()));
+        hotelBooking.setCheckIn(createBookingDTO.getCheckIn());
+        hotelBooking.setCheckOut(createBookingDTO.getCheckOut());
         hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice());
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Integer value = entry.getValue();
@@ -135,7 +139,7 @@ public class BookingController {
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long categoryId = entry.getKey();
             Integer roomCount = entry.getValue();
-            List<Room> rooms = roomService.countRoomAvaliableByCategory(categoryId, newHotelBooking.getCheckIn().toLocalDate(), newHotelBooking.getCheckOut().toLocalDate());
+            List<Room> rooms = roomService.countRoomAvaliableByCategory(categoryId, LocalDateTime.ofInstant(newHotelBooking.getCheckIn(), ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(newHotelBooking.getCheckOut(), ZoneOffset.UTC).toLocalDate());
 
             // Khai báo biến đếm số lần đã thêm phòng
             int roomsAdded = 0;

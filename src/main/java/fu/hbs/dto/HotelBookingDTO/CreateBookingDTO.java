@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Data
 public class CreateBookingDTO {
-    private LocalDate checkIn;
-    private LocalDate checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
     private List<RoomCategories> roomCategoriesList;
     private List<Room> rooms;
     private BigDecimal totalPrice;

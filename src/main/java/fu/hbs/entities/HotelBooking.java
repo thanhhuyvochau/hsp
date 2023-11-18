@@ -16,6 +16,7 @@ package fu.hbs.entities;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,6 +52,6 @@ public class HotelBooking {
     private String phone;
     private BigDecimal totalPrice;
     private BigDecimal depositPrice;
-    private Date checkIn;
-    private Date checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
 }

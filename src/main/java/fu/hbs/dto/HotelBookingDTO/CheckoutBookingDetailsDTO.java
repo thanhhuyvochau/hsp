@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -26,7 +27,7 @@ public class CheckoutBookingDetailsDTO {
     private BigDecimal price = BigDecimal.ZERO;
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    public static CheckoutBookingDetailsDTO valueOf(RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Date checkIn, Date checkOut) {
+    public static CheckoutBookingDetailsDTO valueOf(RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Instant checkIn, Instant checkOut) {
         CheckoutBookingDetailsDTO detailsDTO = new CheckoutBookingDetailsDTO();
         detailsDTO.setCategoryId(detailsDTO.getCategoryId());
         detailsDTO.setCategoryName(roomCategory.getRoomCategoryName());

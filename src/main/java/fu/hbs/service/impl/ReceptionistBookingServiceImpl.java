@@ -2,9 +2,7 @@ package fu.hbs.service.impl;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -89,8 +87,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         hotelBooking.setAddress(bookingRequest.getAddress());
         hotelBooking.setPhone(bookingRequest.getPhone());
 
-        Date checkIn = bookingRequest.getCheckIn();
-        Date checkOut = bookingRequest.getCheckOut();
+        Instant checkIn = bookingRequest.getCheckIn();
+        Instant checkOut = bookingRequest.getCheckOut();
 
         hotelBooking.setCheckIn(checkIn);
         hotelBooking.setCheckOut(checkOut);
@@ -109,7 +107,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         hotelBooking.setTotalPrice(totalPrice);
     }
 
-    private List<BookingRoomDetails> createBookingDetails(CreateHotelBookingDTO bookingRequest, Date checkIn, Date checkOut, HotelBooking hotelBooking) {
+    private List<BookingRoomDetails> createBookingDetails(CreateHotelBookingDTO bookingRequest, Instant checkIn, Instant checkOut, HotelBooking hotelBooking) {
         List<BookingRoomDetails> bookingRoomDetails = new ArrayList<>(); // All result of BookingRoomDetails
         Map<Long, List<Room>> availableRoomWithCategoryMap = new HashMap<>(); // Map for save temporary all available room in this creating session
 
@@ -140,8 +138,11 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return bookingRoomDetails;
     }
 
-    private List<Room> findAvailableRoomsByCategoryIdAndDateBetween(Date start, Date end, Long roomCategoryId) {
-        return roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, start.toLocalDate(), end.toLocalDate());
+    private List<Room> findAvailableRoomsByCategoryIdAndDateBetween(Instant start, Instant end, Long roomCategoryId) {
+        LocalDateTime startDateTime = LocalDateTime.ofInstant(start, ZoneOffset.UTC);
+        LocalDateTime endDateTime = LocalDateTime.ofInstant(end, ZoneOffset.UTC);
+
+        return roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, startDateTime.toLocalDate(), endDateTime.toLocalDate());
     }
 
     private BigDecimal calculateTotalPrice(List<BookingRoomDetails> bookingRoomDetailsList) {
@@ -182,7 +183,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
             BigDecimal roomPrice = BigDecimal.ZERO;
             List<BookingRoomDetails> allByHotelBookingId = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBooking.getHotelBookingId());
-            Date checkIn = hotelBooking.getCheckIn();
+            Instant checkIn = hotelBooking.getCheckIn();
             for (BookingRoomDetails bookingRoomDetail : allByHotelBookingId) {
                 BigDecimal price = BookingUtil.calculatePriceBetweenDate(checkIn, hotelBooking.getCheckOut(), bookingRoomDetail.getRoomCategoryId());
                 roomPrice = roomPrice.add(price);

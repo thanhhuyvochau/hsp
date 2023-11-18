@@ -17,6 +17,7 @@ package fu.hbs.dto.HotelBookingDTO;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class CreateHotelBookingDTO {
     private String email;
     private String address;
     private String phone;
-    private Date checkIn;
-    private Date checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
     private String notes;
     private Long paymentTypeId = 1L;
     private List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();

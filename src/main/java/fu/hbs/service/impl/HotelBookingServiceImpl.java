@@ -14,8 +14,7 @@ package fu.hbs.service.impl;
 
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -233,7 +232,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     }
 
     @Override
-    public CreateBookingDTO createBooking(List<Long> roomCategoryNames, List<Integer> selectedRoomCategories, LocalDate checkIn, LocalDate checkOut, HttpSession session) {
+    public CreateBookingDTO createBooking(List<Long> roomCategoryNames, List<Integer> selectedRoomCategories, Instant checkIn, Instant checkOut, HttpSession session) {
         CreateBookingDTO createBookingDTO = new CreateBookingDTO();
         Map<Long, Integer> roomCategoryMap = new HashMap<>();
         Integer number = (Integer) session.getAttribute("numberOfPeople");
@@ -257,14 +256,14 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            rooms = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
+            rooms = roomRepository.findAvailableRoomsByCategoryId(category, LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
             roomCategoriesList.add(roomCategoriesRepository.findByRoomCategoryId(category));
         }
 
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            List<Room> roomsByCategory = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
+            List<Room> roomsByCategory = roomRepository.findAvailableRoomsByCategoryId(category, LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
             rooms.addAll(roomsByCategory);
         }
 
@@ -285,7 +284,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             categoryRoomPrices.add(categoryRoomPrice);
         }
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
