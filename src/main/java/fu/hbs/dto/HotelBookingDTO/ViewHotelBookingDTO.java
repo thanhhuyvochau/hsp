@@ -11,15 +11,14 @@
 package fu.hbs.dto.HotelBookingDTO;
 
 
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.RoomStatus;
-import fu.hbs.entities.User;
+import fu.hbs.entities.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 @NoArgsConstructor
@@ -29,10 +28,12 @@ public class ViewHotelBookingDTO {
     private Long hotelBookingId;
     private int totalRoom;
     private RoomStatus statusId;
+    private HotelBookingStatus hotelBookingStatus;
     private User user;
     private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;
-    private Date checkIn;
-    private Date checkOut;
+    private Instant checkIn;
+    private Instant checkOut;
+    private CustomerCancellation customerCancellation;
 
 }

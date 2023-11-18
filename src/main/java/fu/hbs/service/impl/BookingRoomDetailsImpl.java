@@ -31,6 +31,7 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +66,8 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
     RefundAccountRepository refundAccountRepository;
     @Autowired
     BankListRepository bankListRepository;
+    @Autowired
+    CustomerCancellationRepository customerCancellationRepository;
 
     @Override
     public BookingRoomDetails save(BookingRoomDetails bookingRoomDetails) {
@@ -75,7 +78,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
     @Override
     public BookingDetailsDTO getBookingDetails(Authentication authentication, Long hotelBookingId) {
         BookingDetailsDTO dto = new BookingDetailsDTO();
-
+        CustomerCancellation cancellation = new CustomerCancellation();
 
         // User's details
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -85,8 +88,13 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         // Hotel booking
         HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
 
-        LocalDate checkIn = hotelBooking.getCheckIn().toLocalDate();
-        LocalDate checkOut = hotelBooking.getCheckOut().toLocalDate();
+        cancellation = customerCancellationRepository.findCustomerCancellationNewHotelBookingId(hotelBookingId);
+        if (cancellation != null) {
+            dto.setCustomerCancellation(cancellation);
+        }
+
+        Instant checkIn = hotelBooking.getCheckIn();
+        Instant checkOut = hotelBooking.getCheckOut();
 
         dto.setHotelBooking(hotelBooking);
         // Booking details
@@ -111,7 +119,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
 
         for (RoomCategories roomCategory : distinctRoomCategories) {
-            roomInDetailsDTOS.add(new RoomInDetailsDTO(room, roomCategory, categoryRoomPriceRepository.findByRoomCategoryId(roomCategory.getRoomCategoryId())));
+            roomInDetailsDTOS.add(new RoomInDetailsDTO(room, roomCategory, categoryRoomPriceRepository.getCategoryId(roomCategory.getRoomCategoryId())));
         }
 
         // Group rooms by room category
@@ -120,28 +128,36 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
             Long categoryId = entry.getKey();
             List<Room> roomsWithSameCategory = entry.getValue();
         }
+        //converst
+        LocalDate localDateCheckIn = checkIn.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateCheckOut = checkOut.atZone(ZoneId.systemDefault()).toLocalDate();
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
-        System.out.println("dateInfoList" + dateInfoList.size());
+
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(localDateCheckIn, localDateCheckOut);
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
+
 
         // tổng giá cho một CategoryRoomPrice theo Category
         for (int i = 0; i < roomInDetailsDTOS.size(); i++) {
             BigDecimal totalForCategory = calculateTotalForCategory(roomInDetailsDTOS.get(i).getCategoryRoomPrice(), dateInfoList);
             totalPriceByCategoryId.put(roomInDetailsDTOS.get(i).getCategoryRoomPrice().getRoomCategoryId(), totalForCategory);
+
+
         }
+
         // CategoryRoomPrice * total Room
         for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
             Long categoryId = entry.getKey();
+
             List<Room> roomsWithSameCategory = entry.getValue();
-            System.out.println("roomsWithSameCategory" + roomsWithSameCategory.size());
 
             if (totalPriceByCategoryId.containsKey(categoryId)) {
 
                 BigDecimal totalPrice1 = totalPriceByCategoryId.get(categoryId);
 
                 BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomsWithSameCategory.size()));
+
             }
         }
 
@@ -149,6 +165,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         dto.setGroupedRooms(groupedRooms);
         dto.setBookingRoomDetails(roomInDetailsDTOS);
         dto.setDateInfoList(dateInfoList);
+
 
         return dto;
     }
@@ -162,11 +179,13 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
 
         UserInBookingDetailsDTO userInBookingDetailsDTO = new UserInBookingDetailsDTO();
         // RefundAccount details
-        RefundAccount refundAccount = refundAccountRepository.findAccountIdNew(user.getUserId());
+        CustomerCancellation customerCancellation = customerCancellationRepository.findCustomerCancellationNewHotelBookingId(hotelBookingId);
+        userInBookingDetailsDTO.setCustomerCancellation(customerCancellation);
+        RefundAccount refundAccount = refundAccountRepository.findByAccountId(customerCancellation.getAccountId());
+
         userInBookingDetailsDTO.setUser(user);
         userInBookingDetailsDTO.setRefundAccount(refundAccount);
         BankList bankList = bankListRepository.findByBankId(refundAccount.getBankId());
-
         userInBookingDetailsDTO.setBankList(bankList);
 
         dto.setUserInBookingDetailsDTO(userInBookingDetailsDTO);
@@ -175,8 +194,8 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         // Hotel booking
         HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
 
-        LocalDate checkIn = hotelBooking.getCheckIn().toLocalDate();
-        LocalDate checkOut = hotelBooking.getCheckOut().toLocalDate();
+        Instant checkIn = hotelBooking.getCheckIn();
+        Instant checkOut = hotelBooking.getCheckOut();
 
         dto.setHotelBooking(hotelBooking);
         // Booking details
@@ -210,9 +229,12 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
             Long categoryId = entry.getKey();
             List<Room> roomsWithSameCategory = entry.getValue();
         }
+        //converst
+        LocalDate localDateCheckIn = checkIn.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateCheckOut = checkOut.atZone(ZoneId.systemDefault()).toLocalDate();
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
-        System.out.println("dateInfoList" + dateInfoList.size());
+
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(localDateCheckIn, localDateCheckOut);
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
@@ -225,7 +247,87 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
             Long categoryId = entry.getKey();
             List<Room> roomsWithSameCategory = entry.getValue();
-            System.out.println("roomsWithSameCategory" + roomsWithSameCategory.size());
+            if (totalPriceByCategoryId.containsKey(categoryId)) {
+
+                BigDecimal totalPrice1 = totalPriceByCategoryId.get(categoryId);
+
+                BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomsWithSameCategory.size()));
+            }
+        }
+
+
+        dto.setTotalPriceByCategoryId(totalPriceByCategoryId);
+        dto.setGroupedRooms(groupedRooms);
+        dto.setBookingRoomDetails(roomInDetailsDTOS);
+        dto.setDateInfoList(dateInfoList);
+
+        return dto;
+    }
+
+    @Override
+    public BookingDetailsDTO getBookingDetailsByHotelBooking(Long hotelBookingId) {
+        BookingDetailsDTO dto = new BookingDetailsDTO();
+
+        // Hotel booking
+        HotelBooking hotelBooking = hotelBookingRepository.findByHotelBookingId(hotelBookingId);
+
+        Instant checkIn = hotelBooking.getCheckIn();
+        Instant checkOut = hotelBooking.getCheckOut();
+
+        dto.setHotelBooking(hotelBooking);
+        // Booking details
+        List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        List<RoomInDetailsDTO> roomInDetailsDTOS = new ArrayList<>();
+
+        Room room = new Room();
+        RoomCategories roomCategories = new RoomCategories();
+        CategoryRoomPrice categoryRoomPrice = new CategoryRoomPrice();
+        List<Room> rooms = new ArrayList<>();
+        int count = 0;
+        Set<RoomCategories> distinctRoomCategories = new HashSet<>();
+
+        // Distinct RoomCategory
+        for (BookingRoomDetails item : bookingRoomDetails) {
+            room = roomRepository.findById(item.getRoomId()).get();
+            rooms.add(room);
+            roomCategories = roomCategoriesRepository.findByRoomCategoryId(item.getRoomCategoryId());
+            distinctRoomCategories.add(roomCategories);
+        }
+
+        List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
+
+        for (RoomCategories roomCategory : distinctRoomCategories) {
+            roomInDetailsDTOS.add(new RoomInDetailsDTO(room, roomCategory, categoryRoomPriceRepository.getCategoryId(roomCategory.getRoomCategoryId())));
+        }
+
+
+        // Group rooms by room category
+
+        Map<Long, List<Room>> groupedRooms = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
+        }
+
+        //converst
+        LocalDate localDateCheckIn = checkIn.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateCheckOut = checkOut.atZone(ZoneId.systemDefault()).toLocalDate();
+
+
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(localDateCheckIn, localDateCheckOut);
+        BigDecimal total_Price = BigDecimal.ZERO;
+        Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
+
+        // tổng giá cho một CategoryRoomPrice theo Category
+        for (int i = 0; i < roomInDetailsDTOS.size(); i++) {
+            BigDecimal totalForCategory = calculateTotalForCategory(roomInDetailsDTOS.get(i).getCategoryRoomPrice(), dateInfoList);
+            totalPriceByCategoryId.put(roomInDetailsDTOS.get(i).getCategoryRoomPrice().getRoomCategoryId(), totalForCategory);
+        }
+
+        // CategoryRoomPrice * total Room
+        for (Map.Entry<Long, List<Room>> entry : groupedRooms.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<Room> roomsWithSameCategory = entry.getValue();
 
             if (totalPriceByCategoryId.containsKey(categoryId)) {
 
@@ -235,8 +337,10 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
             }
         }
 
+
         dto.setTotalPriceByCategoryId(totalPriceByCategoryId);
         dto.setGroupedRooms(groupedRooms);
+        dto.setHotelBooking(hotelBooking);
         dto.setBookingRoomDetails(roomInDetailsDTOS);
         dto.setDateInfoList(dateInfoList);
 
@@ -250,7 +354,7 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
 
         int daysBetween = dateInfoList.size();
 
-        for (int i = 0; i < daysBetween; i++) {
+        for (int i = 0; i < daysBetween - 1; i++) {
             BigDecimal multiplier = BigDecimal.ONE; // Mặc định là 1
 
             switch (dateInfoList.get(i).getDayType()) {
@@ -331,12 +435,6 @@ public class BookingRoomDetailsImpl implements BookingRoomDetailsService {
         } else {
             return 2; // weekend
         }
-    }
-
-    @Override
-    public List<BookingRoomDetails> getBookingDetailsByHotelBookingId(Long hotelBookingId) {
-        List<BookingRoomDetails> bookingRoomDetailsList = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
-        return bookingRoomDetailsList;
     }
 }
 

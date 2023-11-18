@@ -12,13 +12,13 @@
 
 package fu.hbs.controller;
 
-import com.google.gson.Gson;
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
-import fu.hbs.dto.HotelBookingDTO.SearchingResultRoomDTO;
-import fu.hbs.dto.HotelBookingDTO.SearchingRoomDTO;
+import fu.hbs.dto.HotelBookingDTO.GuestBookingDTO;
 import fu.hbs.entities.*;
+import fu.hbs.exceptionHandler.CancellationExistException;
+import fu.hbs.exceptionHandler.ResetExceptionHandler;
 import fu.hbs.service.dao.*;
 import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.service.dao.RoomService;
@@ -26,6 +26,9 @@ import fu.hbs.service.impl.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,8 +37,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +60,7 @@ public class BookingController {
     @Autowired
     private VNPayService vnPayService;
     @Autowired
-    private VnpayTransactionsService vnpayTransactionsService;
+    private TransactionsService transactionsService;
     @Autowired
     BookingRoomDetailsService bookingRoomDetailsService;
     @Autowired
@@ -81,121 +89,81 @@ public class BookingController {
         model.addAttribute("createBookingDTO", createBookingDTO);
         session.setAttribute("createBookingDTO", createBookingDTO);
 
+
         return "customer/createBooking";
     }
 
-    @PostMapping("/room/addBooking")
-    public String submidOrder(@RequestParam("amount") String orderTotal,
-                              @RequestParam("orderInfo") String orderInfo, Model model, HttpSession session) {
-        model.addAttribute("orderTotal", formatString(orderTotal));
-        model.addAttribute("orderInfo", orderInfo);
 
-        return "customer/orderCustomer";
+    @PostMapping(value = "/room/addBooking", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> submitOrder(@RequestBody GuestBookingDTO guestBookingDTO, Model model, HttpSession session) {
+        System.out.println(guestBookingDTO);
+
+        BigDecimal doubleValue = guestBookingDTO.getPaymentAmount();
+        System.out.println(doubleValue);
+        session.setAttribute("orderTotal", doubleValue);
+        session.setAttribute("orderInfo", guestBookingDTO.getOrderInfo());
+        session.setAttribute("guestBookingDTO", guestBookingDTO);
+
+        return ResponseEntity.ok("Gửi thành công.");
     }
 
+    @GetMapping("/room/invoice")
+    public String showInvoice(Model model) {
+        return "redirect:/submitOrder";
+    }
+
+    @GetMapping("/submitOrder")
+    public String submitdOrder(HttpSession session, HttpServletRequest request) {
+
+        BigDecimal orderTotal = (BigDecimal) session.getAttribute("orderTotal");
+        String orderInfo = (String) session.getAttribute("orderInfo");
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+        return "redirect:" + vnpayUrl;
+    }
 
     @GetMapping("/vnpay-payment")
-    public String GetMapping(HttpServletRequest request, Model model, Authentication authentication, HttpSession session) {
+    public String GetMapping(HttpServletRequest request, Model model, Authentication authentication, HttpSession session) throws ResetExceptionHandler {
         int paymentStatus = vnPayService.orderReturn(request);
-        VnpayTransactions vnpayTransactions = new VnpayTransactions();
+        Transactions vnpayTransactions = new Transactions();
 
-        CreateBookingDTO createBookingDTO = (CreateBookingDTO) session.getAttribute("createBookingDTO");
-        List<RoomCategories> roomCategories = createBookingDTO.getRoomCategoriesList();
-        Map<Long, Integer> roomCategoryMap = createBookingDTO.getRoomCategoryMap();
+
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
         String totalPrice = request.getParameter("vnp_Amount");
+
+        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+
 
         model.addAttribute("orderId", orderInfo);
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUserbyEmail(userDetails.getUsername());
-        HotelBooking newHotelBooking = null;
-        int totalRoom = 0;
+        // Define the date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
 
-        HotelBooking hotelBooking = new HotelBooking();
-        hotelBooking.setUserId(user.getUserId());
-        hotelBooking.setCheckIn(Date.valueOf(createBookingDTO.getCheckIn()));
-        hotelBooking.setCheckOut(Date.valueOf(createBookingDTO.getCheckOut()));
-        hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice());
-        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
-            Integer value = entry.getValue();
-            totalRoom += value;
-        }
-        hotelBooking.setTotalRoom(totalRoom);
-        hotelBooking.setStatusId((Long) 1L);
-        newHotelBooking = hotelBookingService.save(hotelBooking);
-
-
-        for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
-            Long categoryId = entry.getKey();
-            Integer roomCount = entry.getValue();
-            List<Room> rooms = roomService.countRoomAvaliableByCategory(categoryId, newHotelBooking.getCheckIn().toLocalDate(), newHotelBooking.getCheckOut().toLocalDate());
-
-            // Khai báo biến đếm số lần đã thêm phòng
-            int roomsAdded = 0;
-
-            for (Room room : rooms) {
-                if (roomsAdded < roomCount) {
-                    BookingRoomDetails bookingRoomDetails = new BookingRoomDetails();
-                    bookingRoomDetails.setRoomId(room.getRoomId());
-                    bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
-                    bookingRoomDetails.setRoomCategoryId(categoryId);
-                    bookingRoomDetailsService.save(bookingRoomDetails);
-
-                    // Tăng biến đếm số phòng đã thêm
-                    roomsAdded++;
-                } else {
-                    break;
-                }
-
-            }
-        }
-
-
+        // Parse the string into a LocalDateTime object
+        LocalDateTime parsedDate = LocalDateTime.parse(paymentTime, formatter);
         if (paymentStatus == 1) {
 
+            Long hotelBookingId = hotelBookingService.saveRoomAfterBooking(authentication, session, bigDecimalValue);
 
-            vnpayTransactions.setTransactionId(transactionId);
-            vnpayTransactions.setHotelBookingId(newHotelBooking.getHotelBookingId());
-//            vnpayTransactions.setCreatedDate(Date.valueOf(paymentTime));
-            vnpayTransactionsService.save(vnpayTransactions);
+            vnpayTransactions.setVnpayTransactionId(transactionId);
+            vnpayTransactions.setHotelBookingId(hotelBookingId);
+            vnpayTransactions.setAmount(bigDecimalValue);
+            vnpayTransactions.setCreatedDate(parsedDate);
+            vnpayTransactions.setStatus("Thành công");
+            vnpayTransactions.setPaymentId(1L);
+            transactionsService.save(vnpayTransactions);
+
+
             return "customer/ordersuccess";
         }
         return "customer/orderfail";
     }
-
-    @PostMapping("/submitOrder")
-    public String submidOrder(@RequestParam("amount") int orderTotal,
-                              @RequestParam("orderInfo") String orderInfo,
-                              HttpServletRequest request) {
-        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
-        return "redirect:" + vnpayUrl;
-    }
-
-
-    public String formatString(String input) {
-        if (input == null || input.isEmpty()) {
-            return input;
-        }
-
-        // Remove trailing zeros and decimal point
-        String formattedString = input.replaceAll("0*$", "");
-
-        // Remove decimal point if it's the last character
-        if (formattedString.endsWith(".")) {
-            formattedString = formattedString.substring(0, formattedString.length() - 1);
-        }
-
-        return formattedString;
-    }
-
 
     @GetMapping("/customer/bookingDetails/{hotelBookingId}")
     public String bookingDetails(Model model, Authentication authentication,
@@ -208,11 +176,14 @@ public class BookingController {
 
 
     @PostMapping("/customer/cancelBooking")
-    public String cancelBooking(@ModelAttribute CancellationFormDTO cancellationForm, Model model, Authentication authentication, RedirectAttributes redirectAttributes) {
-        hotelBookingService.cancelBooking(cancellationForm, authentication);
-        redirectAttributes.addAttribute("successMessage", "Bạn đã hủy thành công.");
-        model.addAttribute("successMessage", "Bạn đã hủy thành công.");
-        return "redirect:/customer/cancelBooking/" + cancellationForm.getHotelBookingId() + "?changeSuccess";
+    public ResponseEntity<?> cancelBooking(@RequestBody CancellationFormDTO cancellationForm, Model model, Authentication authentication) throws CancellationExistException {
+        try {
+            hotelBookingService.cancelBooking(cancellationForm, authentication);
+            return ResponseEntity.ok("Gửi yêu cầu thành công");
+        } catch (CancellationExistException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bạn đã gửi rồi.");
+
+        }
 
     }
 
@@ -231,13 +202,5 @@ public class BookingController {
 
         session.setAttribute("bookingDetailsDTO", bookingDetailsDTO);
         return "customer/cancelBooking";
-    }
-
-    @PostMapping("/search-room")
-    public ResponseEntity<String> searchRoomForBooking(@RequestBody SearchingRoomDTO searchingRoomDTO) {
-        SearchingResultRoomDTO searchingRoomForBooking = this.roomService.getSearchingRoomForBooking(searchingRoomDTO.getCategoryId(), searchingRoomDTO.getCheckIn(), searchingRoomDTO.getCheckOut());
-        Gson gson = new Gson();
-        String json = gson.toJson(searchingRoomForBooking);
-        return ResponseEntity.ok(json);
     }
 }

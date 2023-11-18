@@ -5,8 +5,6 @@ import fu.hbs.entities.BookingRoomDetails;
 import fu.hbs.entities.User;
 import org.springframework.security.core.Authentication;
 
-import java.util.List;
-
 public interface BookingRoomDetailsService {
     BookingRoomDetails save(BookingRoomDetails bookingRoomDetails);
 
@@ -14,5 +12,5 @@ public interface BookingRoomDetailsService {
 
     BookingDetailsDTO getBookingDetailsByUser(Long userId, Long hotelBookingId);
 
-    List<BookingRoomDetails> getBookingDetailsByHotelBookingId(Long hotelBookingId);
+    BookingDetailsDTO getBookingDetailsByHotelBooking(Long hotelBookingId);
 }

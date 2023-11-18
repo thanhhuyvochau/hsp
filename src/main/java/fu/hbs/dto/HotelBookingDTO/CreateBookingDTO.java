@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,8 @@ public class CreateBookingDTO {
     private List<RoomCategories> roomCategoriesList;
     private List<Room> rooms;
     private BigDecimal totalPrice;
+    private BigDecimal depositPrice;
+    private BigDecimal allPrice;
     private int totalDay;
     private Map<Long, Integer> roomCategoryMap;
     private Map<Long, BigDecimal> totalPriceByCategoryId;

@@ -41,8 +41,6 @@ public class CustomerController {
     @Autowired
     private VNPayService vnPayService;
     @Autowired
-    private VnpayTransactionsService vnpayTransactionsService;
-    @Autowired
     BookingRoomDetailsService bookingRoomDetailsService;
 
     @GetMapping("/customer/viewBooking")
