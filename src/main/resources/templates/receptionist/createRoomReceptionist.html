@@ -149,7 +149,7 @@
                                     </div>
                                     <div class="col-lg-3">Loại phòng:
                                         <select id="roomType" class="form-select">
-                                            <option selected></option>
+                                            <option value="-1" selected></option>
                                             <option th:each="category, categoryStat : ${categories}"
                                                     th:value="${category.getRoomCategoryId()}"
                                                     th:text="${category.getRoomCategoryName()}"></option>
@@ -546,27 +546,31 @@
 
 
 <script th:inline="javascript">
-    let room = null;
+    let rooms = null;
     let selectRoomCount = 1;
-
+    let selectedRooms = [];
 
     function updateText(inputId, textId) {
         document.getElementById(textId).textContent = document.getElementById(inputId).value;
     }
 
     $(document).ready(function () {
-        function addBookingDetailID(categoriId) {
+        function addBookingDetailID() {
             var container = document.getElementById('bookingDetailsContainer');
-            var index = container.children.length; // Get the current index
-
-            var detailDiv = document.createElement('div');
-            detailDiv.innerHTML = `
-            <input type="hidden" value=${categoriId} name="bookingDetails[${index}].roomCategoryId" />
+            container.innerText = "";
+            var index = 0; // Get the current index
+            selectedRooms.forEach(selectedRoom => {
+                let detailDiv = document.createElement('div');
+                detailDiv.innerHTML = `
+            <input type="hidden" value=${selectedRoom.roomCategoryId} name="bookingDetails[${index}].roomCategoryId" />
             <input type="hidden" value="1" name="bookingDetails[${index}].roomNumber" />
             <!-- Add other fields of CreateHotelBookingDetailDTO as needed -->
         `;
+                container.appendChild(detailDiv);
+                index++;
+            })
 
-            container.appendChild(detailDiv);
+
         }
 
 
@@ -605,44 +609,48 @@
         });
 
 
-        function addBookingDetail(bookRoom) {
+        function addBookingDetail() {
             // Select the table body
             const tbody = $("#selectedRoomTable > tbody");
-            var index = selectRoomCount - 1;
+            tbody.empty();
             console.log(tbody);
 
             // Update the table with new data
-            console.log("ROOM:" + room.roomCategoryName);
-            var row = $("<tr></tr>");
-            row.id = room.categoryId;
-            row.append("<th scope='row'>" + selectRoomCount + "</th>");
-            row.append("<td>" + room.roomCategoryName + "</td>");
-            // Add other columns based on room properties
+            let index = 1;
+            selectedRooms.forEach(selectedRoom => {
+                var row = $("<tr></tr>");
+                row.id = selectedRoom.categoryId;
+                row.append("<th scope='row'>" + index++ + "</th>");
+                row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
+                // Add other columns based on room properties
 
-            // Example columns for demonstration, replace with actual data
-            row.append("<td>" + room.bookedNumber + "</td>");
-            row.append("<td>" + room.description + "</td>");
-            row.append("<td>" + room.bed + "</td>");
-            row.append("<td>" + room.square + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.price + "</td>");
-            // row.append('<input  th:value="1" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomNumber}" />');
-            // row.append('<input  th:value="' + room.categoryId + '" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomCategoryId}" />');
+                // Example columns for demonstration, replace with actual data
+                row.append("<td>" + selectedRoom.bookedNumber + "</td>");
+                row.append("<td>" + selectedRoom.description + "</td>");
+                row.append("<td>" + selectedRoom.bed + "</td>");
+                row.append("<td>" + selectedRoom.square + "</td>");
+                row.append("<td>" + selectedRoom.numberPerson + "</td>");
+                row.append("<td>" + selectedRoom.numberPerson + "</td>");
+                row.append("<td>" + selectedRoom.price + "</td>");
+                // row.append('<input  th:value="1" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomNumber}" />');
+                // row.append('<input  th:value="' + room.categoryId + '" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomCategoryId}" />');
 
-            const buttonColumn = $("<td></td>");
-            const addButton = $("<button></button>")
-                .addClass("btn button btn-dark")
-                .html("<i class='bi bi-trash'></i>")
-                .on("click", function () {
-                    console.log("CLICK");
-                    // Add your logic here for button click
-                });
-            buttonColumn.append(addButton);
+                const buttonColumn = $("<td></td>");
+                const addButton = $("<button></button>")
+                    .addClass("btn button btn-dark")
+                    .html("<i class='bi bi-trash'></i>")
+                    .on("click", function () {
+                        deleteRow(this, selectedRoom.roomCategoryId);
+                        console.log("CLICK");
+                        // Add your logic here for button click
+                    });
+                buttonColumn.append(addButton);
 
-            row.append(buttonColumn);
-            // Append the row to the table body
-            tbody.append(row);
+                row.append(buttonColumn);
+                // Append the row to the table body
+                tbody.append(row);
+            })
+
             calculateTotalPrice();
             selectRoomCount++;
             updateInformationOfBooking();
@@ -650,69 +658,74 @@
 
         function updateInformationOfBooking() {
             const tbody = $("#bookingInformationRooms > tbody");
+            tbody.empty();
             const childNumber = document.querySelector("#bookingInformationRooms > tbody").childElementCount + 1;
             console.log(tbody);
+            selectedRooms.forEach(selectedRoom => {
+                var row = $("<tr></tr>");
+                row.id = selectedRoom.categoryId;
+                row.append("<th scope='row'>" + childNumber + "</th>");
+                row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
+                // Add other columns based on room properties
 
-            var row = $("<tr></tr>");
-            row.id = room.categoryId;
-            row.append("<th scope='row'>" + childNumber + "</th>");
-            row.append("<td>" + room.roomCategoryName + "</td>");
-            // Add other columns based on room properties
-
-            // Example columns for demonstration, replace with actual data
-            row.append("<td>" + 1 + "</td>");
-            row.append("<td>" + room.description + "</td>");
-            row.append("<td>" + room.bed + "</td>");
-            row.append("<td>" + room.square + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.price + "</td>");
-            // Append the row to the table body
-            tbody.append(row);
-            $("#bookedRoomNumber").text(selectRoomCount - 1);
+                // Example columns for demonstration, replace with actual data
+                row.append("<td>" + 1 + "</td>");
+                row.append("<td>" + selectedRoom.description + "</td>");
+                row.append("<td>" + selectedRoom.bed + "</td>");
+                row.append("<td>" + selectedRoom.square + "</td>");
+                row.append("<td>" + selectedRoom.numberPerson + "</td>");
+                row.append("<td>" + selectedRoom.numberPerson + "</td>");
+                row.append("<td>" + selectedRoom.price + "</td>");
+                // Append the row to the table body
+                tbody.append(row);
+                $("#bookedRoomNumber").text(selectRoomCount - 1);
+            })
         }
 
         function updateTableView(response) {
             // Assuming the response is a JSON object with room details
-            room = JSON.parse(response);
+            rooms = JSON.parse(response);
             // Select the table body
             const tbody = $("#roomTable tbody");
 
             // Clear existing table rows
             tbody.empty();
-
+            let index = 1;
             // Update the table with new data
-            console.log("ROOM:" + room.roomCategoryName);
-            var row = $("<tr></tr>");
-            row.append("<th scope='row'>1</th>");
-            row.append("<td>" + room.roomCategoryName + "</td>");
-            // Add other columns based on room properties
+            rooms.forEach(room => {
+                var row = $("<tr></tr>");
+                row.append("<th scope='row'>" + index + "</th>");
+                row.append("<td>" + room.roomCategoryName + "</td>");
+                // Add other columns based on room properties
 
-            // Example columns for demonstration, replace with actual data
-            row.append("<td>" + room.numberAvailable + "</td>");
-            row.append("<td>" + room.description + "</td>");
-            row.append("<td>" + room.bed + "</td>");
-            row.append("<td>" + room.square + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.numberPerson + "</td>");
-            row.append("<td>" + room.price + "</td>");
+                // Example columns for demonstration, replace with actual data
+                row.append("<td>" + room.numberAvailable + "</td>");
+                row.append("<td>" + room.description + "</td>");
+                row.append("<td>" + room.bed + "</td>");
+                row.append("<td>" + room.square + "</td>");
+                row.append("<td>" + room.numberPerson + "</td>");
+                row.append("<td>" + room.numberPerson + "</td>");
+                row.append("<td>" + room.price + "</td>");
 
-            const buttonColumn = $("<td></td>");
-            const addButton = $("<button type='button'></button>")
-                .addClass("btn button btn-dark")
-                .text("Thêm")
-                .on("click", function () {
-                    console.log("CLICK");
-                    addBookingDetail(room);
-                    addBookingDetailID(room.roomCategoryId);
-                    // Add your logic here for button click
-                });
-            buttonColumn.append(addButton);
+                const buttonColumn = $("<td></td>");
+                const addButton = $("<button type='button'></button>")
+                    .addClass("btn button btn-dark")
+                    .text("Thêm")
+                    .on("click", function () {
+                        console.log("CLICK");
+                        selectedRooms.push(room);
+                        console.log(selectedRooms);
+                        addBookingDetail();
+                        addBookingDetailID(room.roomCategoryId);
+                        // Add your logic here for button click
+                    });
+                buttonColumn.append(addButton);
 
-            row.append(buttonColumn);
-            // Append the row to the table body
-            tbody.append(row);
-
+                row.append(buttonColumn);
+                // Append the row to the table body
+                tbody.append(row);
+                index++;
+            })
         }
 
         function calculateTotalPrice() {
@@ -756,6 +769,14 @@
 
         function formatNumberWithPeriods(number) {
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function deleteRow(button, categoryId) {
+            let row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            selectedRooms = selectedRooms.filter(room => room.roomCategoryId !== categoryId);
+            addBookingDetail();
+            // You can optionally perform additional actions or re-render the page here
         }
 
 

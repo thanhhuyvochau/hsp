@@ -35,7 +35,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     private HotelBookingServiceRepository hotelBookingServiceRepository;
 
     @Autowired
-    private VnpayTransactionsRepository vnpayTransactionsRepository;
+    private TransactionsRepository vnpayTransactionsRepository;
 
     @Override
     public List<HotelBooking> findAll() {
@@ -195,13 +195,13 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
             BigDecimal totalPrice = servicePrice.add(roomPrice).add(taxPrice);
 
-            VnpayTransactions transactions = new VnpayTransactions();
-            transactions.setTransactionId(RandomKey.generateRandomKey());
+            Transactions transactions = new Transactions();
+            transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
             transactions.setStatus("Thành công");
             transactions.setAmount(totalPrice);
             LocalDate localDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
             Date date = Date.valueOf(localDate);
-            transactions.setCreatedDate(date);
+            transactions.setCreatedDate(Instant.now());
             transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
 
             vnpayTransactionsRepository.save(transactions);

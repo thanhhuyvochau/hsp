@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -35,23 +37,30 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<SearchingResultRoomDTO> getSearchingRoomForBooking(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
         List<Room> rooms;
-        if (roomCategoryId == null) {
+        if (roomCategoryId == -1) {
             rooms = roomRepository.findAvailableRoomsByDate(checkIn, checkOut);
         } else {
             rooms = roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
         }
 
-        CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.findByRoomCategoryId(roomCategoryId);
+        Map<Long, List<Room>> roomMapWithCategoryIdAsKey = rooms.stream()
+                .collect(Collectors.groupingBy(Room::getRoomCategoryId));
+
+        List<Room> roomGroupByCategory = roomMapWithCategoryIdAsKey.values().stream()
+                .map(roomsList -> roomsList.stream().findFirst()
+                        .orElse(null))
+                .filter(Objects::nonNull).collect(Collectors.toList());
 
         Map<Long, RoomCategories> roomCategoryAsMap = BookingUtil.getAllRoomCategoryAsMap();
         List<SearchingResultRoomDTO> searchingResultRoomDTOList = new ArrayList<>();
+        for (Room room : roomGroupByCategory) {
+            List<Room> allRoomsByIdCategory = roomRepository.findByRoomCategoryId(room.getRoomCategoryId()); // All room by category
+            List<Room> availableRoomsByCategoryId = roomRepository.findAvailableRoomsByCategoryId(room.getRoomCategoryId(), checkIn, checkOut);
 
-        for (Room room : rooms) {
-            List<Room> allRoomsByIdCategory = roomRepository.findByRoomCategoryId(room.getRoomCategoryId());
             RoomCategories category = roomCategoryAsMap.get(room.getRoomCategoryId());
-
+            CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.findByRoomCategoryId(category.getRoomCategoryId());
             SearchingResultRoomDTO searchingRoomDTO = new SearchingResultRoomDTO
-                    (rooms.size(), categoryRoomPrice.getPrice(), category.getRoomCategoryId(), category.getRoomCategoryName(), category.getDescription(), category.getSquare(), category.getNumberPerson(), category.getImage(), room.getBedSize(), allRoomsByIdCategory.size() - rooms.size());
+                    (availableRoomsByCategoryId.size(), categoryRoomPrice.getPrice(), category.getRoomCategoryId(), category.getRoomCategoryName(), category.getDescription(), category.getSquare(), category.getNumberPerson(), category.getImage(), room.getBedSize(), allRoomsByIdCategory.size() - availableRoomsByCategoryId.size());
             searchingResultRoomDTOList.add(searchingRoomDTO);
 
         }

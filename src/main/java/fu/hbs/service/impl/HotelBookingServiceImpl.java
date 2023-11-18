@@ -16,18 +16,26 @@ package fu.hbs.service.impl;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
+import fu.hbs.exceptionHandler.ResetExceptionHandler;
+import fu.hbs.service.dao.BookingRoomDetailsService;
+import org.springframework.mail.javamail.JavaMailSender;
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
-import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
+import fu.hbs.dto.HotelBookingDTO.GuestBookingDTO;
 import fu.hbs.entities.*;
+import fu.hbs.exceptionHandler.CancellationExistException;
+import fu.hbs.exceptionHandler.MailExceptionHandler;
 import fu.hbs.exceptionHandler.RoomCategoryNamesNullException;
 import fu.hbs.repository.*;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -37,6 +45,8 @@ import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewHotelBookingDTO;
 import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.utils.StringDealer;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 public class HotelBookingServiceImpl implements HotelBookingService {
@@ -69,19 +79,25 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     UserRepository userRepository;
     @Autowired
     RoomStatusRepository roomStatusRepository;
-
     @Autowired
     CustomerCancellationReasonRepository customerCancellationReasonRepository;
     @Autowired
     CustomerCancellationRepository customerCancellationRepository;
     @Autowired
     RefundAccountRepository refundAccountRepository;
+    @Autowired
+    BookingRoomDetailsRepository bookingRoomDetailsRepository;
+    @Autowired
+    BookingRoomDetailsService bookingRoomDetailsService;
+    @Autowired
+    HotelBookingStatusRepository hotelBookingStatusRepository;
+    @Autowired
+    RoomStatusHistoryRepository roomStatusHistoryRepository;
+    @Autowired
+    TemplateEngine templateEngine;
+    @Autowired
+    JavaMailSender javaMailSender;
     StringDealer stringDealer;
-    @Autowired
-    private HotelBookingServiceRepository hotelBookingServiceRepository;
-
-    @Autowired
-    private RoomServiceRepository roomServiceRepository;
 
     public HotelBookingServiceImpl() {
         this.stringDealer = new StringDealer();
@@ -96,7 +112,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomStatus = roomStatusRepository.findByRoomStatusId(hotelBookings.get(i).getStatusId());
+//            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
@@ -205,24 +221,31 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     @Override
     public List<ViewHotelBookingDTO> findAllByUserIdAndSameTime(Long id) {
         List<HotelBooking> hotelBookings = hotelBookingRepository.findAllByUserId(id);
+        CustomerCancellation customerCancellation = new CustomerCancellation();
+        HotelBookingStatus hotelBookingStatus = new HotelBookingStatus();
         List<ViewHotelBookingDTO> viewHotelBookingDTOList = new ArrayList<>();
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
         User user = new User();
         RoomStatus roomStatus = new RoomStatus();
         for (int i = 0; i < hotelBookings.size(); i++) {
             ViewHotelBookingDTO viewHotelBookingDTO = new ViewHotelBookingDTO();
-            roomStatus = roomStatusRepository.findByRoomStatusId(hotelBookings.get(i).getStatusId());
+            customerCancellation = customerCancellationRepository.findCustomerCancellationNewHotelBookingId(hotelBookings.get(i).getHotelBookingId());
+//            roomStatus = roomStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
+            hotelBookingStatus = hotelBookingStatusRepository.findByStatusId(hotelBookings.get(i).getStatusId());
             user = userRepository.findById(hotelBookings.get(i).getUserId()).get();
             viewHotelBookingDTO.setHotelBookingId(hotelBookings.get(i).getHotelBookingId());
             viewHotelBookingDTO.setCheckOut(hotelBookings.get(i).getCheckOut());
             viewHotelBookingDTO.setCheckIn(hotelBookings.get(i).getCheckIn());
-            viewHotelBookingDTO.setStatusId(roomStatus);
+            viewHotelBookingDTO.setHotelBookingStatus(hotelBookingStatus);
             viewHotelBookingDTO.setTotalRoom(hotelBookings.get(i).getTotalRoom());
             viewHotelBookingDTO.setUser(user);
             viewHotelBookingDTO.setRoomCategoriesList(roomCategoriesList);
+            if (customerCancellation != null) {
+                viewHotelBookingDTO.setCustomerCancellation(customerCancellationRepository.findCustomerCancellationNewHotelBookingId(hotelBookings.get(i).getHotelBookingId()));
+            }
             viewHotelBookingDTOList.add(viewHotelBookingDTO);
         }
-        System.out.println(viewHotelBookingDTOList);
+
         return viewHotelBookingDTOList;
     }
 
@@ -231,8 +254,11 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         return hotelBookingRepository.save(hotelBooking);
     }
 
+
     @Override
-    public CreateBookingDTO createBooking(List<Long> roomCategoryNames, List<Integer> selectedRoomCategories, Instant checkIn, Instant checkOut, HttpSession session) {
+    public CreateBookingDTO createBooking
+            (List<Long> roomCategoryNames, List<Integer> selectedRoomCategories, LocalDate checkIn, LocalDate
+                    checkOut, HttpSession session) {
         CreateBookingDTO createBookingDTO = new CreateBookingDTO();
         Map<Long, Integer> roomCategoryMap = new HashMap<>();
         Integer number = (Integer) session.getAttribute("numberOfPeople");
@@ -250,30 +276,28 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         if (roomCategoryMap.isEmpty()) {
             throw new RuntimeException("Bạn chưa đặt phòng nào");
         }
-
+        //   Room Available by CategoryId
         List<Room> rooms = new ArrayList<>();
+
         List<RoomCategories> roomCategoriesList = new ArrayList<>();
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            rooms = roomRepository.findAvailableRoomsByCategoryId(category, LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
+
+            rooms = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
+
             roomCategoriesList.add(roomCategoriesRepository.findByRoomCategoryId(category));
         }
 
 
         for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
             Long category = entry.getKey();
-            List<Room> roomsByCategory = roomRepository.findAvailableRoomsByCategoryId(category, LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
+            List<Room> roomsByCategory = roomRepository.findAvailableRoomsByCategoryId(category, checkIn, checkOut);
             rooms.addAll(roomsByCategory);
         }
 
         // Group rooms by room category
         Map<Long, List<Room>> roomMap = rooms.stream().collect(Collectors.groupingBy(Room::getRoomCategoryId));
-        for (Map.Entry<Long, List<Room>> entry : roomMap.entrySet()) {
-            Long categoryId = entry.getKey();
-            List<Room> roomsWithSameCategory = entry.getValue();
-
-        }
 
 
         List<CategoryRoomPrice> categoryRoomPrices = new ArrayList<>();
@@ -284,15 +308,15 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             categoryRoomPrices.add(categoryRoomPrice);
         }
 
-        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(LocalDateTime.ofInstant(checkIn, ZoneOffset.UTC).toLocalDate(), LocalDateTime.ofInstant(checkOut, ZoneOffset.UTC).toLocalDate());
+        List<DateInfoCategoryRoomPriceDTO> dateInfoList = processDateInfo(checkIn, checkOut);
         BigDecimal total_Price = BigDecimal.ZERO;
         Map<Long, BigDecimal> totalPriceByCategoryId = new HashMap<>();
 
         for (CategoryRoomPrice cpr : categoryRoomPrices) {
             BigDecimal totalForCategory = calculateTotalForCategory(cpr, dateInfoList);
             totalPriceByCategoryId.put(cpr.getRoomCategoryId(), totalForCategory);
-
         }
+
 
         // Lặp qua map 1 và kiểm tra xem khóa có tồn tại trong map 2 không
         for (Map.Entry<Long, Integer> entry1 : roomCategoryMap.entrySet()) {
@@ -302,20 +326,20 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             if (totalPriceByCategoryId.containsKey(category)) {
                 // Nếu khóa tồn tại trong map 2, lấy giá trị từ cả hai map
                 BigDecimal totalPrice1 = totalPriceByCategoryId.get(category);
-
                 BigDecimal totalPrice2 = totalPrice1.multiply(BigDecimal.valueOf(roomCount));
-
                 total_Price = total_Price.add(totalPrice2);
 
 
             }
         }
-
-
+        BigDecimal totalPrice = total_Price.multiply(BigDecimal.valueOf(1.1));
+        BigDecimal divisor = new BigDecimal("2");
         createBookingDTO.setRoomCategoriesList(roomCategoriesList);
         createBookingDTO.setTotalPrice(total_Price);
-        createBookingDTO.setCheckIn(checkIn);
-        createBookingDTO.setCheckOut(checkOut);
+        createBookingDTO.setAllPrice(totalPrice);
+        createBookingDTO.setDepositPrice(totalPrice.divide(divisor, 0, BigDecimal.ROUND_HALF_UP));
+        createBookingDTO.setCheckIn(Instant.from(checkIn));
+        createBookingDTO.setCheckOut(Instant.from(checkOut));
         createBookingDTO.setRoomCategoryMap(roomCategoryMap);
         createBookingDTO.setTotalPriceByCategoryId(totalPriceByCategoryId);
         createBookingDTO.setDateInfoList(dateInfoList);
@@ -326,7 +350,8 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     }
 
     @Override
-    public void cancelBooking(CancellationFormDTO cancellationFormDTO, Authentication authentication) {
+    public void cancelBooking(CancellationFormDTO cancellationFormDTO, Authentication authentication) throws
+            CancellationExistException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userRepository.getUserByEmail(userDetails.getUsername());
 
@@ -339,16 +364,252 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 
         RefundAccount newRefundAccount = refundAccountRepository.save(refundAccount);
 
-
-        // Cancellation
+        List<CustomerCancellation> cancellationList = customerCancellationRepository.findAll();
         CustomerCancellation customerCancellation = new CustomerCancellation();
         customerCancellation.setHotelBookingId(cancellationFormDTO.getHotelBookingId());
         customerCancellation.setCancelTime(new Date());
         customerCancellation.setReasonId(cancellationFormDTO.getReasonId());
         customerCancellation.setOtherReason(cancellationFormDTO.getOtherReason());
         customerCancellation.setAccountId(newRefundAccount.getAccountId());
-        customerCancellation.setStatus(false);
+        customerCancellation.setStatus(0);
+
+
+        for (CustomerCancellation c : cancellationList) {
+            if (c.getHotelBookingId() == customerCancellation.getHotelBookingId()) {
+                throw new CancellationExistException("Cancellation already exists in the list.");
+            }
+        }
+
         customerCancellationRepository.save(customerCancellation);
+
+
+    }
+
+    @Override
+    public Long saveRoomAfterBooking(Authentication authentication, HttpSession session, BigDecimal totalPrice) throws
+            ResetExceptionHandler {
+
+        CreateBookingDTO createBookingDTO = (CreateBookingDTO) session.getAttribute("createBookingDTO");
+        List<RoomCategories> roomCategories = createBookingDTO.getRoomCategoriesList();
+        Map<Long, Integer> roomCategoryMap = createBookingDTO.getRoomCategoryMap();
+        List<BookingRoomDetails> bookingRoomDetailsList = new ArrayList<>();
+        BigDecimal result = createBookingDTO.getDepositPrice();
+        result = createBookingDTO.getDepositPrice().setScale(totalPrice.scale());
+        int comparisonResult = result.compareTo(totalPrice);
+        if (authentication != null) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User user = userRepository.getUserByEmail(userDetails.getUsername());
+            System.out.println(user);
+            if (user != null) {
+                HotelBooking hotelBooking = new HotelBooking();
+                // find new id
+
+                HotelBooking newHotelBooking = null;
+                int totalRoom = 0;
+
+                // save hotelBooking
+                hotelBooking.setUserId(user.getUserId());
+                LocalDate checkInDate = LocalDate.from(createBookingDTO.getCheckIn());
+                LocalTime checkInTime = LocalTime.of(12, 0);
+                LocalDateTime checkInDateTime = LocalDateTime.of(checkInDate, checkInTime);
+                Instant instant = checkInDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                System.out.println(instant + "Ngay check_in");
+                hotelBooking.setCheckIn(instant);
+
+                LocalDate checkOutDate = LocalDate.from(createBookingDTO.getCheckOut());
+                LocalTime checkOutTime = LocalTime.of(14, 0);
+                LocalDateTime checkOutDateTime = LocalDateTime.of(checkOutDate, checkOutTime);
+
+                Instant instantCheckOut = checkOutDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                hotelBooking.setCheckOut(instantCheckOut);
+
+
+                if (comparisonResult == 0) {
+
+                    hotelBooking.setDepositPrice(totalPrice);
+                } else { // deposit
+                    hotelBooking.setDepositPrice(BigDecimal.valueOf(0));
+                }
+                hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice().multiply(BigDecimal.valueOf(1.1)));
+                for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+                    Integer value = entry.getValue();
+                    totalRoom += value;
+                }
+                hotelBooking.setTotalRoom(totalRoom);
+                hotelBooking.setStatusId((Long) 1L);
+                newHotelBooking = hotelBookingRepository.save(hotelBooking);
+
+
+                //converst
+                LocalDate localDateCheckIn = newHotelBooking.getCheckIn().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate localDateCheckOut = newHotelBooking.getCheckOut().atZone(ZoneId.systemDefault()).toLocalDate();
+
+
+                for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+                    Long categoryId = entry.getKey();
+                    Integer roomCount = entry.getValue();
+                    List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(categoryId, localDateCheckIn, localDateCheckOut);
+
+                    // Khai báo biến đếm số lần đã thêm phòng
+                    int roomsAdded = 0;
+
+                    for (Room room : rooms) {
+                        if (roomsAdded < roomCount) {
+                            BookingRoomDetails bookingRoomDetails = new BookingRoomDetails();
+                            bookingRoomDetails.setRoomId(room.getRoomId());
+                            bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
+                            bookingRoomDetails.setRoomCategoryId(categoryId);
+                            bookingRoomDetailsRepository.save(bookingRoomDetails);
+
+                            // Tăng biến đếm số phòng đã thêm
+                            roomsAdded++;
+                        } else {
+                            break;
+                        }
+
+                    }
+
+                }
+                return newHotelBooking.getHotelBookingId();
+            }
+        } else {
+            HotelBooking hotelBooking = new HotelBooking();
+            GuestBookingDTO guestBookingDTO1 = (GuestBookingDTO) session.getAttribute("guestBookingDTO");
+            // find new id
+            HotelBooking newHotelBooking = null;
+            int totalRoom = 0;
+
+            // save hotelBooking
+            hotelBooking.setUserId(null);
+            hotelBooking.setName(guestBookingDTO1.getName());
+            hotelBooking.setAddress(guestBookingDTO1.getAddress());
+            hotelBooking.setPhone(guestBookingDTO1.getPhone());
+            hotelBooking.setEmail(guestBookingDTO1.getEmail());
+
+            LocalDate checkInDate = LocalDate.from(createBookingDTO.getCheckIn());
+//            LocalTime checkInTime = LocalTime.of(12, 0);
+//            LocalDateTime checkInDateTime = LocalDateTime.of(checkInDate, checkInTime);
+//            ZoneId zoneId = ZoneId.of("Asia/Saigon");
+//            ZonedDateTime zonedDateTime = ZonedDateTime.of(checkInDateTime, zoneId);
+//            ZonedDateTime adjustedDateTime = zonedDateTime.withHour(12).withMinute(0).withSecond(0);
+//            Instant instant = adjustedDateTime.toInstant();
+            Instant instant = checkInDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            System.out.println(instant + "Ngay check_in");
+
+            hotelBooking.setCheckIn(instant);
+
+            LocalDate checkOutDate = LocalDate.from(createBookingDTO.getCheckOut());
+            LocalTime checkOutTime = LocalTime.of(14, 0);
+            LocalDateTime checkOutDateTime = LocalDateTime.of(checkOutDate, checkOutTime);
+
+            Instant instantCheckOut = checkOutDateTime.atZone(ZoneId.systemDefault()).toInstant();
+            hotelBooking.setCheckOut(instantCheckOut);
+
+
+            if (comparisonResult == 0) {
+                hotelBooking.setDepositPrice(totalPrice);
+            } else { // deposit
+                hotelBooking.setDepositPrice(BigDecimal.valueOf(0));
+            }
+            hotelBooking.setTotalPrice(createBookingDTO.getTotalPrice().multiply(BigDecimal.valueOf(1.1)));
+
+            for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+                Integer value = entry.getValue();
+                totalRoom += value;
+            }
+            hotelBooking.setTotalRoom(totalRoom);
+            hotelBooking.setStatusId((Long) 1L);
+            newHotelBooking = hotelBookingRepository.save(hotelBooking);
+
+
+            //converst
+            LocalDate localDateCheckIn = newHotelBooking.getCheckIn().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate localDateCheckOut = newHotelBooking.getCheckOut().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            RoomStatusHistory roomStatusHistory = new RoomStatusHistory();
+            for (Map.Entry<Long, Integer> entry : roomCategoryMap.entrySet()) {
+                Long categoryId = entry.getKey();
+                Integer roomCount = entry.getValue();
+                List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(categoryId, localDateCheckIn, localDateCheckOut);
+
+                // Khai báo biến đếm số lần đã thêm phòng
+                int roomsAdded = 0;
+
+                for (Room room : rooms) {
+                    if (roomsAdded < roomCount) {
+                        BookingRoomDetails bookingRoomDetails = new BookingRoomDetails();
+                        bookingRoomDetails.setRoomId(room.getRoomId());
+                        bookingRoomDetails.setHotelBookingId(newHotelBooking.getHotelBookingId());
+                        bookingRoomDetails.setRoomCategoryId(categoryId);
+                        bookingRoomDetailsRepository.save(bookingRoomDetails);
+
+                        // save RoomStatusHistory
+//                        roomStatusHistory.setCheckIn(instant);
+//                        roomStatusHistory.setCheckOut(instantCheckOut);
+//                        roomStatusHistory.setRoomId(room.getRoomId());
+//
+//                        roomStatusHistoryRepository.save(roomStatusHistory);
+                        // Tăng biến đếm số phòng đã thêm
+                        roomsAdded++;
+                    } else {
+                        break;
+                    }
+
+                }
+
+            }
+            sendBookingRequest(newHotelBooking.getHotelBookingId());
+
+            return newHotelBooking.getHotelBookingId();
+        }
+        return 0L;
+    }
+
+    @Override
+    public void sendBookingRequest(Long hotelBookingId) throws ResetExceptionHandler {
+        BookingDetailsDTO bookingDetailsDTO = bookingRoomDetailsService.getBookingDetailsByHotelBooking(hotelBookingId);
+
+        if (bookingDetailsDTO.getHotelBooking().getEmail() != null) {
+            Context context = new Context();
+            context.setVariable("checkIn", bookingDetailsDTO.getHotelBooking().getCheckIn());
+            context.setVariable("checkOut", bookingDetailsDTO.getHotelBooking().getCheckOut());
+//            context.setVariable("roomCate", bookingDetailsDTO.getBookingRoomDetails());
+            context.setVariable("totalRoom", bookingDetailsDTO.getHotelBooking().getTotalRoom());
+            context.setVariable("bookingDetailsDTO", bookingDetailsDTO);
+            context.setVariable("userId", bookingDetailsDTO.getHotelBooking().getName());
+//            context.setVariable("expirationDate", hotelBooking.getPhone());
+            String emailContent = templateEngine.process("email/createBookingEmail", context);
+
+            // Gửi email
+            sendBookingEmail(bookingDetailsDTO.getHotelBooking().getEmail(), "Thông tin đặt phòng", emailContent);
+
+        } else {
+            throw new MailExceptionHandler("Lỗi gửi mail");
+        }
+
+    }
+
+    @Override
+    public void updateRoomStatus(Room room) {
+//        RoomStatusHistory roomStatusHistory = new RoomStatusHistory();
+//
+//        List<Room> roomList = new ArrayList<>();
+//
+//        // Lấy danh sách trạng thái phòng cho phòng và khoảng thời gian cụ thể
+////        List<RoomStatusHistory> roomStatusList = RoomStatusHistoryRepository.findByRoomIdAndTimeRange(bookingRoomDetails.getRoomId(), checkIn, checkOut);
+//
+//        // Xác định trạng thái mới dựa trên số lượng bản ghi trả về
+//        Long newStatus = (roomStatusList.isEmpty()) ? 1L : 2L; // Giả sử 1 là trạng thái sẵn có, 2 là trạng thái đã đặt
+//
+//        // Tạo một bản ghi trạng thái mới
+//        RoomStatusHistory newStatusRecord = new RoomStatusHistory();
+//        newStatusRecord.setRoom(roomRepository.findById(roomId).orElse(null));
+//        newStatusRecord.setStatusId(newStatus);
+//        newStatusRecord.setStartTime(checkIn);
+//        newStatusRecord.setEndTime(checkOut);
+//
+//        // Lưu bản ghi trạng thái mới vào cơ sở dữ liệu
+//        roomStatusHistoryRepository.save(newStatusRecord);
     }
 
 
@@ -359,7 +620,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
 //        int daysBetween = calculateDaysBetween(dateInfoList.getDate(), endDate.getDate());
         int daysBetween = dateInfoList.size(); //
 
-        for (int i = 0; i < daysBetween; i++) {
+        for (int i = 0; i < daysBetween - 1; i++) {
             BigDecimal multiplier = BigDecimal.ONE; // Mặc định là 1
 
             switch (dateInfoList.get(i).getDayType()) {
@@ -442,28 +703,30 @@ public class HotelBookingServiceImpl implements HotelBookingService {
         }
     }
 
-//    @Override
-//    public List<RoomBookingServiceDTO> getAllUsedRoomServices(Long hotelBookingId) {
-//        List<fu.hbs.entities.HotelBookingService> hotelBookingServices = hotelBookingServiceRepository.getAllByHotelBookingId(hotelBookingId);
-//
-//        List<Long> allUseRoomServiceIds = hotelBookingServices.stream().map(fu.hbs.entities.HotelBookingService::getServiceId).distinct().collect(Collectors.toList());
-//        List<RoomService> roomServices = roomServiceRepository.getAllByServiceId(allUseRoomServiceIds);
-//        Map<Long, RoomService> roomServiceMap = roomServices.stream().collect(Collectors.toMap(RoomService::getServiceId, Function.identity()));
-//        Map<Long, RoomBookingServiceDTO> roomBookingServiceDTOMap = new HashMap<>();
-//        for (fu.hbs.entities.HotelBookingService hotelBookingService : hotelBookingServices) {
-//            RoomService roomService = roomServiceMap.get(hotelBookingService.getServiceId());
-//            RoomBookingServiceDTO roomBookingServiceDTO = roomBookingServiceDTOMap.get(hotelBookingService.getServiceId());
-//            if (roomBookingServiceDTO == null) {
-//                roomBookingServiceDTO = new RoomBookingServiceDTO();
-//                roomBookingServiceDTO.setQuantity(1);
-//                roomBookingServiceDTO.setRoomService(roomService);
-//            } else {
-//                roomBookingServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity() + 1);
-//            }
-//        }
-//
-//        return (List<RoomBookingServiceDTO>) roomBookingServiceDTOMap.values();
-//    }
+    /**
+     * Send a booking email to a recipient.
+     *
+     * @param recipientEmail the email address of the recipient
+     * @param subject        the subject of the email
+     * @param emailContent   the content of the email
+     * @throws MailExceptionHandler if there is an issue with sending the email
+     */
+    public void sendBookingEmail(String recipientEmail, String subject, String emailContent)
+            throws MailExceptionHandler {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setFrom("3HKT@gmail.com");
+            helper.setTo(recipientEmail);
+            helper.setSubject(subject);
+            helper.setText(emailContent, true); // Sử dụng HTML
+
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new MailExceptionHandler("Lỗi gửi mail");
+        }
+    }
 
     @Override
     public HotelBooking findById(Long id) {

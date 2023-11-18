@@ -3,6 +3,7 @@ package fu.hbs.dto.HotelBookingDTO;
 import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.*;
 import fu.hbs.utils.BookingUtil;
+import fu.hbs.utils.DateUtil;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -25,8 +26,8 @@ public class ViewCheckoutDTO {
     private String phone;
     private BigDecimal totalRoomPrice = BigDecimal.ZERO;
     private BigDecimal depositPrice = BigDecimal.ZERO;
-    private Instant checkIn;
-    private Instant checkOut;
+    private String checkIn;
+    private String checkOut;
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;
@@ -51,8 +52,8 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setAddress(hotelBooking.getAddress());
         viewCheckoutDto.setPhone(hotelBooking.getPhone());
         viewCheckoutDto.setDepositPrice(hotelBooking.getDepositPrice());
-        viewCheckoutDto.setCheckIn(hotelBooking.getCheckIn());
-        viewCheckoutDto.setCheckOut(hotelBooking.getCheckOut());
+        viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
+        viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 

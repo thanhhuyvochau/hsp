@@ -11,9 +11,7 @@
 package fu.hbs.dto.HotelBookingDTO;
 
 
-import fu.hbs.entities.RoomCategories;
-import fu.hbs.entities.RoomStatus;
-import fu.hbs.entities.User;
+import fu.hbs.entities.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,10 +28,11 @@ public class ViewHotelBookingDTO {
     private Long hotelBookingId;
     private int totalRoom;
     private RoomStatus statusId;
+    private HotelBookingStatus hotelBookingStatus;
     private User user;
     private List<RoomCategories> roomCategoriesList;
     private BigDecimal totalPrice;
     private Instant checkIn;
     private Instant checkOut;
-
+    private CustomerCancellation customerCancellation;
 }

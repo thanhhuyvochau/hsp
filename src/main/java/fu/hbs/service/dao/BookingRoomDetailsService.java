@@ -14,5 +14,7 @@ public interface BookingRoomDetailsService {
 
     BookingDetailsDTO getBookingDetailsByUser(Long userId, Long hotelBookingId);
 
+    BookingDetailsDTO getBookingDetailsByHotelBooking(Long hotelBookingId);
+
     List<BookingRoomDetails> getBookingDetailsByHotelBookingId(Long hotelBookingId);
 }

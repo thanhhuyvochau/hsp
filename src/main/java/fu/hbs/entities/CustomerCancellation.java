@@ -45,5 +45,5 @@ public class CustomerCancellation {
     private BigDecimal refundAmount;
     private Date cancelTime;
     private String otherReason;
-    private boolean status;
+    private int status;
 }

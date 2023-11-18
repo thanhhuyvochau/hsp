@@ -12,5 +12,8 @@ public interface RefundAccountRepository extends JpaRepository<RefundAccount, Lo
             "WHERE user_id = ?1 \n" +
             "ORDER BY account_id DESC\n" +
             "LIMIT 1", nativeQuery = true)
-    RefundAccount findAccountIdNew(Long user_id);
+    RefundAccount findAccountIdNew(Long userId);
+
+
+    RefundAccount findByAccountId(Long accountId);
 }

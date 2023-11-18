@@ -1,6 +1,7 @@
 package fu.hbs.dto.HotelBookingDTO;
 
 import fu.hbs.dto.CategoryRoomPriceDTO.DateInfoCategoryRoomPriceDTO;
+import fu.hbs.entities.CustomerCancellation;
 import fu.hbs.entities.HotelBooking;
 import fu.hbs.entities.Room;
 import fu.hbs.entities.User;
@@ -23,4 +24,5 @@ public class BookingDetailsDTO {
     private UserInBookingDetailsDTO userInBookingDetailsDTO;
     private Map<Long, BigDecimal> totalPriceByCategoryId;
     private List<DateInfoCategoryRoomPriceDTO> dateInfoList;
+    private CustomerCancellation customerCancellation;
 }
