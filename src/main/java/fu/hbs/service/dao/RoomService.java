@@ -9,5 +9,5 @@ import java.util.List;
 public interface RoomService {
     List<Room> countRoomAvaliableByCategory(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut);
 
-    SearchingResultRoomDTO getSearchingRoomForBooking(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut);
+    List<SearchingResultRoomDTO> getSearchingRoomForBooking(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut);
 }

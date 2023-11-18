@@ -8,12 +8,15 @@ import fu.hbs.repository.CategoryRoomPriceRepository;
 import fu.hbs.repository.RoomCategoriesRepository;
 import fu.hbs.repository.RoomRepository;
 import fu.hbs.service.dao.RoomService;
+import fu.hbs.utils.BookingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -30,13 +33,28 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public SearchingResultRoomDTO getSearchingRoomForBooking(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
-        List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
-        List<Room> allRoomsByIdCategory = roomRepository.findByRoomCategoryId(roomCategoryId);
-        RoomCategories category = roomCategoriesRepository.findByRoomCategoryId(roomCategoryId);
+    public List<SearchingResultRoomDTO> getSearchingRoomForBooking(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
+        List<Room> rooms;
+        if (roomCategoryId == null) {
+            rooms = roomRepository.findAvailableRoomsByDate(checkIn, checkOut);
+        } else {
+            rooms = roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
+        }
+
         CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.findByRoomCategoryId(roomCategoryId);
-        SearchingResultRoomDTO searchingRoomDTO = new SearchingResultRoomDTO(rooms.size(), categoryRoomPrice.getPrice(), category.getRoomCategoryId(), category.getRoomCategoryName(), category.getDescription(), category.getSquare(), category.getNumberPerson(), category.getImage(), "", allRoomsByIdCategory.size() - rooms.size());
-        rooms.stream().findFirst().ifPresent(room -> searchingRoomDTO.setBed(room.getBedSize()));
-        return searchingRoomDTO;
+
+        Map<Long, RoomCategories> roomCategoryAsMap = BookingUtil.getAllRoomCategoryAsMap();
+        List<SearchingResultRoomDTO> searchingResultRoomDTOList = new ArrayList<>();
+
+        for (Room room : rooms) {
+            List<Room> allRoomsByIdCategory = roomRepository.findByRoomCategoryId(room.getRoomCategoryId());
+            RoomCategories category = roomCategoryAsMap.get(room.getRoomCategoryId());
+
+            SearchingResultRoomDTO searchingRoomDTO = new SearchingResultRoomDTO
+                    (rooms.size(), categoryRoomPrice.getPrice(), category.getRoomCategoryId(), category.getRoomCategoryName(), category.getDescription(), category.getSquare(), category.getNumberPerson(), category.getImage(), room.getBedSize(), allRoomsByIdCategory.size() - rooms.size());
+            searchingResultRoomDTOList.add(searchingRoomDTO);
+
+        }
+        return searchingResultRoomDTOList;
     }
 }

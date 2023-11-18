@@ -239,7 +239,7 @@ public class BookingController {
 
     @PostMapping("/search-room")
     public ResponseEntity<String> searchRoomForBooking(@RequestBody SearchingRoomDTO searchingRoomDTO) {
-        SearchingResultRoomDTO searchingRoomForBooking = this.roomService.getSearchingRoomForBooking(searchingRoomDTO.getCategoryId(), searchingRoomDTO.getCheckIn(), searchingRoomDTO.getCheckOut());
+        List<SearchingResultRoomDTO> searchingRoomForBooking = this.roomService.getSearchingRoomForBooking(searchingRoomDTO.getCategoryId(), searchingRoomDTO.getCheckIn(), searchingRoomDTO.getCheckOut());
         Gson gson = new Gson();
         String json = gson.toJson(searchingRoomForBooking);
         return ResponseEntity.ok(json);

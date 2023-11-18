@@ -3,6 +3,7 @@ package fu.hbs.utils;
 import fu.hbs.entities.*;
 import fu.hbs.service.dao.CategoryRoomPriceService;
 import fu.hbs.service.dao.HotelBookingServiceService;
+import fu.hbs.service.dao.RoomCategoryService;
 import fu.hbs.service.dao.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,10 +25,13 @@ public class BookingUtil {
 
     private static ServiceService staticRoomServiceService;
 
-    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService, HotelBookingServiceService hotelBookingServiceService, ServiceService roomServiceService) {
+    private static RoomCategoryService staticRoomCategoryService;
+
+    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService, HotelBookingServiceService hotelBookingServiceService, ServiceService roomServiceService, RoomCategoryService roomCategoryService) {
         BookingUtil.staticCategoryRoomPriceService = categoryRoomPriceService;
         BookingUtil.statichHotelBookingServiceService = hotelBookingServiceService;
         BookingUtil.staticRoomServiceService = roomServiceService;
+        BookingUtil.staticRoomCategoryService = roomCategoryService;
     }
 
     public static long calculateRoomNumber(RoomCategories roomCategories, List<BookingRoomDetails> bookingRoomDetails) {
@@ -58,5 +62,9 @@ public class BookingUtil {
 
     public static Map<Long, RoomService> getAllRoomServiceAsMap() {
         return staticRoomServiceService.getAllServices().stream().collect(Collectors.toMap(RoomService::getServiceId, Function.identity()));
+    }
+
+    public static Map<Long, RoomCategories> getAllRoomCategoryAsMap() {
+        return staticRoomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
     }
 }

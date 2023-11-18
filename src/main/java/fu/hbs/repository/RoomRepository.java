@@ -54,6 +54,19 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 
+    @Query(value = "SELECT r.*\n" +
+            "FROM room r\n" +
+            "LEFT JOIN room_categories rc ON r.room_category_id = rc.room_category_id\n" +
+            "WHERE  " +
+            "r.room_id NOT IN (\n" +
+            "SELECT brd.room_id\n" +
+            "FROM booking_room_details brd\n" +
+            "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
+            "WHERE ((hb.check_in BETWEEN ?1 AND ?2 )\n" +
+            "OR (hb.check_out BETWEEN ?1 AND ?2 ))" +
+            " AND hb.status_id = 1 );", nativeQuery = true)
+    List<Room> findAvailableRoomsByDate(LocalDate checkIn, LocalDate checkOut);
+
     List<Room> findAllByRoomCategoryId(Long roomCategoryId);
 
 }
