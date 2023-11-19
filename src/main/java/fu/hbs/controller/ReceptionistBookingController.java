@@ -2,7 +2,10 @@ package fu.hbs.controller;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +82,8 @@ public class ReceptionistBookingController {
         hotelBookingDTO.setEmail("john.doe@example.com");
         hotelBookingDTO.setAddress("123 Main Street");
         hotelBookingDTO.setPhone("123-456-7890");
-//        hotelBookingDTO.setCheckIn(Date.valueOf("2023-11-15"));
-//        hotelBookingDTO.setCheckOut(Date.valueOf("2023-11-20"));
+        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
+        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
         // Create sample data for CreateHotelBookingDetailDTO
         CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
         bookingDetailDTO1.setRoomCategoryId(1L);

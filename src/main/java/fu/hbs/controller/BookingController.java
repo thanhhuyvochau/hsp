@@ -24,6 +24,7 @@ import fu.hbs.service.dao.RoomService;
 import fu.hbs.service.impl.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -204,7 +205,7 @@ public class BookingController {
     }
 
     @PostMapping("/search-room")
-    public ResponseEntity<String> searchRoomForBooking(@RequestBody SearchingRoomDTO searchingRoomDTO) {
+    public ResponseEntity<String> searchRoomForBooking(@RequestBody @Valid SearchingRoomDTO searchingRoomDTO) {
         List<SearchingResultRoomDTO> searchingRoomForBooking = this.roomService.getSearchingRoomForBooking(searchingRoomDTO.getCategoryId(), searchingRoomDTO.getCheckIn(), searchingRoomDTO.getCheckOut());
         Gson gson = new Gson();
         String json = gson.toJson(searchingRoomForBooking);

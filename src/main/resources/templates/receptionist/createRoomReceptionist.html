@@ -678,7 +678,7 @@
                 row.append("<td>" + selectedRoom.price + "</td>");
                 // Append the row to the table body
                 tbody.append(row);
-                $("#bookedRoomNumber").text(selectRoomCount - 1);
+                $("#bookedRoomNumber").text(selectedRoom.length);
             })
         }
 
@@ -716,7 +716,7 @@
                         selectedRooms.push(room);
                         console.log(selectedRooms);
                         addBookingDetail();
-                        addBookingDetailID(room.roomCategoryId);
+                        addBookingDetailID();
                         // Add your logic here for button click
                     });
                 buttonColumn.append(addButton);
@@ -776,6 +776,7 @@
             row.parentNode.removeChild(row);
             selectedRooms = selectedRooms.filter(room => room.roomCategoryId !== categoryId);
             addBookingDetail();
+            addBookingDetailID();
             // You can optionally perform additional actions or re-render the page here
         }
 
