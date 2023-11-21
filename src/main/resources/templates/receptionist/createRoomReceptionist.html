@@ -142,7 +142,7 @@
                                 <div
                                         class=" navSearch row justify-content-center">
                                     <div class="col-lg-2">Ngày nhận phòng:
-                                        <input th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
+                                        <input  th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-2">Ngày trả phòng:
                                         <input th:field="*{checkOut}" id="checkOut" type="date" class="form-control">
@@ -329,8 +329,9 @@
                                             <div class="row mt-2">
                                                 <h6>Phương thức đặt:</h6>
                                                 <select th:field="*{paymentTypeId}" class="form-select">
-                                                    <option value="1" selected>Tại quầy lễ tân</option>
-                                                    <option value="2">Chuyển khoản</option>
+                                                    <option value="1" selected>Qua cổng thanh toán</option>
+                                                    <option value="2">Tiền mặt</option>
+                                                    <option value="3">Chuyển khoản</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -492,18 +493,18 @@
                                                     </div>
                                                     <div class="col text-end"><a id="taxPriceConfirm">0</a></div>
                                                 </div>
-                                                <!--                                                    <div class="row mt-2 me-1">-->
-                                                <!--                                                        <div class="col ms-4">-->
-                                                <!--                                                            <h6 class="fw-bold">Đặt cọc(50%):</h6>-->
-                                                <!--                                                        </div>-->
-                                                <!--                                                        <div class="col text-end"><a>1.635.000</a></div>-->
-                                                <!--                                                    </div>-->
-                                                <!--                                                    <div class="row mt-2 me-1">-->
-                                                <!--                                                        <div class="col ms-4">-->
-                                                <!--                                                            <h6 class="fw-bold">Thanh toán hết:</h6>-->
-                                                <!--                                                        </div>-->
-                                                <!--                                                        <div class="col text-end"><a>2.943.000</a></div>-->
-                                                <!--                                                    </div>-->
+                                                <div class="row mt-2 me-1">
+                                                    <div class="col ms-4">
+                                                        <h6 class="fw-bold">Đặt cọc(50%):</h6>
+                                                    </div>
+                                                    <div class="col text-end"><a id="depositPriceConfirm">0</a></div>
+                                                </div>
+<!--                                                                                                    <div class="row mt-2 me-1">-->
+<!--                                                                                                        <div class="col ms-4">-->
+<!--                                                                                                            <h6 class="fw-bold">Thanh toán hết:</h6>-->
+<!--                                                                                                        </div>-->
+<!--                                                                                                        <div class="col text-end"><a>2.943.000</a></div>-->
+<!--                                                                                                    </div>-->
                                                 <div class="row mt-2 me-1">
                                                     <div class="col ms-4">
                                                         <h6 class="fw-bold">Tổng:</h6>
@@ -651,7 +652,7 @@
                 tbody.append(row);
             })
 
-            calculateTotalPrice();
+            calculatePrices();
             selectRoomCount++;
             updateInformationOfBooking();
         }
@@ -728,7 +729,7 @@
             })
         }
 
-        function calculateTotalPrice() {
+        function calculatePrices() {
             // Select the tbody element within the table
             const tbody = $("#selectedRoomTable tbody");
             const roomPriceE = $("#roomPrice");
@@ -737,6 +738,7 @@
             const roomPriceConfirmE = $("#roomPriceConfirm");
             const taxPriceConfirmE = $("#taxPriceConfirm");
             const totalPriceConfirmE = $("#totalPriceConfirm");
+            const depositPriceConfirmE = $("#depositPriceConfirm");
 
             // Initialize the total price
             let roomPrice = 0;
@@ -755,6 +757,7 @@
 
             let taxPrice = roomPrice * 0.1;
             let totalPrice = taxPrice + roomPrice;
+            let depositPrice = totalPrice * 0.5;
 
             roomPriceE.text(formatNumberWithPeriods(roomPrice));
             taxPriceE.text(formatNumberWithPeriods(taxPrice));
@@ -762,6 +765,7 @@
             roomPriceConfirmE.text(formatNumberWithPeriods(roomPrice));
             taxPriceConfirmE.text(formatNumberWithPeriods(taxPrice));
             totalPriceConfirmE.text(formatNumberWithPeriods(totalPrice));
+            depositPriceConfirmE.text(formatNumberWithPeriods(depositPrice))
             // Log or use the total price as needed
             console.log("Total Price: " + totalPrice);
             // You can use the 'totalPrice' variable as needed in your application

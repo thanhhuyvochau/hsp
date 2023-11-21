@@ -1,6 +1,5 @@
 package fu.hbs.repository;
 
-import fu.hbs.entities.BankList;
 import fu.hbs.entities.HotelBookingService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,6 +10,6 @@ import java.util.List;
 public interface HotelBookingServiceRepository extends JpaRepository<HotelBookingService, Long> {
     List<HotelBookingService> getAllByHotelBookingId(Long id);
 
-    boolean deleteAllByHotelBookingId(Long hotelId);
+    void deleteAllByHotelBookingId(Long hotelId);
 
 }

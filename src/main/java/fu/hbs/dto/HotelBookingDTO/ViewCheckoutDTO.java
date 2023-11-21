@@ -75,7 +75,9 @@ public class ViewCheckoutDTO {
         Map<Long, RoomService> roomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
         for (HotelBookingService usedBookingService : usedBookingServices) {
             RoomService roomService = roomServiceAsMap.get(usedBookingService.getServiceId());
-            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, usedBookingService.getQuantity());
+//            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, usedBookingService.getQuantity());
+            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, 1);
+
             viewCheckoutDto.getRoomBookingServiceDTOS().add(roomBookingServiceDTO);
         }
         BigDecimal totalRoomPrice = viewCheckoutDto.getBookingDetails().stream()

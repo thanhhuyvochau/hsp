@@ -11,5 +11,6 @@ public class SaveCheckoutDTO {
     private Long hotelBookingId;
     private BigDecimal servicePrice = BigDecimal.ZERO;
     private BigDecimal surcharge = BigDecimal.ZERO;
+    private Long paymentTypeId = 2L;
     private List<SaveCheckoutHotelServiceDTO> hotelServices = new ArrayList<>();
 }

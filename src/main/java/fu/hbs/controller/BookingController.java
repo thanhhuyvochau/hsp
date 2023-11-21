@@ -114,11 +114,10 @@ public class BookingController {
 
     @GetMapping("/submitOrder")
     public String submitdOrder(HttpSession session, HttpServletRequest request) {
-
         BigDecimal orderTotal = (BigDecimal) session.getAttribute("orderTotal");
         String orderInfo = (String) session.getAttribute("orderInfo");
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl, "/vnpay-payment");
         return "redirect:" + vnpayUrl;
     }
 

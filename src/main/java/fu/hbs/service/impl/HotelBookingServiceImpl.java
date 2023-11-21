@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import fu.hbs.dto.HotelBookingDTO.BookingDetailsDTO;
 import fu.hbs.exceptionHandler.ResetExceptionHandler;
 import fu.hbs.service.dao.BookingRoomDetailsService;
+import fu.hbs.utils.EmailUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import fu.hbs.dto.CancellationFormDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateBookingDTO;
@@ -95,8 +96,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
     RoomStatusHistoryRepository roomStatusHistoryRepository;
     @Autowired
     TemplateEngine templateEngine;
-    @Autowired
-    JavaMailSender javaMailSender;
+
     StringDealer stringDealer;
 
     public HotelBookingServiceImpl() {
@@ -581,7 +581,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
             String emailContent = templateEngine.process("email/createBookingEmail", context);
 
             // Gửi email
-            sendBookingEmail(bookingDetailsDTO.getHotelBooking().getEmail(), "Thông tin đặt phòng", emailContent);
+            EmailUtil.sendBookingEmail(bookingDetailsDTO.getHotelBooking().getEmail(), "Thông tin đặt phòng", emailContent);
 
         } else {
             throw new MailExceptionHandler("Lỗi gửi mail");
@@ -711,22 +711,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
      * @param emailContent   the content of the email
      * @throws MailExceptionHandler if there is an issue with sending the email
      */
-    public void sendBookingEmail(String recipientEmail, String subject, String emailContent)
-            throws MailExceptionHandler {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        try {
-            helper.setFrom("3HKT@gmail.com");
-            helper.setTo(recipientEmail);
-            helper.setSubject(subject);
-            helper.setText(emailContent, true); // Sử dụng HTML
-
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new MailExceptionHandler("Lỗi gửi mail");
-        }
-    }
 
     @Override
     public HotelBooking findById(Long id) {

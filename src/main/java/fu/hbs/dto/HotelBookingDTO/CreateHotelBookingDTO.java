@@ -18,6 +18,7 @@ import lombok.*;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,8 @@ public class CreateHotelBookingDTO {
     private String email;
     private String address;
     private String phone;
-    private Instant checkIn;
-    private Instant checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
     private String notes;
     private Long paymentTypeId = 1L;
     private List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();

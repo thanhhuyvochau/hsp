@@ -16,6 +16,8 @@ package fu.hbs.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -31,6 +33,6 @@ public class HotelBookingService {
     private Long hotelBookingId;
     private Long roomId;
     private Long serviceId;
-    private int quantity;
+    private Instant createDate;
 
 }

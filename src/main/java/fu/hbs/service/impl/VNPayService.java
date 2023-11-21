@@ -25,7 +25,7 @@ import java.util.*;
 @Service
 public class VNPayService {
 
-    public String createOrder(BigDecimal total, String orderInfor, String urlReturn) {
+    public String createOrder(BigDecimal total, String orderInfor, String baseURL, String detailURL) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
@@ -48,8 +48,8 @@ public class VNPayService {
         String locate = "vn";
         vnp_Params.put("vnp_Locale", locate);
 
-        urlReturn += VNPayConfig.vnp_Returnurl;
-        vnp_Params.put("vnp_ReturnUrl", urlReturn);
+        baseURL += detailURL;
+        vnp_Params.put("vnp_ReturnUrl", baseURL);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));

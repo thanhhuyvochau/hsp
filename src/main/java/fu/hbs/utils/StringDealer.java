@@ -18,6 +18,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringDealer {
     public StringDealer() {
@@ -122,5 +124,14 @@ public class StringDealer {
         return instant.atZone(zoneId).toLocalDate();
     }
 
+    public static String extractNumberFromString(String original) {
+        Pattern pattern = Pattern.compile("\\\\d+");
+        Matcher matcher = pattern.matcher(original);
+        if (matcher.find()) {
+            String number = matcher.group();
+            return number;
+        }
+        return "";
+    }
 
 }

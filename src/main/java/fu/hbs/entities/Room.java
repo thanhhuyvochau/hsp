@@ -46,7 +46,6 @@ public class Room {
     private String description;
     private float discount;
     private String bedSize;
-    private BigDecimal price;
     private String viewCity;
     private boolean activity;
 

@@ -1,11 +1,10 @@
 package fu.hbs.controller;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,15 +13,21 @@ import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingDTO.*;
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
+import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
 import fu.hbs.entities.*;
 import fu.hbs.entities.RoomService;
+import fu.hbs.exceptionHandler.ResetExceptionHandler;
 import fu.hbs.service.dao.*;
 import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.service.impl.VNPayService;
+import fu.hbs.utils.EmailUtil;
+import fu.hbs.utils.StringDealer;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +66,8 @@ public class ReceptionistBookingController {
     private HotelBookingServiceService hotelBookingServiceService;
     @Autowired
     private CategoryRoomPriceService categoryRoomPriceService;
+    @Autowired
+    private TransactionsService transactionsService;
 
     @GetMapping("/create")
     public String createBooking(Model model) {
@@ -69,8 +76,19 @@ public class ReceptionistBookingController {
     }
 
     @PostMapping("/receptionist-save-booking")
-    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest) {
-        bookingService.createHotelBookingByReceptionist(bookingRequest);
+    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, HttpSession session) {
+        Long hotelBookingId = bookingService.createHotelBookingByReceptionist(bookingRequest);
+        if (bookingRequest.getPaymentTypeId() == 1L) {
+            HotelBooking hotelBooking = bookingService.findById(hotelBookingId);
+            if (hotelBooking == null) {
+                return "errorPage";
+            }
+            BigDecimal totalPriceOfHotelBooking = bookingService.getTotalPriceOfHotelBooking(hotelBookingId);
+            session.setAttribute("userEmail", hotelBooking.getEmail().trim());
+            session.setAttribute("orderTotal", totalPriceOfHotelBooking.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+            session.setAttribute("orderInfo", "Thanh toán tiền cọc phòng cho đơn đặt:" + hotelBooking.getHotelBookingId());
+            return "redirect:/payment";
+        }
         return "redirect:/listBookingReceptionist";
     }
 
@@ -82,8 +100,8 @@ public class ReceptionistBookingController {
         hotelBookingDTO.setEmail("john.doe@example.com");
         hotelBookingDTO.setAddress("123 Main Street");
         hotelBookingDTO.setPhone("123-456-7890");
-        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
-        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
+//        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
+//        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
         // Create sample data for CreateHotelBookingDetailDTO
         CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
         bookingDetailDTO1.setRoomCategoryId(1L);
@@ -237,6 +255,14 @@ public class ReceptionistBookingController {
             model.addAttribute("roomServices", roomServices);
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
             SaveCheckoutDTO checkoutModel = new SaveCheckoutDTO();
+            List<SaveCheckoutHotelServiceDTO> hotelServices = checkoutModel.getHotelServices();
+            for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckoutDTO.getRoomBookingServiceDTOS()) {
+                SaveCheckoutHotelServiceDTO saveCheckoutHotelServiceDTO = new SaveCheckoutHotelServiceDTO();
+                saveCheckoutHotelServiceDTO.setServiceId(roomBookingServiceDTO.getServiceId());
+                saveCheckoutHotelServiceDTO.setQuantity(1);
+                hotelServices.add(saveCheckoutHotelServiceDTO);
+
+            }
             checkoutModel.setHotelBookingId(hotelBookingId);
             checkoutModel.setServicePrice(viewCheckoutDTO.getTotalServicePrice());
             model.addAttribute("saveCheckoutDTO", checkoutModel);
@@ -248,9 +274,74 @@ public class ReceptionistBookingController {
 
 
     @PostMapping("receptionist/checkOutReceptionist")
-    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO) {
+    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO, HttpSession session) {
         bookingService.checkout(checkoutDTO);
+        if (checkoutDTO.getPaymentTypeId() == 1) {
+            HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
+            if (hotelBooking == null) {
+                return "errorPage";
+            }
+            BigDecimal totalPrice = hotelBooking.getTotalPrice();
+            session.setAttribute("userEmail", hotelBooking.getEmail().trim());
+            session.setAttribute("orderTotal", totalPrice);
+            session.setAttribute("orderInfo", "Thanh toán tiền phòng cho đơn đặt phòng:" + hotelBooking.getHotelBookingId());
+            return "redirect:/payment";
+        }
         return "redirect:/receptionist/checkOutReceptionist";
+    }
+
+    @GetMapping("/payment")
+    public String payment(HttpSession session, HttpServletRequest request) {
+        BigDecimal orderTotal = (BigDecimal) session.getAttribute("orderTotal");
+        String orderInfo = (String) session.getAttribute("orderInfo");
+        String userEmail = (String) session.getAttribute("userEmail");
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl, "/receptionist-payment");
+        EmailUtil.sendBookingEmail(userEmail, orderInfo, vnpayUrl);
+        return "redirect:/receptionist/checkOutReceptionist?hotelBookingId=10" + vnpayUrl;
+    }
+
+    @GetMapping("/receptionist-payment")
+    public String GetMapping(HttpServletRequest request, Model model) throws ResetExceptionHandler {
+        int paymentStatus = vnPayService.orderReturn(request);
+        Transactions vnpayTransactions = new Transactions();
+
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String paymentTime = request.getParameter("vnp_PayDate");
+        String transactionId = request.getParameter("vnp_TransactionNo");
+        String totalPrice = request.getParameter("vnp_Amount");
+        String hotelBookingIdAsString = StringDealer.extractNumberFromString(orderInfo);
+        Long hotelBookingId;
+        if (!hotelBookingIdAsString.isEmpty()) {
+            hotelBookingId = Long.valueOf(hotelBookingIdAsString);
+        } else {
+            return "errorPage";
+        }
+        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+
+        model.addAttribute("orderId", orderInfo);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("paymentTime", paymentTime);
+        model.addAttribute("transactionId", transactionId);
+
+        // Define the date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+
+        // Parse the string into a LocalDateTime object
+        LocalDateTime parsedDate = LocalDateTime.parse(paymentTime, formatter);
+        if (paymentStatus == 1) {
+            vnpayTransactions.setVnpayTransactionId(transactionId);
+            vnpayTransactions.setHotelBookingId(hotelBookingId);
+            vnpayTransactions.setAmount(bigDecimalValue);
+            vnpayTransactions.setCreatedDate(Instant.from(parsedDate));
+            vnpayTransactions.setStatus("Thành công");
+            vnpayTransactions.setPaymentId(1L);
+            transactionsService.save(vnpayTransactions);
+            return "customer/ordersuccess";
+        }
+        return "customer/orderfail";
     }
 
     @GetMapping("receptionist/createRoomReceptionist")

@@ -1,5 +1,6 @@
 package fu.hbs.service.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import fu.hbs.dto.HotelBookingDTO.SaveCheckoutDTO;
@@ -21,9 +22,10 @@ public interface ReceptionistBookingService {
 
     List<HotelBooking> findAllWithStatusOne();
 
-    public void createHotelBookingByReceptionist(CreateHotelBookingDTO bookingRequest);
+    Long createHotelBookingByReceptionist(CreateHotelBookingDTO bookingRequest);
 
     boolean checkout(SaveCheckoutDTO saveCheckoutDTO);
 
+    BigDecimal getTotalPriceOfHotelBooking(Long hotelBooking);
 
 }
