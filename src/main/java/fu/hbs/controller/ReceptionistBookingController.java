@@ -121,50 +121,6 @@ public class ReceptionistBookingController {
         return "redirect:/listBookingReceptionist";
     }
 
-//    @GetMapping("/checkout-receptionist")
-//    public String checkoutReceptionist(@RequestParam("bookingId") Long bookingId, Model model) {
-//        // Retrieve booking details based on the bookingId
-//        // Replace the following line with your actual logic to fetch booking details
-//        HotelBooking hotelBooking = bookingService.findById(bookingId);
-//        List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
-//        List<RoomService> roomServiceList = roomServiceService.getAllServices();
-//        List<PaymentType> paymentTypes = paymentTypeService.getAllPaymentType();
-////        List<RoomBookingServiceDTO> usageRoomServices = hotelBookingService.getAllUsedRoomServices(bookingId);
-//        ViewCheckoutDTO checkoutDTO = new ViewCheckoutDTO();
-//        // Add booking details to the model
-//        model.addAttribute("hotelBooking", hotelBooking);
-//        model.addAttribute("bookingDetailsList", bookingDetailsList);
-//        model.addAttribute("roomServiceList", roomServiceList);
-//        model.addAttribute("checkoutDTO", checkoutDTO);
-//        model.addAttribute("paymentTypes", paymentTypes)
-//        ;//        model.addAttribute("usageRoomServices", usageRoomServices);
-//        // Return the view name for checkout page
-//        return "receptionist/checkoutReceptionist";
-//    }
-
-//    @PostMapping("/checkout-payment")
-//    public String checkoutPaymentReceptionist(@ModelAttribute("checkoutDTO") ViewCheckoutDTO checkoutDTO, Model model, HttpServletRequest request) {
-//        // Retrieve booking details based on the bookingId
-//        // Replace the following line with your actual logic to fetch booking details
-//        HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
-//        List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
-//        // Sử lý thanh toán luôn
-//        if (checkoutDTO.getPaymentTypeId() == 1) {
-//
-//
-//        } else {
-//
-//        }
-//        // Add booking details to the model
-//        model.addAttribute("hotelBooking", hotelBooking);
-//        model.addAttribute("bookingDetailsList", bookingDetailsList);
-//
-////        BigDecimal totalPrice = checkoutDTO.getTotalPrice();
-//        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-////        String vnpayUrl = vnPayService.createOrder(totalPrice, hotelBooking.getHotelBookingId(), baseUrl);
-//        return "redirect:";
-//    }
-
     @PostMapping("/handle-payment")
     public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO") ViewCheckoutDTO checkoutDTO, Model model) {
         // Retrieve booking details based on the bookingId
@@ -212,17 +168,17 @@ public class ReceptionistBookingController {
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
-    @PostMapping("/checkIn")
-    public ResponseEntity<String> checkIn(@RequestParam("hotelBookingId") Long hotelBookingId) {
-        // Thay đổi trạng thái đặt phòng thành "Đã Check In"
-        // ...
-        //long newStatusId = 2L; // Đã Check In
-        // Cập nhật trạng thái đặt phòng trong dữ liệu
-        // Ví dụ: Sử dụng một service để cập nhật trạng thái đặt phòng
-        hotelBookingRepository.updateStatus(2L, hotelBookingId);
-
-        return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
-    }
+//    @PostMapping("/checkIn")
+//    public ResponseEntity<String> checkIn(@RequestParam("hotelBookingId") Long hotelBookingId) {
+//        // Thay đổi trạng thái đặt phòng thành "Đã Check In"
+//        // ...
+//        //long newStatusId = 2L; // Đã Check In
+//        // Cập nhật trạng thái đặt phòng trong dữ liệu
+//        // Ví dụ: Sử dụng một service để cập nhật trạng thái đặt phòng
+//        hotelBookingRepository.updateStatus(2L, hotelBookingId);
+//
+//        return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
+//    }
 
     @GetMapping("/receptionist/listRoomInUse")
     public String listRoomInUse(Model model) {
@@ -298,7 +254,7 @@ public class ReceptionistBookingController {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl, "/receptionist-payment");
         EmailUtil.sendBookingEmail(userEmail, orderInfo, vnpayUrl);
-        return "redirect:/receptionist/checkOutReceptionist?hotelBookingId=10" + vnpayUrl;
+        return "redirect:/receptionist/checkOutReceptionist?hotelBookingId=10";
     }
 
     @GetMapping("/receptionist-payment")
@@ -353,5 +309,16 @@ public class ReceptionistBookingController {
         model.addAttribute("categories", categories);
         model.addAttribute("searchingModel", new SearchingRoomDTO());
         return "receptionist/createRoomReceptionist";
+    }
+
+    @PostMapping("/checkIn")
+    public ResponseEntity<String> saveCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId) {
+        Boolean result = this.bookingService.checkIn(hotelBookingId);
+        // Return to Page you want
+        if (result) {
+            return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
+        }
     }
 }

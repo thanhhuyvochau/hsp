@@ -12,6 +12,7 @@ import fu.hbs.exceptionHandler.NotEnoughRoomAvalaibleException;
 import fu.hbs.repository.*;
 import fu.hbs.utils.BookingUtil;
 import fu.hbs.utils.RandomKey;
+import fu.hbs.validator.BookingValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fu.hbs.service.dao.ReceptionistBookingService;
@@ -191,6 +192,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
                 Transactions transactions = makeTransaction(servicePrice, roomPrice, hotelBooking, hotelBooking.getDepositPrice());
                 transactionsRepository.save(transactions);
+            } else {
+                BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking.getDepositPrice());
+                hotelBooking.setTotalPrice(totalPrice);
             }
             hotelBookingServiceRepository.saveAll(hotelBookingServiceList);
             bookingRepository.save(hotelBooking);
@@ -200,8 +204,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     private static Transactions makeTransaction(BigDecimal servicePrice, BigDecimal roomPrice, HotelBooking hotelBooking, BigDecimal prePay) {
-        BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
-        BigDecimal totalPrice = servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
+        BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, prePay);
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
@@ -251,5 +254,30 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             return hotelBooking.getTotalPrice();
         }
         return null;
+    }
+
+    @Override
+    public Boolean checkIn(Long hotelBookingId) {
+        HotelBooking hotelBooking = bookingRepository.findByHotelBookingId(hotelBookingId);
+        if (!BookingValidator.isValidDateToCheckIn(hotelBooking.getCheckIn())) {
+            return false;
+        }
+        List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        List<Long> allBookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).toList();
+        List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
+        boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
+        if (isExistNotReadyRoom) {
+            return false;
+        }
+        // Change status room / booking
+        hotelBooking.setStatusId(2L);
+        hotelBooking.setCheckIn(Instant.now());
+
+        for (Room room : allBookedRooms) {
+            room.setRoomStatusId(1L);
+        }
+        bookingRepository.save(hotelBooking);
+        roomRepository.saveAll(allBookedRooms);
+        return true;
     }
 }

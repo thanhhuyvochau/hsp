@@ -238,7 +238,7 @@
 				// Xử lý khi người dùng xác nhận "Check In"
 				$('#confirmCheckInButton').on('click', function () {
 					// Thực hiện yêu cầu POST để thay đổi trạng thái đặt phòng
-					$.post("/checkIn", {hotelBookingId: hotelBookingId}, function (data) {
+					$.post("/checkIn?hotelBookingId="+hotelBookingId, {hotelBookingId: hotelBookingId}, function (data) {
 						// Xử lý phản hồi từ máy chủ (nếu cần)
 						console.log(data);
 						// In ra thông báo "Checkin thành công"

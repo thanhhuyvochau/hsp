@@ -28,4 +28,6 @@ public interface ReceptionistBookingService {
 
     BigDecimal getTotalPriceOfHotelBooking(Long hotelBooking);
 
+    Boolean checkIn(Long hotelBookingId);
+
 }

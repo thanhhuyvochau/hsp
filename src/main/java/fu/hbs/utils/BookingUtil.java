@@ -67,4 +67,11 @@ public class BookingUtil {
     public static Map<Long, RoomCategories> getAllRoomCategoryAsMap() {
         return staticRoomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
     }
+
+    public static BigDecimal calculateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, BigDecimal prePay) {
+        BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
+        return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
+    }
+
+
 }
