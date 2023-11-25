@@ -69,12 +69,6 @@ public class ReceptionistBookingController {
     @Autowired
     private TransactionsService transactionsService;
 
-    @GetMapping("/create")
-    public String createBooking(Model model) {
-        model.addAttribute("booking", new CreateHotelBookingDTO());
-        return "booking/create";
-    }
-
     @PostMapping("/receptionist-save-booking")
     public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, HttpSession session) {
         Long hotelBookingId = bookingService.createHotelBookingByReceptionist(bookingRequest);
@@ -88,7 +82,7 @@ public class ReceptionistBookingController {
             session.setAttribute("orderInfo", "Thanh toán tiền cọc phòng cho đơn đặt:" + hotelBooking.getHotelBookingId());
             return "redirect:/payment";
         }
-        return "redirect:/receptionist/listBookingReceptionist";
+        return "redirect:/receptionist/createRoomReceptionist";
     }
 
 //    @GetMapping("/test-save")
