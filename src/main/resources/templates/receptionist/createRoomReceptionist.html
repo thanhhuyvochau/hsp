@@ -575,7 +575,7 @@
 
 
         $("#search-btn").on("click", function () {
-            if(validateDates()){
+            if (validateDates()) {
                 var checkIn = $("#checkIn").val();
                 var checkOut = $("#checkOut").val();
                 var roomType = $("#roomType").val();
@@ -655,6 +655,7 @@
             calculatePrices();
             updateInformationOfBooking();
         }
+
         function clearBookingDetails() {
             // Select the table body
             selectedRooms = [];
@@ -663,6 +664,7 @@
             calculatePrices(); // Recalculate prices after clearing the content
             updateInformationOfBooking(); // Update additional booking information
         }
+
         function updateInformationOfBooking() {
             const tbody = $("#bookingInformationRooms > tbody");
             tbody.empty();
@@ -720,10 +722,17 @@
                     .text("Thêm")
                     .on("click", function () {
                         console.log("CLICK");
-                        selectedRooms.push(room);
-                        console.log(selectedRooms);
-                        addBookingDetail();
-                        addBookingDetailID();
+                        let numberAvailable = room.numberAvailable;
+                        let numberInList = selectedRooms.filter(r => r.roomCategoryId === room.roomCategoryId).length;
+                        if (numberInList < numberAvailable) {
+                            selectedRooms.push(room);
+                            console.log(selectedRooms);
+                            addBookingDetail();
+                            addBookingDetailID();
+                        } else {
+                            alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                        }
+
                         // Add your logic here for button click
                     });
                 buttonColumn.append(addButton);
