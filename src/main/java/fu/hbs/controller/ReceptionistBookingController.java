@@ -81,45 +81,44 @@ public class ReceptionistBookingController {
         if (bookingRequest.getPaymentTypeId() == 1L) {
             HotelBooking hotelBooking = bookingService.findById(hotelBookingId);
             if (hotelBooking == null) {
-                return "errorPage";
+                return "error";
             }
-            BigDecimal totalPriceOfHotelBooking = bookingService.getTotalPriceOfHotelBooking(hotelBookingId);
             session.setAttribute("userEmail", hotelBooking.getEmail().trim());
-            session.setAttribute("orderTotal", totalPriceOfHotelBooking.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+            session.setAttribute("orderTotal", hotelBooking.getDepositPrice());
             session.setAttribute("orderInfo", "Thanh toán tiền cọc phòng cho đơn đặt:" + hotelBooking.getHotelBookingId());
             return "redirect:/payment";
         }
-        return "redirect:/listBookingReceptionist";
+        return "redirect:/receptionist/listBookingReceptionist";
     }
 
-    @GetMapping("/test-save")
-    public String testSaveBooking() {
-        CreateHotelBookingDTO hotelBookingDTO = new CreateHotelBookingDTO();
-        hotelBookingDTO.setStatusId(1L);
-        hotelBookingDTO.setName("John Doe");
-        hotelBookingDTO.setEmail("john.doe@example.com");
-        hotelBookingDTO.setAddress("123 Main Street");
-        hotelBookingDTO.setPhone("123-456-7890");
-//        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
-//        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
-        // Create sample data for CreateHotelBookingDetailDTO
-        CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
-        bookingDetailDTO1.setRoomCategoryId(1L);
-        bookingDetailDTO1.setRoomNumber(1);
-
-        CreateHotelBookingDetailDTO bookingDetailDTO2 = new CreateHotelBookingDetailDTO();
-        bookingDetailDTO2.setRoomCategoryId(1L);
-        bookingDetailDTO2.setRoomNumber(2);
-
-        // Add booking details to the list in CreateHotelBookingDTO
-        List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
-        bookingDetails.add(bookingDetailDTO1);
-        bookingDetails.add(bookingDetailDTO2);
-
-//        hotelBookingDTO.setBookingDetails(bookingDetails);
-        bookingService.createHotelBookingByReceptionist(hotelBookingDTO);
-        return "redirect:/listBookingReceptionist";
-    }
+//    @GetMapping("/test-save")
+//    public String testSaveBooking() {
+//        CreateHotelBookingDTO hotelBookingDTO = new CreateHotelBookingDTO();
+//        hotelBookingDTO.setStatusId(1L);
+//        hotelBookingDTO.setName("John Doe");
+//        hotelBookingDTO.setEmail("john.doe@example.com");
+//        hotelBookingDTO.setAddress("123 Main Street");
+//        hotelBookingDTO.setPhone("123-456-7890");
+////        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
+////        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
+//        // Create sample data for CreateHotelBookingDetailDTO
+//        CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
+//        bookingDetailDTO1.setRoomCategoryId(1L);
+//        bookingDetailDTO1.setRoomNumber(1);
+//
+//        CreateHotelBookingDetailDTO bookingDetailDTO2 = new CreateHotelBookingDetailDTO();
+//        bookingDetailDTO2.setRoomCategoryId(1L);
+//        bookingDetailDTO2.setRoomNumber(2);
+//
+//        // Add booking details to the list in CreateHotelBookingDTO
+//        List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
+//        bookingDetails.add(bookingDetailDTO1);
+//        bookingDetails.add(bookingDetailDTO2);
+//
+////        hotelBookingDTO.setBookingDetails(bookingDetails);
+//        bookingService.createHotelBookingByReceptionist(hotelBookingDTO);
+//        return "redirect:/listBookingReceptionist";
+//    }
 
     @PostMapping("/handle-payment")
     public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO") ViewCheckoutDTO checkoutDTO, Model model) {
@@ -153,7 +152,7 @@ public class ReceptionistBookingController {
     @PostMapping("/update")
     public String updateBooking(@ModelAttribute("booking") HotelBooking booking) {
         bookingService.save(booking);
-        return "redirect:/listBookingReceptionist";
+        return "redirect:/receptionist/listBookingReceptionist";
     }
 
     @GetMapping("/delete/{id}")
@@ -167,18 +166,6 @@ public class ReceptionistBookingController {
         HotelBooking booking = bookingService.findById(bookingId);
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
-
-//    @PostMapping("/checkIn")
-//    public ResponseEntity<String> checkIn(@RequestParam("hotelBookingId") Long hotelBookingId) {
-//        // Thay đổi trạng thái đặt phòng thành "Đã Check In"
-//        // ...
-//        //long newStatusId = 2L; // Đã Check In
-//        // Cập nhật trạng thái đặt phòng trong dữ liệu
-//        // Ví dụ: Sử dụng một service để cập nhật trạng thái đặt phòng
-//        hotelBookingRepository.updateStatus(2L, hotelBookingId);
-//
-//        return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
-//    }
 
     @GetMapping("/receptionist/listRoomInUse")
     public String listRoomInUse(Model model) {
@@ -223,7 +210,7 @@ public class ReceptionistBookingController {
             checkoutModel.setServicePrice(viewCheckoutDTO.getTotalServicePrice());
             model.addAttribute("saveCheckoutDTO", checkoutModel);
         } else {
-            return "errorPage";
+            return "error";
         }
         return "receptionist/checkOutReceptionist";
     }
@@ -231,19 +218,23 @@ public class ReceptionistBookingController {
 
     @PostMapping("receptionist/checkOutReceptionist")
     public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO, HttpSession session) {
-        bookingService.checkout(checkoutDTO);
-        if (checkoutDTO.getPaymentTypeId() == 1) {
-            HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
-            if (hotelBooking == null) {
-                return "errorPage";
+        try {
+            bookingService.checkout(checkoutDTO);
+            if (checkoutDTO.getPaymentTypeId() == 1) {
+                HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
+                if (hotelBooking == null) {
+                    return "error";
+                }
+                BigDecimal totalPrice = hotelBooking.getTotalPrice().setScale(0, RoundingMode.UP);
+                session.setAttribute("userEmail", hotelBooking.getEmail().trim());
+                session.setAttribute("orderTotal", totalPrice);
+                session.setAttribute("orderInfo", "Thanh toán tiền phòng cho đơn đặt phòng:" + hotelBooking.getHotelBookingId());
+                return "redirect:/payment";
             }
-            BigDecimal totalPrice = hotelBooking.getTotalPrice();
-            session.setAttribute("userEmail", hotelBooking.getEmail().trim());
-            session.setAttribute("orderTotal", totalPrice);
-            session.setAttribute("orderInfo", "Thanh toán tiền phòng cho đơn đặt phòng:" + hotelBooking.getHotelBookingId());
-            return "redirect:/payment";
+        } catch (Exception e) {
+            return "error";
         }
-        return "redirect:/receptionist/checkOutReceptionist";
+        return "redirect:/receptionist/listRoomInUse";
     }
 
     @GetMapping("/payment")
@@ -254,7 +245,7 @@ public class ReceptionistBookingController {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl, "/receptionist-payment");
         EmailUtil.sendBookingEmail(userEmail, orderInfo, vnpayUrl);
-        return "redirect:/receptionist/checkOutReceptionist?hotelBookingId=10";
+        return "redirect:/receptionist/listBookingReceptionist";
     }
 
     @GetMapping("/receptionist-payment")
@@ -272,9 +263,9 @@ public class ReceptionistBookingController {
         if (!hotelBookingIdAsString.isEmpty()) {
             hotelBookingId = Long.valueOf(hotelBookingIdAsString);
         } else {
-            return "errorPage";
+            return "error";
         }
-        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN);
 
         model.addAttribute("orderId", orderInfo);
         model.addAttribute("totalPrice", totalPrice);

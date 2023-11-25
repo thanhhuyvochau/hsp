@@ -125,7 +125,7 @@ public class StringDealer {
     }
 
     public static String extractNumberFromString(String original) {
-        Pattern pattern = Pattern.compile("\\\\d+");
+        Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(original);
         if (matcher.find()) {
             String number = matcher.group();

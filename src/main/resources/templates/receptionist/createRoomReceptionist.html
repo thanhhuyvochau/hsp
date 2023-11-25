@@ -142,7 +142,7 @@
                                 <div
                                         class=" navSearch row justify-content-center">
                                     <div class="col-lg-2">Ngày nhận phòng:
-                                        <input  th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
+                                        <input th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-2">Ngày trả phòng:
                                         <input th:field="*{checkOut}" id="checkOut" type="date" class="form-control">
@@ -499,12 +499,12 @@
                                                     </div>
                                                     <div class="col text-end"><a id="depositPriceConfirm">0</a></div>
                                                 </div>
-<!--                                                                                                    <div class="row mt-2 me-1">-->
-<!--                                                                                                        <div class="col ms-4">-->
-<!--                                                                                                            <h6 class="fw-bold">Thanh toán hết:</h6>-->
-<!--                                                                                                        </div>-->
-<!--                                                                                                        <div class="col text-end"><a>2.943.000</a></div>-->
-<!--                                                                                                    </div>-->
+                                                <!--                                                                                                    <div class="row mt-2 me-1">-->
+                                                <!--                                                                                                        <div class="col ms-4">-->
+                                                <!--                                                                                                            <h6 class="fw-bold">Thanh toán hết:</h6>-->
+                                                <!--                                                                                                        </div>-->
+                                                <!--                                                                                                        <div class="col text-end"><a>2.943.000</a></div>-->
+                                                <!--                                                                                                    </div>-->
                                                 <div class="row mt-2 me-1">
                                                     <div class="col ms-4">
                                                         <h6 class="fw-bold">Tổng:</h6>
@@ -548,7 +548,6 @@
 
 <script th:inline="javascript">
     let rooms = null;
-    let selectRoomCount = 1;
     let selectedRooms = [];
 
     function updateText(inputId, textId) {
@@ -576,37 +575,38 @@
 
 
         $("#search-btn").on("click", function () {
-            // Get values from input fields
-            var checkIn = $("#checkIn").val();
-            var checkOut = $("#checkOut").val();
-            var roomType = $("#roomType").val();
-            var roomNumber = $("#roomNumber").val();
+            if(validateDates()){
+                var checkIn = $("#checkIn").val();
+                var checkOut = $("#checkOut").val();
+                var roomType = $("#roomType").val();
+                var roomNumber = $("#roomNumber").val();
+                console.log(roomType);
+                // Create the data object
+                var searchData = {
+                    checkIn: checkIn,
+                    checkOut: checkOut,
+                    categoryId: roomType,
+                    roomNumber: roomNumber,
+                };
 
-            console.log(roomType);
-            // Create the data object
-            var searchData = {
-                checkIn: checkIn,
-                checkOut: checkOut,
-                categoryId: roomType,
-                roomNumber: roomNumber,
-            };
-
-            // Make an AJAX request to the backend
-            $.ajax({
-                type: "POST",
-                url: "/search-room",  // Replace with the actual backend endpoint
-                contentType: "application/json",  // Set content type to JSON
-                data: JSON.stringify(searchData),  // Convert the object to JSON string
-                success: function (response) {
-                    // Handle the success response from the server
-                    updateTableView(response);
-                    // You can update your UI or perform additional actions here
-                },
-                error: function (error) {
-                    console.error("Error during AJAX request:", error);
-                    // Handle errors if needed
-                }
-            });
+                // Make an AJAX request to the backend
+                $.ajax({
+                    type: "POST",
+                    url: "/search-room",  // Replace with the actual backend endpoint
+                    contentType: "application/json",  // Set content type to JSON
+                    data: JSON.stringify(searchData),  // Convert the object to JSON string
+                    success: function (response) {
+                        // Handle the success response from the server
+                        updateTableView(response);
+                        clearBookingDetails();
+                        // You can update your UI or perform additional actions here
+                    },
+                    error: function (error) {
+                        console.error("Error during AJAX request:", error);
+                        // Handle errors if needed
+                    }
+                });
+            }
         });
 
 
@@ -653,10 +653,16 @@
             })
 
             calculatePrices();
-            selectRoomCount++;
             updateInformationOfBooking();
         }
-
+        function clearBookingDetails() {
+            // Select the table body
+            selectedRooms = [];
+            const tbody = $("#selectedRoomTable > tbody");
+            tbody.empty(); // Clear the table body to remove all rows
+            calculatePrices(); // Recalculate prices after clearing the content
+            updateInformationOfBooking(); // Update additional booking information
+        }
         function updateInformationOfBooking() {
             const tbody = $("#bookingInformationRooms > tbody");
             tbody.empty();
@@ -784,6 +790,34 @@
             // You can optionally perform additional actions or re-render the page here
         }
 
+        function validateDates() {
+            var checkinDate = new Date(document.getElementById('checkIn').value);
+            var checkoutDate = new Date(document.getElementById('checkOut').value);
+
+            // Get the current date
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+
+            // Set check-in and check-out dates to the same day with no time
+            checkinDate.setHours(0, 0, 0, 0);
+            checkoutDate.setHours(0, 0, 0, 0);
+
+            // Check if check-in date is valid
+            console.log("Checkin:" + checkinDate);
+            console.log("Current:" + currentDate);
+
+            if (checkinDate < currentDate) {
+                alert('Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.');
+                return false;
+            }
+
+            // Check if check-out date is valid
+            if (checkoutDate <= checkinDate) {
+                alert('Ngày trả phòng phải ít nhất là một ngày sau ngày nhận phòng.');
+                return false;
+            }
+            return true;
+        }
 
     });
 

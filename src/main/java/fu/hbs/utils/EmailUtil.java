@@ -6,10 +6,16 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EmailUtil {
 
-    private static final JavaMailSender staticJavaMailSender = new JavaMailSenderImpl();
+    private static JavaMailSender staticJavaMailSender;
+
+    EmailUtil(JavaMailSender javaMailSender) {
+        staticJavaMailSender = javaMailSender;
+    }
 
     public static void sendBookingEmail(String recipientEmail, String subject, String emailContent)
             throws MailExceptionHandler {

@@ -307,7 +307,9 @@
                                 <td th:text="${bookDetail.getQuantity()}"></td>
                                 <td th:text="${bookDetail.getPricePer()}"></td>
                                 <td th:text="${bookDetail.getTotalPrice()}"></td>
-                                <td><i class="bi bi-trash"></i></td>
+                                <td>
+                                    <button class="btn button btn-dark"><i class="bi bi-trash"></i></button>
+                                </td>
                             </tr>
 
                             </tbody>
@@ -340,7 +342,7 @@
                                 <div class="col ms-4">
                                     <h6 class="fw-bold mt-2">Phụ phí(nếu có):</h6>
                                 </div>
-                                <div class="d-flex justify-content-end w-25 mt-1"><input pattern="[1-9]\d*|0\.\d+"
+                                <div class="d-flex justify-content-end w-25 mt-1"><input pattern="^\d+(\.\d{1,2})?$"
                                                                                          type="text"
                                                                                          id="surcharge-price"
                                                                                          th:field="*{surcharge}"
@@ -419,7 +421,8 @@
                             <td th:id="${'service-price-'+iStat.index}" th:text="${service.getServicePrice()}"></td>
                             <td>
                                 <label>
-                                    <input th:id="${'service-quantity-'+iStat.index}" id="quantity" type="number">
+                                    <input min="0" value="0" th:id="${'service-quantity-'+iStat.index}" id="quantity"
+                                           type="number">
                                 </label>
                             </td>
                             <td id="">
@@ -437,7 +440,7 @@
                         </tbody>
                     </table>
                     <div class="button-container">
-                        <button id="confirm-overlay-btn">Đóng</button>
+                        <button type="button" id="confirm-overlay-btn">Đóng</button>
                     </div>
                 </div>
             </div>
@@ -447,8 +450,10 @@
     <div id="service-used-container">
         <div th:each="useService, iterStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
             <h1 th:text="${iterStat.index}"></h1>
-            <input th:value="${useService.getServiceId()}" type="hidden" th:field="*{hotelServices[__${iterStat.index}__].serviceId}">
-            <input th:value="${useService.getQuantity()}" type="hidden" th:field="*{hotelServices[__${iterStat.index}__].quantity}">
+            <input th:value="${useService.getServiceId()}" type="hidden"
+                   th:field="*{hotelServices[__${iterStat.index}__].serviceId}">
+            <input th:value="${useService.getQuantity()}" type="hidden"
+                   th:field="*{hotelServices[__${iterStat.index}__].quantity}">
         </div>
     </div>
 </form>
@@ -460,7 +465,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
 <script th:inline="javascript">
-    let selectRoomCount = 1;
     /*<![CDATA[*/
     let services = [[${roomServices}]];
     let addedServices = [[${viewCheckoutDTO.getRoomBookingServiceDTOS()}]];
@@ -469,38 +473,42 @@
 
 
     function addHotelService(rowID) {
-        let addedService = services[rowID];
-        addedServices.push(addedService)
-        console.log("added Service:" + addedService);
-        console.log("Add Service:" + addedServices);
-        let $serviceID = $('#service-id-' + rowID);
         let $quantity = $('#service-quantity-' + rowID);
-        let name = $('#service-name-' + rowID).text();
-        let price = $('#service-price-' + rowID).text();
-        let serviceId = $serviceID.val();
         let quantity = $quantity.val();
-        let container = document.getElementById('service-used-container');
-        let index = container.children.length; // Get the current index
-        let detailDiv = document.createElement('div');
-        detailDiv.id = `service-${index}`;
-        detailDiv.innerHTML = `
+        if (quantity > 0) {
+            let addedService = services[rowID];
+            addedServices.findIndex(service => service.id)
+            addedServices.push(addedService)
+            let $serviceID = $('#service-id-' + rowID);
+
+            let name = $('#service-name-' + rowID).text();
+            let price = $('#service-price-' + rowID).text();
+            let serviceId = $serviceID.val();
+
+            let container = document.getElementById('service-used-container');
+            let index = container.children.length; // Get the current index
+            let detailDiv = document.createElement('div');
+            detailDiv.id = `service-${index}`;            detailDiv.innerHTML = `
             <input value="${serviceId}" type="hidden"
                    name="hotelServices[${index}].serviceId">
             <input value="${quantity}" type="hidden"
                    name="hotelServices[${index}].quantity">
         `;
-        container.appendChild(detailDiv);
-        updateUseServiceView(index, serviceId, name, quantity, price);
+            container.appendChild(detailDiv);
+            updateUseServiceView(index, serviceId, name, quantity, price);
+        } else {
+            alert("Không thể thêm dịch vụ nếu số lượng bằng không");
+        }
     }
 
     function updateUseServiceView(rowId, serviceId, serviceName, quantity, pricePer) {
         // Select the table body
         const tbody = $("#use-service-table > tbody");
-        var index = selectRoomCount - 1;
+        var index = tbody.toArray().length;
         // Update the table with new data
         var row = $("<tr></tr>");
         row.id = 'input-service-id-' + serviceId;
-        row.append("<th scope='row'>" + selectRoomCount + "</th>");
+        row.append("<th scope='row'>" + Number(index + 1) + "</th>");
         row.append("<td>" + serviceName + "</td>");
         // Add other columns based on room properties
 
@@ -522,7 +530,6 @@
         row.append(buttonColumn);
         // Append the row to the table body
         tbody.append(row);
-        selectRoomCount++;
         calculatePrices();
     }
 
@@ -592,7 +599,6 @@
     function deleteRow(button, rowIndex) {
         let row = button.parentNode.parentNode;
         row.parentNode.removeChild(row);
-        selectRoomCount--;
         deleteServiceInput(rowIndex);
     }
 
@@ -614,7 +620,7 @@
             var value = parseFloat(cell.textContent || cell.innerText);
             total += isNaN(value) ? 0 : value;
         }
-        console.log("TOTAL SERVICE:"+total);
+        console.log("TOTAL SERVICE:" + total);
         return total;
     }
 

@@ -50,8 +50,8 @@ public class HotelBooking {
     private String email;
     private String address;
     private String phone;
-    private BigDecimal totalPrice;
-    private BigDecimal depositPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+    private BigDecimal depositPrice = BigDecimal.ZERO;
     private Instant checkIn;
     private Instant checkOut;
 }

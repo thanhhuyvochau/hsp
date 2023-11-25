@@ -1,6 +1,7 @@
 package fu.hbs.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.*;
 import java.util.*;
 import java.util.function.Function;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import fu.hbs.dto.HotelBookingDTO.*;
 import fu.hbs.entities.*;
+import fu.hbs.exceptionHandler.CheckoutException;
 import fu.hbs.exceptionHandler.NotEnoughRoomAvalaibleException;
 import fu.hbs.repository.*;
 import fu.hbs.utils.BookingUtil;
@@ -99,7 +101,10 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
         hotelBooking.setCheckIn(checkIn);
         hotelBooking.setCheckOut(checkOut);
-
+        boolean validTimeForBooking = BookingValidator.isValidTimeForBooking(checkIn, checkOut);
+        if (!validTimeForBooking) {
+            throw new RuntimeException("Thời gian đặt phòng không hợp lệ!");
+        }
         // Calculate total room number
         Optional<Integer> totalRoomNumberOp = bookingRequest.getBookingDetails().stream().map(CreateHotelBookingDetailDTO::getRoomNumber).reduce(Integer::sum);
         totalRoomNumberOp.ifPresent(hotelBooking::setTotalRoom);
@@ -111,6 +116,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         List<BookingRoomDetails> bookingDetails = createBookingDetails(bookingRequest, checkIn, checkOut, hotelBooking);
         bookingRoomDetailsRepository.saveAll(bookingDetails);
         BigDecimal totalPrice = this.calculateTotalPrice(bookingDetails);
+        hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+
         hotelBooking.setTotalPrice(totalPrice);
         return hotelBooking.getHotelBookingId();
     }
@@ -171,6 +178,11 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (hotelBookingOptional.isPresent()) {
             // Update hotel booking status
             HotelBooking hotelBooking = hotelBookingOptional.get();
+
+            if (!BookingValidator.isValidToCheckOut(hotelBooking)) {
+                throw new CheckoutException("Trạng thái của đặt phòng chưa sẵn sàng cho checkout!");
+            }
+
             hotelBooking.setStatusId(3L);
             hotelBooking.setCheckOut(Instant.now());
 
@@ -189,12 +201,11 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             BigDecimal roomPrice = BigDecimal.ZERO;
             roomPrice = calculateRoomPrice(hotelBooking, hotelBookingDetails, roomPrice);
 
+            updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
+
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
-                Transactions transactions = makeTransaction(servicePrice, roomPrice, hotelBooking, hotelBooking.getDepositPrice());
+                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice());
                 transactionsRepository.save(transactions);
-            } else {
-                BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking.getDepositPrice());
-                hotelBooking.setTotalPrice(totalPrice);
             }
             hotelBookingServiceRepository.saveAll(hotelBookingServiceList);
             bookingRepository.save(hotelBooking);
@@ -203,12 +214,16 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return false;
     }
 
-    private static Transactions makeTransaction(BigDecimal servicePrice, BigDecimal roomPrice, HotelBooking hotelBooking, BigDecimal prePay) {
-        BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, prePay);
+    private static void updateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, HotelBooking hotelBooking) {
+        BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking.getDepositPrice());
+        hotelBooking.setTotalPrice(totalPrice);
+    }
+
+    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay) {
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
-        transactions.setAmount(totalPrice);
+        transactions.setAmount(totalPrice.subtract(prePay));
         transactions.setCreatedDate(Instant.now());
         transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
         return transactions;
@@ -259,7 +274,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     @Override
     public Boolean checkIn(Long hotelBookingId) {
         HotelBooking hotelBooking = bookingRepository.findByHotelBookingId(hotelBookingId);
-        if (!BookingValidator.isValidDateToCheckIn(hotelBooking.getCheckIn())) {
+        if (!BookingValidator.isValidToCheckIn(hotelBooking.getCheckIn())) {
             return false;
         }
         List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);

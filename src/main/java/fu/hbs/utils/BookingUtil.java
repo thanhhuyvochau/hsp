@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -41,9 +42,21 @@ public class BookingUtil {
     }
 
     public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId) {
-        long diffInDays = checkIn.until(checkout, ChronoUnit.DAYS);
+//        long diffInDays = checkIn.until(checkout, ChronoUnit.HOURS);
+        Duration durationOfStay = Duration.between(checkIn, checkout);
+        Duration durationOfCheckoutSooner = Duration.between(Instant.now(), checkout);
+
         BigDecimal pricePer = getPriceOfRoom(categoryId);
-        return pricePer.multiply(BigDecimal.valueOf(diffInDays));
+        // If the user checked out earlier than 24 hours, deduct 1 day's price as a refund
+        long durationOfStayDays = durationOfStay.toDays();
+        long soonerDays = durationOfCheckoutSooner.toDays();
+        BigDecimal totalPrice = pricePer.multiply(BigDecimal.valueOf(durationOfStayDays));
+        if (soonerDays > 1) {
+            BigDecimal refund = pricePer.multiply(BigDecimal.valueOf(soonerDays));
+            return totalPrice.subtract(refund);
+        }
+        return totalPrice;
+
     }
 
     public static BigDecimal getPriceOfRoom(Long categoryId) {
