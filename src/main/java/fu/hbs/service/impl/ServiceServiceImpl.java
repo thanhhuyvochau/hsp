@@ -71,5 +71,7 @@ public class ServiceServiceImpl implements ServiceService {
     public List<RoomService> getAllServices() {
         return serviceRepository.findAll();
     }
-
+	public List<RoomService> getAllServicesByStatus(Boolean status) {
+		return serviceRepository.findAllByStatusIs(status);
+	}
 }

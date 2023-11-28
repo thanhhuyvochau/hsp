@@ -43,5 +43,5 @@ public interface ServiceService {
 	List<RoomService> getAllServices();
 
 //	List<com.example.entities.Service> searchByName(String serviceName);
-
+	List<RoomService> getAllServicesByStatus(Boolean status);
 }

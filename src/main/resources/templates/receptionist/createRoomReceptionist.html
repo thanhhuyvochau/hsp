@@ -135,20 +135,20 @@
                             </ul>
                         </div>
 
-                        <form th:action="@{/receptionist-save-booking}" th:object="${booking}" method="post"
+                        <form  th:action="@{/receptionist-save-booking}" th:object="${booking}" method="post"
                               class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="chooseRoom" role="tabpanel"
                                  aria-labelledby="chooseRoom-tab">
                                 <div
                                         class=" navSearch row justify-content-center">
                                     <div class="col-lg-2">Ngày nhận phòng:
-                                        <input th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
+                                        <label for="checkIn"></label><input th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-2">Ngày trả phòng:
                                         <input th:field="*{checkOut}" id="checkOut" type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-3">Loại phòng:
-                                        <select id="roomType" class="form-select">
+                                        <label for="roomType"></label><select id="roomType" class="form-select">
                                             <option value="-1" selected></option>
                                             <option th:each="category, categoryStat : ${categories}"
                                                     th:value="${category.getRoomCategoryId()}"
@@ -288,18 +288,30 @@
                                         <div class="col-lg-4">
                                             <div class="row ms-1">
                                                 <h6>(*) Họ tên:</h6>
-                                                <input onchange="updateText('nameCustomer', 'confirmName')" type="text"
+                                                <input onchange="{
+                                                    if (validateName()){
+                                                        updateText('nameCustomer', 'confirmName')
+                                                    }
+                                                }" type="text"
                                                        class="form-control"
                                                        th:field="*{name}"
                                                        id="nameCustomer"
                                                        placeholder="Nguyễn Ngọc Khoa">
+                                                <span id="nameError" style="color: red;"></span>
+
                                             </div>
                                             <div class="row mt-2 ms-1">
                                                 <h6>(*) Số điện thoại:</h6>
-                                                <input onchange="updateText('phoneCustomer', 'confirmPhone')"
+                                                <input onchange="{
+                                                    if (validatePhone()){
+                                                        updateText('phoneCustomer', 'confirmPhone')
+                                                    }
+                                                }"
                                                        th:field="*{phone}" type="text" class="form-control"
                                                        id="phoneCustomer"
                                                        placeholder="0388 663 366">
+                                                <span id="phoneError" style="color: red;"></span>
+
                                             </div>
                                             <div class="row mt-2 ms-1">
                                                 <h6>(*) Địa chỉ:</h6>
@@ -307,6 +319,8 @@
                                                        th:field="*{address}" type="text" class="form-control"
                                                        id="addressCustomer"
                                                        placeholder="Thạch Hòa - Thạch Thất - Hà Nội">
+
+
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -314,17 +328,22 @@
                                         <div class="col-lg-4 ">
                                             <div class="row">
                                                 <h6>(*) Email:</h6>
-                                                <input onchange="updateText('emailCustomer', 'confirmEmail')"
+                                                <input onchange="{
+                                                    if (validateEmail()){
+                                                    updateText('emailCustomer', 'confirmEmail');
+                                                }}"
                                                        th:field="*{email}" type="text" class="form-control"
                                                        id="emailCustomer"
                                                        placeholder="nnkhoa36@gmail.com">
+                                                <span id="emailError" style="color: red;"></span>
+
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Ghi chú:</h6>
-                                                <input onchange="updateText('noteCustomer', 'confirmNote')"
-                                                       th:field="*{notes}" type="text" class="form-control"
-                                                       id="noteCustomer"
-                                                       placeholder="">
+                                                <label for="noteCustomer"></label><input onchange="updateText('noteCustomer', 'confirmNote')"
+                                                                                         th:field="*{notes}" type="text" class="form-control"
+                                                                                         id="noteCustomer"
+                                                                                         placeholder="">
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Phương thức đặt:</h6>
@@ -524,8 +543,8 @@
                                                     Quay
                                                     lại
                                                 </button>
-                                                <button type="submit" class="btn btn-dark" style="margin-right: 2rem; margin-top:
-                                                    2rem;margin-bottom: 2rem;">Tiếp tục
+                                                <button type="button" id="booking-btn" class="btn btn-dark" style="margin-right: 2rem; margin-top:
+                                                    2rem;margin-bottom: 2rem;">Đặt Phòng
                                                 </button>
                                             </div>
                                         </div>
@@ -626,7 +645,7 @@
                 // Add other columns based on room properties
 
                 // Example columns for demonstration, replace with actual data
-                row.append("<td>" + selectedRoom.bookedNumber + "</td>");
+                row.append("<td>" + selectedRoom.quantity + "</td>");
                 row.append("<td>" + selectedRoom.description + "</td>");
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
@@ -723,16 +742,19 @@
                     .on("click", function () {
                         console.log("CLICK");
                         let numberAvailable = room.numberAvailable;
-                        let numberInList = selectedRooms.filter(r => r.roomCategoryId === room.roomCategoryId).length;
-                        if (numberInList < numberAvailable) {
-                            selectedRooms.push(room);
-                            console.log(selectedRooms);
-                            addBookingDetail();
-                            addBookingDetailID();
-                        } else {
-                            alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
-                        }
+                        let existRoom = selectedRooms.find(r => r.roomCategoryId === room.roomCategoryId);
 
+                        if (!existRoom){
+                            selectedRooms.push({...room,"quantity":1});
+                        }else{
+                            if (existRoom.quantity == room.numberAvailable){
+                                alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                            }else{
+                                existRoom.quantity = existRoom.quantity + 1;
+                            }
+                        }
+                        addBookingDetail();
+                        addBookingDetailID();
                         // Add your logic here for button click
                     });
                 buttonColumn.append(addButton);
@@ -762,12 +784,14 @@
             tbody.find("tr").each(function () {
                 // Get the value in the "Giá" column (assuming it's the 8th column, index 7)
                 const priceString = $(this).find("td:eq(7)").text().trim();
-
+                const numberOfBookingString = $(this).find("td:eq(1)").text().trim();
+                console.log("Number of Booking:"+numberOfBookingString)
                 // Convert the price string to a number (assuming the price is in Vietnamese dong format)
                 const price = parseFloat(priceString.replace(/\D/g, ''));
+                const numberOfBooking = parseFloat(numberOfBookingString.replace(/\D/g, ''));
 
                 // Add the price to the total
-                roomPrice += isNaN(price) ? 0 : price;
+                roomPrice += isNaN(price) ? 0 : price*numberOfBooking;
             });
 
             let taxPrice = roomPrice * 0.1;
@@ -787,7 +811,7 @@
         }
 
         function formatNumberWithPeriods(number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return formatCurrency(number);
         }
 
         function deleteRow(button, categoryId) {
@@ -802,7 +826,7 @@
         function validateDates() {
             var checkinDate = new Date(document.getElementById('checkIn').value);
             var checkoutDate = new Date(document.getElementById('checkOut').value);
-
+            console.log("VALIDATE CHECKKIN:"+checkinDate)
             // Get the current date
             var currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0);
@@ -829,7 +853,99 @@
         }
 
     });
+    function validateName() {
+        var nameInput = document.getElementById("nameCustomer");
+        var nameError = document.getElementById("nameError");
 
+        // Regular expression for name validation (uppercase and lowercase letters)
+        var nameRegex = /^[A-Za-z\s]+$/;
+
+        if (!nameRegex.test(nameInput.value)) {
+            nameError.innerText = "Nhập tên chỉ chứa chữ cái viết hoa, thường và khoảng trắng";
+            return false;
+        } else {
+            nameError.innerText = "";
+            return true;
+        }
+    }
+
+    function validateEmail() {
+        var emailInput = document.getElementById("emailCustomer");
+        var emailError = document.getElementById("emailError");
+
+        // Regular expression for email validation
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(emailInput.value)) {
+            emailError.innerText = "Nhập một địa chỉ email hợp lệ";
+            return false;
+        } else {
+            emailError.innerText = "";
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        var phoneInput = document.getElementById("phoneCustomer");
+        var phoneError = document.getElementById("phoneError");
+
+        // Regular expression for Vietnamese phone numbers
+        var phoneRegex = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+
+        if (!phoneRegex.test(phoneInput.value)) {
+            phoneError.innerText = "Nhập đúng định dạng số điện thoại Việt Nam";
+            return false;
+        } else {
+            phoneError.innerText = "";
+            return true;
+        }
+    }
+    document.getElementById('booking-btn').addEventListener("click", (e) =>{
+        e.preventDefault();
+        validateName();
+        validateEmail();
+        validatePhone();
+        console.log("Submit")
+        console.log( validateName())
+        console.log( validateEmail())
+        console.log( validatePhone())
+        if (validateName() && validateEmail() && validatePhone()){
+
+            console.log(document.getElementById('myTabContent'));
+            document.getElementById('myTabContent').submit();
+        }else{
+            alert("Cần chỉnh sửa lại thông tin chính xác trớc khi đặt phòng");
+        }
+    })
+    function setDefaultDates() {
+        var currentDate = new Date();
+        document.getElementById("checkIn").value = getFormatDateTime(currentDate);
+
+        var nextDay = new Date();
+        nextDay.setDate(nextDay.getDate() + 1);
+        document.getElementById("checkOut").value = getFormatDateTime(nextDay);
+    }
+    window.onload = setDefaultDates;
+
+    function formatCurrency(amount) {
+        if (typeof Intl.NumberFormat === 'function') {
+            const formattedAmount = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0  // Set the number of decimal places
+            }).format(amount);
+
+            return formattedAmount;
+        } else {
+            return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        }
+    }
+    function getFormatDateTime(date){
+        var day = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear()+"-"+(month)+"-"+(day) ;
+        return today;
+    }
 </script>
 
 

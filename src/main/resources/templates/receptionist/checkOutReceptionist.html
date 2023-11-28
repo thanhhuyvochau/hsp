@@ -452,7 +452,7 @@
             <h1 th:text="${iterStat.index}"></h1>
             <input th:value="${useService.getServiceId()}" type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].serviceId}">
-            <input th:value="${useService.getQuantity()}" type="hidden"
+            <input  th:value="${useService.getQuantity()}" type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].quantity}">
         </div>
     </div>

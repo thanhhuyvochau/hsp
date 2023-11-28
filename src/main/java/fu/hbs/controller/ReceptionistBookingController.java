@@ -24,12 +24,14 @@ import fu.hbs.utils.EmailUtil;
 import fu.hbs.utils.StringDealer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fu.hbs.repository.HotelBookingRepository;
 import fu.hbs.repository.RoomStatusRepository;
+
+import javax.naming.Binding;
 
 @Controller
 public class ReceptionistBookingController {
@@ -70,7 +74,7 @@ public class ReceptionistBookingController {
     private TransactionsService transactionsService;
 
     @PostMapping("/receptionist-save-booking")
-    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, HttpSession session) {
+    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, BindingResult result, HttpSession session, Model model) {
         Long hotelBookingId = bookingService.createHotelBookingByReceptionist(bookingRequest);
         if (bookingRequest.getPaymentTypeId() == 1L) {
             HotelBooking hotelBooking = bookingService.findById(hotelBookingId);
@@ -115,7 +119,7 @@ public class ReceptionistBookingController {
 //    }
 
     @PostMapping("/handle-payment")
-    public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO") ViewCheckoutDTO checkoutDTO, Model model) {
+    public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO")  ViewCheckoutDTO checkoutDTO, Model model) {
         // Retrieve booking details based on the bookingId
         // Replace the following line with your actual logic to fetch booking details
         HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
@@ -182,7 +186,7 @@ public class ReceptionistBookingController {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null) {
             List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
-            List<RoomService> roomServices = roomServiceService.getAllServices();
+            List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
             PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);
             List<fu.hbs.entities.HotelBookingService> usedServices = hotelBookingServiceService.findAllByHotelBookingId(hotelBookingId);
 
@@ -211,7 +215,7 @@ public class ReceptionistBookingController {
 
 
     @PostMapping("receptionist/checkOutReceptionist")
-    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO, HttpSession session) {
+    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO")  SaveCheckoutDTO checkoutDTO, HttpSession session) {
         try {
             bookingService.checkout(checkoutDTO);
             if (checkoutDTO.getPaymentTypeId() == 1) {

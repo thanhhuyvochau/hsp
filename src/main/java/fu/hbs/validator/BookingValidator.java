@@ -30,10 +30,10 @@ public class BookingValidator {
         Instant currentDay = Instant.now().truncatedTo(ChronoUnit.DAYS);
         Instant checkInTruncated = checkIn.truncatedTo(ChronoUnit.DAYS);
         Instant checkOutTruncated = checkOut.truncatedTo(ChronoUnit.DAYS);
-        if (currentDay.isAfter(checkIn)) {
+        if (currentDay.isAfter(checkInTruncated)) {
             return false;
         }
-        if (!checkOutTruncated.isAfter(checkOutTruncated)) {
+        if (!checkOutTruncated.isAfter(checkInTruncated)) {
             return false;
         }
         return true;

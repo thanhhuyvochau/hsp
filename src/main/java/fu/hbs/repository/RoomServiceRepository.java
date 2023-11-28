@@ -25,4 +25,6 @@ public interface RoomServiceRepository extends JpaRepository<RoomService, Long> 
     RoomService findByServiceId(Long serviceId);
 
     List<RoomService> getAllByServiceIdIn(List<Long> serviceIds);
+
+    List<RoomService> findAllByStatusIs(Boolean status);
 }

@@ -65,19 +65,23 @@
 					<a href="#"><i class="fa-regular fa-rectangle-list pe-2"></i>Danh sách phòng</a>
 				</li>
 				<li>
-					<a href="./createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt phòng</a>
+					<a href="/receptionist/createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt
+						phòng</a>
 				</li>
 				<li>
-					<a href="./checkOutReceptionist"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả phòng</a>
+					<a href="/receptionist/checkOutReceptionist"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả
+						phòng</a>
 				</li>
 				<li>
-					<a href="./listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử dụng</a>
+					<a href="/receptionist/listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử
+						dụng</a>
 				</li>
 				<li>
-					<a href="./listBookingReceptionist"><i class="fa-solid fa-bell pe-2"></i>Đặt trước</a>
+					<a href="/receptionist/listBookingReceptionist"><i class="fa-solid fa-bell pe-2"></i>Đặt trước</a>
 				</li>
 				<li>
-					<a href="./listHistoryBooking"><i class="fa-solid fa-clipboard pe-2"></i>Lịch sử đặt phòng</a>
+					<a href="/receptionist/listHistoryBooking"><i class="fa-solid fa-clipboard pe-2"></i>Lịch sử đặt
+						phòng</a>
 				</li>
 			</ul>
 
@@ -106,7 +110,7 @@
 			</nav>
 
 			<div class="table-responsive">
-				<p class="fw-bold"> Các yêu cầu hoàn tiền</p>
+				<p class="fw-bold"> Danh sách đặt chỗ</p>
 				<table id="bookingTable" class="table table-striped">
 					<thead>
 						<tr class="table-dark">
@@ -132,20 +136,21 @@
 							<td th:text="${hotelbooking.checkIn}"></td>
 							<td th:text="${hotelbooking.checkOut}"></td>
 							<td th:text="${hotelbooking.totalPrice}"></td>
-							<td th:text="${hotelbooking.statusId}"></td>
+							<td th:text="${hotelbooking.statusId == 1 ? 'Chưa CheckIn' : 'Đang sử dụng'}"></td>
 							<td>
-								<button type="button" id="btn-detail" class="btn btn-dark"
-									th:attr="data-booking-id=${hotelbooking.hotelBookingId}">Chi tiết</button>
+								<button class="btn btn-dark"><a
+										th:href="@{'/receptionist/bookingDetails/' + ${hotelbooking.getHotelBookingId()} }">
+										Chi
+										tiết</a></button>
 								<button type="button" id="btn-checkin" class="btn btn-dark"
 									th:attr="data-booking-id=${hotelbooking.hotelBookingId}" data-toggle="modal"
-									data-target="#confirmCheckInModal">Check In</button>
+									data-target="#confirmCheckInModal" onclick="checkInConfirm(this)">Check In
+								</button>
 
 							</td>
 						</tr>
 					</tbody>
 				</table>
-
-
 
 
 			</div>
@@ -199,58 +204,38 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 
 
-
 	<script>
+		function checkInConfirm(event) {
+			let text = "Bạn có muốn đổi trạng thái đặt này thành 'đã check-in'";
+			var hotelBookingId = $(event).attr("data-booking-id");
+			if (confirm(text) === true) {
+				$.ajax({
+					type: "POST",
+					url: "/checkIn?hotelBookingId=" + hotelBookingId,
+					contentType: "application/json",
+					data: JSON.stringify(hotelBookingId),
+					success: function (data,status) {
+						alert('Check-in thành công')
+						location.reload();
+					},
+					error: function (error) {
+						if (error.status === 200){
+							alert('Check-in thành công')
+							location.reload();
+						}else{
+							console.error("Error during AJAX request:", error);
+						}
+					}
+				});
+
+
+			}
+		}
 		$(document).ready(function () {
 			var table = $('#bookingTable').DataTable({
 				"paging": true,
 				"pageLength": 5,
 				"searching": true
-			});
-
-			$('#bookingTable').on('click', '#btn-detail', function () {
-				var data = table.row($(this).parents('tr')).data();
-
-				$("#customerName").text(data[1]);
-				$("#customerEmail").text(data[2]);
-				$("#customerAddress").text(data[3]);
-				$("#customerPhone").text(data[4]);
-				$("#checkInDate").text(data[5]);
-				$("#checkOutDate").text(data[6]);
-				$("#totalPrice").text(data[7]);
-				$("#bookingStatusId").text(data[8]);
-				$("#bookingDetailsModal").modal("show");
-			});
-			$('#bookingDetailsModal').on('hidden.bs.modal', function () {
-				// Đặt các hành động bạn muốn thực hiện khi modal được đóng ở đây
-				console.log('Modal đã được đóng');
-			});
-
-			$('#close').on('click', function () {
-				$('#bookingDetailsModal').modal('hide')
-			});
-			$('#bookingTable').on('click', '#btn-checkin', function () {
-				var hotelBookingId = $(this).attr("data-booking-id"); // Lấy hotelBookingId từ thuộc tính data-booking-id
-
-				// Mở modal xác nhận "Check In"
-				$('#confirmCheckInModal').modal('show');
-
-				// Xử lý khi người dùng xác nhận "Check In"
-				$('#confirmCheckInButton').on('click', function () {
-					// Thực hiện yêu cầu POST để thay đổi trạng thái đặt phòng
-					$.post("/checkIn?hotelBookingId="+hotelBookingId, {hotelBookingId: hotelBookingId}, function (data) {
-						// Xử lý phản hồi từ máy chủ (nếu cần)
-						console.log(data);
-						// In ra thông báo "Checkin thành công"
-						alert("Checkin thành công");
-
-						// Làm tải lại trang
-						location.reload();
-						// Đóng modal xác nhận "Check In"
-						$('#confirmCheckInModal').modal('hide');
-						// Cập nhật giao diện nếu cần
-					});
-				});
 			});
 			$('#close2').on('click', function () {
 				$('#confirmCheckInModal').modal('hide')
