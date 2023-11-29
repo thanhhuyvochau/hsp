@@ -175,8 +175,7 @@
                                                 <th scope="col">Ưu đãi</th>
                                                 <th scope="col">Giường</th>
                                                 <th scope="col">Diện tích(m2)</th>
-                                                <th scope="col">Người lớn</th>
-                                                <th scope="col">Trẻ em</th>
+                                                <th scope="col">Số người</th>
                                                 <th scope="col">Giá</th>
                                                 <th scope="col"></th>
                                             </tr>
@@ -229,8 +228,7 @@
                                                 <th scope="col">Ưu đãi</th>
                                                 <th scope="col">Giường</th>
                                                 <th scope="col">Diện tích(m2)</th>
-                                                <th scope="col">Người lớn</th>
-                                                <th scope="col">Trẻ em</th>
+                                                <th scope="col">Số người</th>
                                                 <th scope="col">Giá</th>
                                                 <th scope="col"></th>
                                             </tr>
@@ -670,7 +668,6 @@
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
                 row.append("<td>" + selectedRoom.numberPerson + "</td>");
-                row.append("<td>" + selectedRoom.numberPerson + "</td>");
                 row.append("<td>" + selectedRoom.price + "</td>");
                 // row.append('<input  th:value="1" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomNumber}" />');
                 // row.append('<input  th:value="' + room.categoryId + '" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomCategoryId}" />');
@@ -726,7 +723,6 @@
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
                 row.append("<td>" + selectedRoom.numberPerson + "</td>");
-                row.append("<td>" + selectedRoom.numberPerson + "</td>");
                 row.append("<td>" + selectedRoom.price + "</td>");
                 // Append the row to the table body
                 tbody.append(row);
@@ -755,7 +751,6 @@
                 row.append("<td>" + room.description + "</td>");
                 row.append("<td>" + room.bed + "</td>");
                 row.append("<td>" + room.square + "</td>");
-                row.append("<td>" + room.numberPerson + "</td>");
                 row.append("<td>" + room.numberPerson + "</td>");
                 row.append("<td>" + room.price + "</td>");
 
@@ -818,9 +813,11 @@
             // Iterate through each row in the tbody
             tbody.find("tr").each(function () {
                 // Get the value in the "Giá" column (assuming it's the 8th column, index 7)
-                const priceString = $(this).find("td:eq(7)").text().trim();
+
+                const priceString = $(this).find("td:eq(6)").text().trim();
+                console.log("PRICESTIRNG:"+priceString);
                 const numberOfBookingString = $(this).find("td:eq(1)").text().trim();
-                console.log("Number of Booking:" + numberOfBookingString)
+                console.log("Room Number:"+numberOfBookingString);
                 // Convert the price string to a number (assuming the price is in Vietnamese dong format)
                 const price = parseFloat(priceString.replace(/\D/g, ''));
                 const numberOfBooking = parseFloat(numberOfBookingString.replace(/\D/g, ''));
