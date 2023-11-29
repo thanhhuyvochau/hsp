@@ -316,11 +316,15 @@
                                             </div>
                                             <div class="row mt-2 ms-1">
                                                 <h6>(*) Địa chỉ:</h6>
-                                                <input onchange="updateText('addressCustomer', 'confirmAddress')"
+                                                <input onchange="{
+                                                    if (validateAddress()){
+                                                        updateText('addressCustomer', 'confirmAddress');
+                                                    }
+                                                }"
                                                        th:field="*{address}" type="text" class="form-control"
                                                        id="addressCustomer"
                                                        placeholder="Thạch Hòa - Thạch Thất - Hà Nội">
-
+                                                <span id="addressError" style="color: red;"></span>
 
                                             </div>
                                         </div>
@@ -890,8 +894,8 @@
         var nameError = document.getElementById("nameError");
 
         // Regular expression for name validation (uppercase and lowercase letters)
-        var nameRegex = /^[A-Za-z\s]+$/;
-
+        const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s|_]+$/u;
+        console.log(nameRegex.test(nameInput.value))
         if (!nameRegex.test(nameInput.value)) {
             nameError.innerText = "Nhập tên chỉ chứa chữ cái viết hoa, thường và khoảng trắng";
             return false;
@@ -929,6 +933,21 @@
             return false;
         } else {
             phoneError.innerText = "";
+            return true;
+        }
+    }
+    function validateAddress() {
+        var address = document.getElementById("addressCustomer");
+        var addressError = document.getElementById("addressError");
+
+        // Regular expression for name validation (uppercase and lowercase letters)
+        const addressReg = /^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/u;
+
+        if (!addressReg.test(address.value)) {
+            addressError.innerText = "Không được để trống địa chỉ";
+            return false;
+        } else {
+            addressError.innerText = "";
             return true;
         }
     }
@@ -988,9 +1007,3 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
 </html>
-
-
-<h4 class="">Thanh toán</h4>
-<div class="bg-light-subtle border shadow d-flex flex-column flex-grow-1">
-
-</div>
