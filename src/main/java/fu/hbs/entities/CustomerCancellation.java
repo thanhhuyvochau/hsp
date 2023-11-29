@@ -42,6 +42,7 @@ public class CustomerCancellation {
     private Long reasonId;
     private Long hotelBookingId;
     private Long accountId;
+    private Long transactionId;
     private BigDecimal refundAmount;
     private Date cancelTime;
     private String otherReason;
