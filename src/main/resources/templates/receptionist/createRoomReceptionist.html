@@ -661,9 +661,23 @@
                 row.append("<th scope='row'>" + index++ + "</th>");
                 row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
                 // Add other columns based on room properties
+                const roomNumberColumn = $("<td></td>");
+                const roomNumberInput = $("<input min='0' type='number'>").val(selectedRoom.quantity).on("input", function(event) {
+                    let oldValue = selectedRoom.quantity;
+                    selectedRoom.quantity = this.value;
+                    if (selectedRoom.numberAvailable < selectedRoom.quantity){
+                        selectedRoom.quantity = oldValue;
+                        this.value = oldValue;
+                        alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
 
+                    }else{
+                        addBookingDetailID();
+                    }
+                });
+                roomNumberColumn.append(roomNumberInput);
+                row.append(roomNumberColumn);
                 // Example columns for demonstration, replace with actual data
-                row.append("<td>" + selectedRoom.quantity + "</td>");
+                // row.append("<td><input min='0' type='number' value='"+selectedRoom.quantity+"'/></td>");
                 row.append("<td>" + selectedRoom.description + "</td>");
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
