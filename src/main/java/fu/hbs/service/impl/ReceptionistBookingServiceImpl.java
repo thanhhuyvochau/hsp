@@ -116,7 +116,12 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         List<BookingRoomDetails> bookingDetails = createBookingDetails(bookingRequest, checkIn, checkOut, hotelBooking);
         bookingRoomDetailsRepository.saveAll(bookingDetails);
         BigDecimal totalPrice = this.calculateTotalPrice(bookingDetails);
-        hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+        // Deposit Option Yes/No
+        if (bookingRequest.isPrepay()) {
+            hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+        } else {
+            hotelBooking.setDepositPrice(BigDecimal.ZERO);
+        }
 
         hotelBooking.setTotalPrice(totalPrice);
         return hotelBooking.getHotelBookingId();

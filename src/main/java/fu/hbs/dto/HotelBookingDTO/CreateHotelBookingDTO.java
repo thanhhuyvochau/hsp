@@ -49,5 +49,6 @@ public class CreateHotelBookingDTO {
     private String notes;
     private Long paymentTypeId = 1L;
     private List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
+    private boolean isPrepay = true;
 }
 

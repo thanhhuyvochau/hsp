@@ -361,7 +361,7 @@
                                         <hr>
                                         <h6>Mã đặt phòng: <a>1001</a>
                                         </h6>
-                                        <h6>Số phòng đặt: <a id="bookedRoomNumber">0</a>
+                                        <h6>Số phòng đặt: <span class="bookedRoomNumber">0</span>
                                         </h6>
                                     </div>
                                     <div class="row mt-3">
@@ -469,7 +469,7 @@
                                         <hr>
                                         <h6>Mã đặt phòng: <a>1001</a>
                                         </h6>
-                                        <h6>Số phòng đặt: <a>2</a>
+                                        <h6>Số phòng đặt: <a class="bookedRoomNumber">2</a>
                                         </h6>
                                     </div>
                                     <div class="row mt-3">
@@ -582,7 +582,7 @@
                 let detailDiv = document.createElement('div');
                 detailDiv.innerHTML = `
             <input type="hidden" value=${selectedRoom.roomCategoryId} name="bookingDetails[${index}].roomCategoryId" />
-            <input type="hidden" value="1" name="bookingDetails[${index}].roomNumber" />
+            <input type="hidden" value=${selectedRoom.quantity} name="bookingDetails[${index}].roomNumber" />
             <!-- Add other fields of CreateHotelBookingDetailDTO as needed -->
         `;
                 container.appendChild(detailDiv);
@@ -634,10 +634,11 @@
             const tbody = $("#selectedRoomTable > tbody");
             tbody.empty();
             console.log(tbody);
-
+            let totalNumber= 0;
             // Update the table with new data
             let index = 1;
             selectedRooms.forEach(selectedRoom => {
+                totalNumber = totalNumber + selectedRoom.quantity;
                 var row = $("<tr></tr>");
                 row.id = selectedRoom.categoryId;
                 row.append("<th scope='row'>" + index++ + "</th>");
@@ -670,6 +671,10 @@
                 // Append the row to the table body
                 tbody.append(row);
             })
+            console.log("RÔM BUMBER: "+totalNumber)
+            for (let elementsByClassNameElement of document.getElementsByClassName("bookedRoomNumber")) {
+                elementsByClassNameElement.innerHTML = totalNumber;
+            }
 
             calculatePrices();
             updateInformationOfBooking();
@@ -777,6 +782,17 @@
             const totalPriceConfirmE = $("#totalPriceConfirm");
             const depositPriceConfirmE = $("#depositPriceConfirm");
 
+            var checkinDate = new Date(document.getElementById('checkIn').value);
+            var checkoutDate = new Date(document.getElementById('checkOut').value);
+            checkinDate.setHours(0, 0, 0, 0);
+            checkoutDate.setHours(0, 0, 0, 0);
+
+            var timeDifference = checkoutDate - checkinDate;
+
+            var daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+            console.log("Number of days:", daysDifference);
+
             // Initialize the total price
             let roomPrice = 0;
 
@@ -791,7 +807,7 @@
                 const numberOfBooking = parseFloat(numberOfBookingString.replace(/\D/g, ''));
 
                 // Add the price to the total
-                roomPrice += isNaN(price) ? 0 : price*numberOfBooking;
+                roomPrice += isNaN(price) ? 0 : price * numberOfBooking * daysDifference; // Price Per Day + Number of Booking + Number of Booking Day
             });
 
             let taxPrice = roomPrice * 0.1;
