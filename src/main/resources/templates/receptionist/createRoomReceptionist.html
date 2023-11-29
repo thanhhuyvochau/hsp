@@ -135,14 +135,15 @@
                             </ul>
                         </div>
 
-                        <form  th:action="@{/receptionist-save-booking}" th:object="${booking}" method="post"
+                        <form th:action="@{/receptionist-save-booking}" th:object="${booking}" method="post"
                               class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="chooseRoom" role="tabpanel"
                                  aria-labelledby="chooseRoom-tab">
                                 <div
                                         class=" navSearch row justify-content-center">
                                     <div class="col-lg-2">Ngày nhận phòng:
-                                        <label for="checkIn"></label><input th:field="*{checkIn}" id="checkIn" type="date" class="form-control">
+                                        <label for="checkIn"></label><input th:field="*{checkIn}" id="checkIn"
+                                                                            type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-2">Ngày trả phòng:
                                         <input th:field="*{checkOut}" id="checkOut" type="date" class="form-control">
@@ -340,10 +341,11 @@
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Ghi chú:</h6>
-                                                <label for="noteCustomer"></label><input onchange="updateText('noteCustomer', 'confirmNote')"
-                                                                                         th:field="*{notes}" type="text" class="form-control"
-                                                                                         id="noteCustomer"
-                                                                                         placeholder="">
+                                                <label for="noteCustomer"></label><input
+                                                    onchange="updateText('noteCustomer', 'confirmNote')"
+                                                    th:field="*{notes}" type="text" class="form-control"
+                                                    id="noteCustomer"
+                                                    placeholder="">
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Phương thức đặt:</h6>
@@ -408,6 +410,7 @@
                                                 <div class="col text-end"><span class="fw-bold">3.270.000</span>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -518,18 +521,30 @@
                                                     </div>
                                                     <div class="col text-end"><a id="depositPriceConfirm">0</a></div>
                                                 </div>
-                                                <!--                                                                                                    <div class="row mt-2 me-1">-->
-                                                <!--                                                                                                        <div class="col ms-4">-->
-                                                <!--                                                                                                            <h6 class="fw-bold">Thanh toán hết:</h6>-->
-                                                <!--                                                                                                        </div>-->
-                                                <!--                                                                                                        <div class="col text-end"><a>2.943.000</a></div>-->
-                                                <!--                                                                                                    </div>-->
                                                 <div class="row mt-2 me-1">
                                                     <div class="col ms-4">
                                                         <h6 class="fw-bold">Tổng:</h6>
                                                     </div>
                                                     <div class="col text-end"><span class="fw-bold"
                                                                                     id="totalPriceConfirm">0</span>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <label class="form-check-label px-1" for="depositPayment">
+                                                        Đặt cọc trước
+                                                    </label>
+                                                    <div class="form-check ">
+                                                        <input  th:field="*{payFull}" class="form-check-input" type="radio"  id="depositPayment"
+                                                               value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <label class="form-check-label px-1" for="fullPayment">
+                                                        Thanh toán hết
+                                                    </label>
+                                                    <div class="form-check mb-4">
+                                                        <input th:field="*{payFull}" class="form-check-input" type="radio" id="fullPayment"
+                                                               value="1" checked>
                                                     </div>
                                                 </div>
                                             </div>
@@ -634,7 +649,7 @@
             const tbody = $("#selectedRoomTable > tbody");
             tbody.empty();
             console.log(tbody);
-            let totalNumber= 0;
+            let totalNumber = 0;
             // Update the table with new data
             let index = 1;
             selectedRooms.forEach(selectedRoom => {
@@ -671,7 +686,7 @@
                 // Append the row to the table body
                 tbody.append(row);
             })
-            console.log("RÔM BUMBER: "+totalNumber)
+            console.log("RÔM BUMBER: " + totalNumber)
             for (let elementsByClassNameElement of document.getElementsByClassName("bookedRoomNumber")) {
                 elementsByClassNameElement.innerHTML = totalNumber;
             }
@@ -749,12 +764,12 @@
                         let numberAvailable = room.numberAvailable;
                         let existRoom = selectedRooms.find(r => r.roomCategoryId === room.roomCategoryId);
 
-                        if (!existRoom){
-                            selectedRooms.push({...room,"quantity":1});
-                        }else{
-                            if (existRoom.quantity == room.numberAvailable){
+                        if (!existRoom) {
+                            selectedRooms.push({...room, "quantity": 1});
+                        } else {
+                            if (existRoom.quantity == room.numberAvailable) {
                                 alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
-                            }else{
+                            } else {
                                 existRoom.quantity = existRoom.quantity + 1;
                             }
                         }
@@ -801,7 +816,7 @@
                 // Get the value in the "Giá" column (assuming it's the 8th column, index 7)
                 const priceString = $(this).find("td:eq(7)").text().trim();
                 const numberOfBookingString = $(this).find("td:eq(1)").text().trim();
-                console.log("Number of Booking:"+numberOfBookingString)
+                console.log("Number of Booking:" + numberOfBookingString)
                 // Convert the price string to a number (assuming the price is in Vietnamese dong format)
                 const price = parseFloat(priceString.replace(/\D/g, ''));
                 const numberOfBooking = parseFloat(numberOfBookingString.replace(/\D/g, ''));
@@ -842,7 +857,7 @@
         function validateDates() {
             var checkinDate = new Date(document.getElementById('checkIn').value);
             var checkoutDate = new Date(document.getElementById('checkOut').value);
-            console.log("VALIDATE CHECKKIN:"+checkinDate)
+            console.log("VALIDATE CHECKKIN:" + checkinDate)
             // Get the current date
             var currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0);
@@ -869,6 +884,7 @@
         }
 
     });
+
     function validateName() {
         var nameInput = document.getElementById("nameCustomer");
         var nameError = document.getElementById("nameError");
@@ -916,23 +932,25 @@
             return true;
         }
     }
-    document.getElementById('booking-btn').addEventListener("click", (e) =>{
+
+    document.getElementById('booking-btn').addEventListener("click", (e) => {
         e.preventDefault();
         validateName();
         validateEmail();
         validatePhone();
         console.log("Submit")
-        console.log( validateName())
-        console.log( validateEmail())
-        console.log( validatePhone())
-        if (validateName() && validateEmail() && validatePhone()){
+        console.log(validateName())
+        console.log(validateEmail())
+        console.log(validatePhone())
+        if (validateName() && validateEmail() && validatePhone()) {
 
             console.log(document.getElementById('myTabContent'));
             document.getElementById('myTabContent').submit();
-        }else{
+        } else {
             alert("Cần chỉnh sửa lại thông tin chính xác trớc khi đặt phòng");
         }
     })
+
     function setDefaultDates() {
         var currentDate = new Date();
         document.getElementById("checkIn").value = getFormatDateTime(currentDate);
@@ -941,6 +959,7 @@
         nextDay.setDate(nextDay.getDate() + 1);
         document.getElementById("checkOut").value = getFormatDateTime(nextDay);
     }
+
     window.onload = setDefaultDates;
 
     function formatCurrency(amount) {
@@ -953,13 +972,14 @@
 
             return formattedAmount;
         } else {
-            return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
         }
     }
-    function getFormatDateTime(date){
+
+    function getFormatDateTime(date) {
         var day = ("0" + date.getDate()).slice(-2);
         var month = ("0" + (date.getMonth() + 1)).slice(-2);
-        var today = date.getFullYear()+"-"+(month)+"-"+(day) ;
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
         return today;
     }
 </script>
@@ -968,3 +988,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
 </html>
+
+
+<h4 class="">Thanh toán</h4>
+<div class="bg-light-subtle border shadow d-flex flex-column flex-grow-1">
+
+</div>

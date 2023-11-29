@@ -116,13 +116,23 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         List<BookingRoomDetails> bookingDetails = createBookingDetails(bookingRequest, checkIn, checkOut, hotelBooking);
         bookingRoomDetailsRepository.saveAll(bookingDetails);
         BigDecimal totalPrice = this.calculateTotalPrice(bookingDetails);
+        totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(0.1))).setScale(0, RoundingMode.HALF_DOWN);
         // Deposit Option Yes/No
-        if (bookingRequest.isPrepay()) {
-            hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+        if (bookingRequest.isPayFull()) {
+            hotelBooking.setDepositPrice(totalPrice);
         } else {
-            hotelBooking.setDepositPrice(BigDecimal.ZERO);
+            hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
         }
 
+        if (bookingRequest.getPaymentTypeId() != 1L) {
+            Transactions transaction = new Transactions();
+            transaction.setVnpayTransactionId(RandomKey.generateRandomKey());
+            transaction.setStatus("Thành công");
+            transaction.setAmount(hotelBooking.getDepositPrice());
+            transaction.setCreatedDate(Instant.now());
+            transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
+            transactionsRepository.save(transaction);
+        }
         hotelBooking.setTotalPrice(totalPrice);
         return hotelBooking.getHotelBookingId();
     }
