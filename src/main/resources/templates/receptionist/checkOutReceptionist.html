@@ -590,10 +590,10 @@
         totalPrice = Number(roomPrice) + Number(servicePrice) + Number(surchargePrice) + Number(taxPrice);
         remainPrice = Number(totalPrice) - Number(prepayPrice);
 
-        $tax.text(taxPrice);
-        $total.text(totalPrice);
-        $remain.text(remainPrice);
-        $service.text(servicePrice)
+        $tax.text(formatCurrency(taxPrice));
+        $total.text(formatCurrency(totalPrice));
+        $remain.text(formatCurrency(remainPrice));
+        $service.text(formatCurrency(servicePrice));
     }
 
     function deleteRow(button, rowIndex) {
@@ -623,7 +623,19 @@
         console.log("TOTAL SERVICE:" + total);
         return total;
     }
+    function formatCurrency(amount) {
+        if (typeof Intl.NumberFormat === 'function') {
+            const formattedAmount = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0  // Set the number of decimal places
+            }).format(amount);
 
+            return formattedAmount;
+        } else {
+            return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+        }
+    }
 
 </script>
 </html>

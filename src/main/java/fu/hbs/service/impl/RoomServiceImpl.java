@@ -9,11 +9,15 @@ import fu.hbs.repository.RoomCategoriesRepository;
 import fu.hbs.repository.RoomRepository;
 import fu.hbs.service.dao.RoomService;
 import fu.hbs.utils.BookingUtil;
+import fu.hbs.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +46,12 @@ public class RoomServiceImpl implements RoomService {
         } else {
             rooms = roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
         }
+        Instant now = Instant.now();
+        LocalDate localDate = LocalDateTime.ofInstant(now, ZoneId.systemDefault()).toLocalDate();
+        if (localDate.equals(checkIn)){
+            rooms = rooms.stream().filter(room -> room.getRoomStatusId() == 2).toList();
+        }
+
 
         Map<Long, List<Room>> roomMapWithCategoryIdAsKey = rooms.stream()
                 .collect(Collectors.groupingBy(Room::getRoomCategoryId));
