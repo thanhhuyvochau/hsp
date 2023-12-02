@@ -514,8 +514,8 @@
 
         // Example columns for demonstration, replace with actual data
         row.append("<td>" + quantity + "</td>");
-        row.append("<td>" + pricePer + "</td>");
-        row.append("<td>" + pricePer * quantity + "</td>");
+        row.append("<td>" + formatCurrency(pricePer) + "</td>");
+        row.append("<td>" + formatCurrency(pricePer * quantity) + "</td>");
 
         const buttonColumn = $("<td></td>");
         const addButton = $("<button></button>")

@@ -591,6 +591,27 @@
     }
 
     $(document).ready(function () {
+        $("#checkIn").change(() => {
+            let checkinDate = new Date($("#checkIn").val());
+            let currentDate = new Date();
+
+            if (checkinDate < currentDate) {
+                document.getElementById("checkIn").valueAsDate = currentDate;
+                alert('Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.');
+            }
+        })
+        $("#checkOut").change(() => {
+            let checkoutDate =new Date( $("#checkOut").val());
+            let checkinDate =  new Date($("#checkIn").val());
+
+            if (checkoutDate <= checkinDate) {
+                checkinDate.setDate(checkoutDate.getDate() + 1);
+                document.getElementById("checkOut").valueAsDate = checkinDate;
+                alert('Ngày trả phòng phải lớn hơn ngày nhận phòng ít nhất 1 ngày.' +
+                    '');
+                return false;
+            }
+        })
         function addBookingDetailID() {
             var container = document.getElementById('bookingDetailsContainer');
             container.innerText = "";
