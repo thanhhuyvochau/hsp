@@ -479,7 +479,7 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex flex-column">
-                                            <table
+                                            <table id="lastConfirmTable"
                                                     class="table table-striped table-hover border align-baseline text-center">
                                                 <thead class="table-dark">
                                                 <tr>
@@ -692,6 +692,7 @@
                         alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
 
                     }else{
+                        updateLastConfirmBooking();
                         updateInformationOfBooking();
                         addBookingDetailID();
                         calculatePrices();
@@ -731,6 +732,7 @@
 
             calculatePrices();
             updateInformationOfBooking();
+            updateLastConfirmBooking();
         }
 
         function clearBookingDetails() {
@@ -914,6 +916,34 @@
                 return false;
             }
             return true;
+        }
+
+        function updateLastConfirmBooking() {
+            console.log("LAST PAGE")
+            const tbody = $("#lastConfirmTable > tbody");
+            tbody.empty();
+            console.log(tbody);
+            let index = 1;
+            var checkinDate = new Date(document.getElementById('checkIn').value);
+            var checkoutDate = new Date(document.getElementById('checkOut').value);
+            selectedRooms.forEach(selectedRoom => {
+                console.log("LAST PAGE:"+JSON.stringify(selectedRoom))
+                let row = $("<tr></tr>");
+                row.append("<th scope='row'>" + index + "</th>");
+                row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
+                // Add other columns based on room properties
+
+                // Example columns for demonstration, replace with actual data
+                row.append("<td>" + getFormatDateTime(checkinDate) + "</td>");
+                row.append("<td>" + getFormatDateTime(checkoutDate) + "</td>");
+                row.append("<td>" + selectedRoom.bed + "</td>");
+                row.append("<td>" + selectedRoom.square + "</td>");
+                row.append("<td>" + "Không" + "</td>");
+                row.append("<td>" + selectedRoom.price + "</td>");
+                // Append the row to the table body
+                tbody.append(row);
+                index++;
+            });
         }
 
     });
