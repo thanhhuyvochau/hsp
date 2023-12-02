@@ -54,4 +54,5 @@ public class HotelBooking {
     private BigDecimal depositPrice = BigDecimal.ZERO;
     private Instant checkIn;
     private Instant checkOut;
+    private Boolean validBooking;
 }

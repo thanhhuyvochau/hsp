@@ -23,11 +23,11 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
     <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="/assets/css/manager.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
     <link rel="stylesheet" href="/assets/css/sidebar.css">
     <script src="/assets/js/sidebar.js"></script>
     <script src="/assets/js/manager.js"></script>
@@ -65,22 +65,19 @@
         <ul class="list-unstyled components border-bottom">
             <p class="border-bottom fw-bold"><i class="bi bi-person-badge-fill pe-2"></i>Lễ tân</p>
             <li>
-                <a href="#"><i class="fa-regular fa-rectangle-list pe-2"></i>Danh sách phòng</a>
+                <a href="/receptionist/createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt
+                    phòng</a>
             </li>
             <li>
-                <a href="./createRoomReceptionist"><i class="fa-solid fa-check-double pe-2"></i>Đặt phòng</a>
+                <a href="/receptionist/listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử
+                    dụng</a>
             </li>
             <li>
-                <a href="./checkOutReceptionist"><i class="fa-solid fa-right-from-bracket pe-2"></i>Trả phòng</a>
+                <a href="/receptionist/listBookingReceptionist"><i class="fa-solid fa-bell pe-2"></i>Đặt trước</a>
             </li>
             <li>
-                <a href="./listRoomInUse"><i class="fa-solid fa-house-user pe-2"></i>Phòng đang sử dụng</a>
-            </li>
-            <li>
-                <a href="./listBookingReceptionist"><i class="fa-solid fa-bell pe-2"></i>Đặt trước</a>
-            </li>
-            <li>
-                <a href="./listHistoryBooking"><i class="fa-solid fa-clipboard pe-2"></i>Lịch sử đặt phòng</a>
+                <a href="/receptionist/listHistoryBooking"><i class="fa-solid fa-clipboard pe-2"></i>Lịch sử đặt
+                    phòng</a>
             </li>
         </ul>
 
@@ -104,7 +101,17 @@
                 </button>
 
 
-                <button class=" btn bi-person-circle " style="font-size: 2em;"></button>
+                <button id="userButton" class="btn bi-person-circle" style="font-size: 2em;"></button>
+                <div id="userMenu" class="user-menu">
+                    <ul>
+                        <li><a th:href="@{/viewProfile}">Hồ sơ</a></li>
+                        <li><a th:href="@{/updateprofile}">Chỉnh sửa</a>
+                        </li>
+                        <li><a th:href="@{/changepass}">Đổi mật khẩu</a>
+                        </li>
+                        <li><a th:href="@{/logout}">Đăng xuất</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
         <main class="content px-3 py-2">
@@ -139,14 +146,14 @@
                               class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="chooseRoom" role="tabpanel"
                                  aria-labelledby="chooseRoom-tab">
-                                <div
-                                        class=" navSearch row justify-content-center">
+                                <div class=" navSearch row justify-content-center">
                                     <div class="col-lg-2">Ngày nhận phòng:
                                         <label for="checkIn"></label><input th:field="*{checkIn}" id="checkIn"
                                                                             type="date" class="form-control">
                                     </div>
                                     <div class="col-lg-2">Ngày trả phòng:
-                                        <input th:field="*{checkOut}" id="checkOut" type="date" class="form-control">
+                                        <input th:field="*{checkOut}" id="checkOut" type="date"
+                                               class="form-control">
                                     </div>
                                     <div class="col-lg-3">Loại phòng:
                                         <label for="roomType"></label><select id="roomType" class="form-select">
@@ -181,34 +188,6 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <!--                                            <tr>-->
-                                            <!--                                                <th scope="row">1</th>-->
-                                            <!--                                                <td>Phòng Tiêu Chuẩn</td>-->
-                                            <!--                                                <td>10</td>-->
-                                            <!--                                                <td>Bữa sáng</td>-->
-                                            <!--                                                <td>1 giường lớn</td>-->
-                                            <!--                                                <td>40</td>-->
-                                            <!--                                                <td>2</td>-->
-                                            <!--                                                <td>1</td>-->
-                                            <!--                                                <td>1.200.000</td>-->
-                                            <!--                                                <td>-->
-                                            <!--                                                    <button class="btn button btn-dark">Thêm</button>-->
-                                            <!--                                                </td>-->
-                                            <!--                                            </tr>-->
-                                            <!--                                            <tr>-->
-                                            <!--                                                <th scope="row">2</th>-->
-                                            <!--                                                <td>Phòng Cao Cấp</td>-->
-                                            <!--                                                <td>5</td>-->
-                                            <!--                                                <td>Bữa sáng</td>-->
-                                            <!--                                                <td>2 giường nhỏ</td>-->
-                                            <!--                                                <td>60</td>-->
-                                            <!--                                                <td>2</td>-->
-                                            <!--                                                <td>1</td>-->
-                                            <!--                                                <td>1.700.000</td>-->
-                                            <!--                                                <td>-->
-                                            <!--                                                    <button class="btn button btn-dark">Thêm</button>-->
-                                            <!--                                                </td>-->
-                                            <!--                                            </tr>-->
                                             </tbody>
                                         </table>
                                     </div>
@@ -258,8 +237,8 @@
                                             <div class="col ms-3">
                                                 <h6 class="fw-bold">Tổng:</h6>
                                             </div>
-                                            <div class="col text-end"><span class="fw-bold"
-                                                                            id="totalPrice">0</span></div>
+                                            <div class="col text-end"><span class="fw-bold" id="totalPrice">0</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -268,12 +247,8 @@
                                 <div class="row mt-3">
                                     <div class="btn-end text-center">
                                         <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
-                                        <button type="button" class="btn btn-secondary"
-                                                style="margin-right: 2rem;margin-bottom: 2rem;">Quay
-                                            lại
-                                        </button>
-                                        <button type="button" class="btn btn-dark" style="margin-bottom: 2rem;">Tiếp
-                                            tục
+                                        <button id="btnContinue" type="button" class="btn btn-dark"
+                                                style="margin-bottom: 2rem;">Tiếp tục
                                         </button>
                                     </div>
                                 </div>
@@ -291,11 +266,8 @@
                                                     if (validateName()){
                                                         updateText('nameCustomer', 'confirmName')
                                                     }
-                                                }" type="text"
-                                                       class="form-control"
-                                                       th:field="*{name}"
-                                                       id="nameCustomer"
-                                                       placeholder="Nguyễn Ngọc Khoa">
+                                                }" type="text" class="form-control" th:field="*{name}"
+                                                       id="nameCustomer" placeholder="Nguyễn Ngọc Khoa">
                                                 <span id="nameError" style="color: red;"></span>
 
                                             </div>
@@ -305,10 +277,8 @@
                                                     if (validatePhone()){
                                                         updateText('phoneCustomer', 'confirmPhone')
                                                     }
-                                                }"
-                                                       th:field="*{phone}" type="text" class="form-control"
-                                                       id="phoneCustomer"
-                                                       placeholder="0388 663 366">
+                                                }" th:field="*{phone}" type="text" class="form-control"
+                                                       id="phoneCustomer" placeholder="0388 663 366">
                                                 <span id="phoneError" style="color: red;"></span>
 
                                             </div>
@@ -318,8 +288,7 @@
                                                     if (validateAddress()){
                                                         updateText('addressCustomer', 'confirmAddress');
                                                     }
-                                                }"
-                                                       th:field="*{address}" type="text" class="form-control"
+                                                }" th:field="*{address}" type="text" class="form-control"
                                                        id="addressCustomer"
                                                        placeholder="Thạch Hòa - Thạch Thất - Hà Nội">
                                                 <span id="addressError" style="color: red;"></span>
@@ -334,10 +303,8 @@
                                                 <input onchange="{
                                                     if (validateEmail()){
                                                     updateText('emailCustomer', 'confirmEmail');
-                                                }}"
-                                                       th:field="*{email}" type="text" class="form-control"
-                                                       id="emailCustomer"
-                                                       placeholder="nnkhoa36@gmail.com">
+                                                }}" th:field="*{email}" type="text" class="form-control"
+                                                       id="emailCustomer" placeholder="nnkhoa36@gmail.com">
                                                 <span id="emailError" style="color: red;"></span>
 
                                             </div>
@@ -346,8 +313,7 @@
                                                 <label for="noteCustomer"></label><input
                                                     onchange="updateText('noteCustomer', 'confirmNote')"
                                                     th:field="*{notes}" type="text" class="form-control"
-                                                    id="noteCustomer"
-                                                    placeholder="">
+                                                    id="noteCustomer" placeholder="">
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Phương thức đặt:</h6>
@@ -363,10 +329,7 @@
                                     <div class="row mt-5 ">
                                         <h4 class="fw-bold">Thông tin phòng & dịch vụ:</h4>
                                         <hr>
-                                        <h6>Mã đặt phòng: <a>1001</a>
-                                        </h6>
-                                        <h6>Số phòng đặt: <span class="bookedRoomNumber">0</span>
-                                        </h6>
+                                        <h6>Số phòng đặt: <span class="bookedRoomNumber">0</span></h6>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex flex-column">
@@ -409,7 +372,8 @@
                                                 <div class="col ms-3">
                                                     <h6 class="fw-bold">Tổng:</h6>
                                                 </div>
-                                                <div class="col text-end"><span id="totalPrice-2" class="fw-bold"></span>
+                                                <div class="col text-end"><span id="totalPrice-2"
+                                                                                class="fw-bold"></span>
                                                 </div>
                                             </div>
 
@@ -419,12 +383,13 @@
                                 <div class="row mt-3">
                                     <div class="btn-end text-center">
                                         <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
-                                        <button type="button" class="btn btn-secondary"
-                                                style="margin-right: 2rem; margin-top: 2rem;">Quay
-                                            lại
+                                        <button id="btnBack" type="button" class="btn btn-secondary"
+                                                style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;">
+                                            Quay lại
                                         </button>
-                                        <button type="button" class="btn btn-dark" style="margin-right: 2rem; margin-top:
-                                            2rem;">Tiếp tục
+                                        <button id="btnContinueProfile" type="button" class="btn btn-dark"
+                                                style="margin-right: 2rem; margin-top: 2rem;margin-bottom: 2rem;">
+                                            Tiếp tục
                                         </button>
                                     </div>
                                 </div>
@@ -472,15 +437,13 @@
                                     <div class="row mt-5">
                                         <h4 class="fw-bold">Thông tin phòng & dịch vụ:</h4>
                                         <hr>
-                                        <h6>Mã đặt phòng: <a>1001</a>
-                                        </h6>
-                                        <h6>Số phòng đặt: <a class="bookedRoomNumber">2</a>
+                                        <h6>Số phòng đặt: <a class="bookedRoomNumber"></a>
                                         </h6>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex flex-column">
                                             <table id="lastConfirmTable"
-                                                    class="table table-striped table-hover border align-baseline text-center">
+                                                   class="table table-striped table-hover border align-baseline text-center">
                                                 <thead class="table-dark">
                                                 <tr>
                                                     <th scope="col">STT</th>
@@ -521,7 +484,8 @@
                                                     <div class="col ms-4">
                                                         <h6 class="fw-bold">Đặt cọc(50%):</h6>
                                                     </div>
-                                                    <div class="col text-end"><a id="depositPriceConfirm">0</a></div>
+                                                    <div class="col text-end"><a id="depositPriceConfirm">0</a>
+                                                    </div>
                                                 </div>
                                                 <div class="row mt-2 me-1">
                                                     <div class="col ms-4">
@@ -536,8 +500,8 @@
                                                         Đặt cọc trước
                                                     </label>
                                                     <div class="form-check ">
-                                                        <input  th:field="*{payFull}" class="form-check-input" type="radio"  id="depositPayment"
-                                                               value="0">
+                                                        <input th:field="*{payFull}" class="form-check-input"
+                                                               type="radio" id="depositPayment" value="0">
                                                     </div>
                                                 </div>
                                                 <div class="d-flex justify-content-end">
@@ -545,8 +509,8 @@
                                                         Thanh toán hết
                                                     </label>
                                                     <div class="form-check mb-4">
-                                                        <input th:field="*{payFull}" class="form-check-input" type="radio" id="fullPayment"
-                                                               value="1" checked>
+                                                        <input th:field="*{payFull}" class="form-check-input"
+                                                               type="radio" id="fullPayment" value="1" checked>
                                                     </div>
                                                 </div>
                                             </div>
@@ -555,10 +519,9 @@
                                         <div class="row mt-5">
                                             <div class="btn-end text-center">
                                                 <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
-                                                <button type="button" class="btn btn-secondary"
+                                                <button id="btnBackConfirm" type="button" class="btn btn-secondary"
                                                         style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;">
-                                                    Quay
-                                                    lại
+                                                    Quay lại
                                                 </button>
                                                 <button type="button" id="booking-btn" class="btn btn-dark" style="margin-right: 2rem; margin-top:
                                                     2rem;margin-bottom: 2rem;">Đặt Phòng
@@ -601,8 +564,8 @@
             }
         })
         $("#checkOut").change(() => {
-            let checkoutDate =new Date( $("#checkOut").val());
-            let checkinDate =  new Date($("#checkIn").val());
+            let checkoutDate = new Date($("#checkOut").val());
+            let checkinDate = new Date($("#checkIn").val());
 
             if (checkoutDate <= checkinDate) {
                 checkinDate.setDate(checkoutDate.getDate() + 1);
@@ -683,15 +646,20 @@
                 row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
                 // Add other columns based on room properties
                 const roomNumberColumn = $("<td></td>");
-                const roomNumberInput = $("<input min='0' type='number'>").val(selectedRoom.quantity).on("input", function(event) {
+                const roomNumberInput = $("<input min='1' type='number'>").val(selectedRoom.quantity).on("input", function (event) {
                     let oldValue = selectedRoom.quantity;
                     selectedRoom.quantity = this.value;
-                    if (selectedRoom.numberAvailable < selectedRoom.quantity){
+
+                    if (selectedRoom.quantity <= 0) {
+                        selectedRoom.quantity = oldValue;
+                        this.value = oldValue;
+                        alert("Vui lòng nhập một số lớn hơn 0!");
+                    } else if (selectedRoom.numberAvailable < selectedRoom.quantity) {
                         selectedRoom.quantity = oldValue;
                         this.value = oldValue;
                         alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
 
-                    }else{
+                    } else {
                         updateLastConfirmBooking();
                         updateInformationOfBooking();
                         addBookingDetailID();
@@ -706,7 +674,7 @@
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
                 row.append("<td>" + selectedRoom.numberPerson + "</td>");
-                row.append("<td>" + selectedRoom.price + "</td>");
+                row.append("<td>" + formatCurrency(selectedRoom.price) + "</td>");
                 // row.append('<input  th:value="1" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomNumber}" />');
                 // row.append('<input  th:value="' + room.categoryId + '" type="hidden" th:field="*{bookingDetails[__' + index + '__].roomCategoryId}" />');
 
@@ -762,7 +730,7 @@
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
                 row.append("<td>" + selectedRoom.numberPerson + "</td>");
-                row.append("<td>" + selectedRoom.price + "</td>");
+                row.append("<td>" + formatCurrency(selectedRoom.price) + "</td>");
                 // Append the row to the table body
                 tbody.append(row);
                 $("#bookedRoomNumber").text(selectedRoom.length);
@@ -791,7 +759,7 @@
                 row.append("<td>" + room.bed + "</td>");
                 row.append("<td>" + room.square + "</td>");
                 row.append("<td>" + room.numberPerson + "</td>");
-                row.append("<td>" + room.price + "</td>");
+                row.append("<td>" + formatCurrency(room.price) + "</td>");
 
                 const buttonColumn = $("<td></td>");
                 const addButton = $("<button type='button'></button>")
@@ -927,7 +895,7 @@
             var checkinDate = new Date(document.getElementById('checkIn').value);
             var checkoutDate = new Date(document.getElementById('checkOut').value);
             selectedRooms.forEach(selectedRoom => {
-                console.log("LAST PAGE:"+JSON.stringify(selectedRoom))
+                console.log("LAST PAGE:" + JSON.stringify(selectedRoom))
                 let row = $("<tr></tr>");
                 row.append("<th scope='row'>" + index + "</th>");
                 row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
@@ -939,13 +907,34 @@
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
                 row.append("<td>" + "Không" + "</td>");
-                row.append("<td>" + selectedRoom.price + "</td>");
+                row.append("<td>" + formatCurrency(selectedRoom.price) + "</td>");
                 // Append the row to the table body
                 tbody.append(row);
                 index++;
             });
         }
+        document.getElementById('btnContinue').addEventListener('click', function () {
+            // Use Bootstrap's Tab JavaScript API to switch to the "profile" tab
+            var tab = new bootstrap.Tab(document.getElementById('profile-tab'));
+            tab.show();
+        });
+        document.getElementById('btnBack').addEventListener('click', function () {
+            // Switch to the "chooseRoom" tab
+            var tab = new bootstrap.Tab(document.getElementById('chooseRoom-tab'));
+            tab.show();
+        });
 
+        document.getElementById('btnContinueProfile').addEventListener('click', function () {
+            // Switch to the "confirm" tab
+            var tab = new bootstrap.Tab(document.getElementById('confirm-tab'));
+            tab.show();
+        });
+
+        document.getElementById('btnBackConfirm').addEventListener('click', function () {
+            // Switch back to the "profile" tab
+            var tab = new bootstrap.Tab(document.getElementById('profile-tab'));
+            tab.show();
+        });
     });
 
     function validateName() {
@@ -1065,4 +1054,5 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+
 </html>
