@@ -53,7 +53,11 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setPhone(hotelBooking.getPhone());
         viewCheckoutDto.setDepositPrice(hotelBooking.getDepositPrice());
         viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
-        viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+        if (hotelBooking.getStatusId() == 2L){
+            viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(Instant.now()));
+        }else{
+            viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+        }
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
