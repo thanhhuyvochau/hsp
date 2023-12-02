@@ -397,19 +397,19 @@
                                                 <div class="col ms-3">
                                                     <h6 class="fw-bold">Tiền phòng:</h6>
                                                 </div>
-                                                <div class="col text-end"><a>2.900.000</a></div>
+                                                <div class="col text-end"><a id="roomPrice-2"></a></div>
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col ms-3">
                                                     <h6 class="fw-bold">Thuế(10%):</h6>
                                                 </div>
-                                                <div class="col text-end"><a>370.000</a></div>
+                                                <div class="col text-end"><a id="taxPrice-2"></a></div>
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col ms-3">
                                                     <h6 class="fw-bold">Tổng:</h6>
                                                 </div>
-                                                <div class="col text-end"><span class="fw-bold">3.270.000</span>
+                                                <div class="col text-end"><span id="totalPrice-2" class="fw-bold"></span>
                                                 </div>
                                             </div>
 
@@ -692,7 +692,9 @@
                         alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
 
                     }else{
+                        updateInformationOfBooking();
                         addBookingDetailID();
+                        calculatePrices();
                     }
                 });
                 roomNumberColumn.append(roomNumberInput);
@@ -753,7 +755,7 @@
                 // Add other columns based on room properties
 
                 // Example columns for demonstration, replace with actual data
-                row.append("<td>" + 1 + "</td>");
+                row.append("<td>" + selectedRoom.quantity + "</td>");
                 row.append("<td>" + selectedRoom.description + "</td>");
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
@@ -822,7 +824,6 @@
 
         function calculatePrices() {
             // Select the tbody element within the table
-            const tbody = $("#selectedRoomTable tbody");
             const roomPriceE = $("#roomPrice");
             const taxPriceE = $("#taxPrice");
             const totalPriceE = $("#totalPrice");
@@ -845,21 +846,13 @@
             // Initialize the total price
             let roomPrice = 0;
 
-            // Iterate through each row in the tbody
-            tbody.find("tr").each(function () {
-                // Get the value in the "Giá" column (assuming it's the 8th column, index 7)
+            selectedRooms.forEach(room => {
+                const price = room.price;
+                const numberOfBooking = room.quantity;
+                roomPrice += isNaN(price) ? 0 : price * numberOfBooking * daysDifference;
+            })
 
-                const priceString = $(this).find("td:eq(6)").text().trim();
-                console.log("PRICESTIRNG:"+priceString);
-                const numberOfBookingString = $(this).find("td:eq(1)").text().trim();
-                console.log("Room Number:"+numberOfBookingString);
-                // Convert the price string to a number (assuming the price is in Vietnamese dong format)
-                const price = parseFloat(priceString.replace(/\D/g, ''));
-                const numberOfBooking = parseFloat(numberOfBookingString.replace(/\D/g, ''));
 
-                // Add the price to the total
-                roomPrice += isNaN(price) ? 0 : price * numberOfBooking * daysDifference; // Price Per Day + Number of Booking + Number of Booking Day
-            });
 
             let taxPrice = roomPrice * 0.1;
             let totalPrice = taxPrice + roomPrice;
@@ -871,7 +864,11 @@
             roomPriceConfirmE.text(formatNumberWithPeriods(roomPrice));
             taxPriceConfirmE.text(formatNumberWithPeriods(taxPrice));
             totalPriceConfirmE.text(formatNumberWithPeriods(totalPrice));
-            depositPriceConfirmE.text(formatNumberWithPeriods(depositPrice))
+            depositPriceConfirmE.text(formatNumberWithPeriods(depositPrice));
+
+            $("#taxPrice-2").text(formatNumberWithPeriods(taxPrice));
+            $("#totalPrice-2").text(formatNumberWithPeriods(totalPrice))
+            $("#roomPrice-2").text(formatNumberWithPeriods(roomPrice))
             // Log or use the total price as needed
             console.log("Total Price: " + totalPrice);
             // You can use the 'totalPrice' variable as needed in your application
