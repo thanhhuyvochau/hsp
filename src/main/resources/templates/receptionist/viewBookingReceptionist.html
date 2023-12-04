@@ -133,8 +133,8 @@
 							<td th:text="${hotelbooking.email}"></td>
 							<td th:text="${hotelbooking.address}"></td>
 							<td th:text="${hotelbooking.phone}"></td>
-							<td th:text="${hotelbooking.checkIn}"></td>
-							<td th:text="${hotelbooking.checkOut}"></td>
+							<td th:text="${#dates.format(hotelbooking.checkIn, 'dd-MM-yyyy')}"></td>
+							<td th:text="${#dates.format(hotelbooking.checkOut, 'dd-MM-yyyy')}"></td>
 							<td th:text="${hotelbooking.totalPrice}"></td>
 							<td th:text="${hotelbooking.statusId == 1 ? 'Chưa CheckIn' : 'Đang sử dụng'}"></td>
 							<td>

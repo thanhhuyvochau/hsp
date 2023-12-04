@@ -26,7 +26,8 @@ public interface HotelBookingRepository extends JpaRepository<HotelBooking, Long
 
     List<HotelBooking> findAllByUserId(Long id);
 
-    public List<HotelBooking> findByStatusId(Long status);
+    List<HotelBooking> findByStatusId(Long status);
+    List<HotelBooking> findByStatusIdAndValidBooking(Long status, Boolean validBooking);
 
 
     HotelBooking findByHotelBookingId(Long hotelBookingId);

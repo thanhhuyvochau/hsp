@@ -30,4 +30,5 @@ public interface ReceptionistBookingService {
 
     Boolean checkIn(Long hotelBookingId);
 
+    List<HotelBooking> findAllWithStatusOneAndValidBooking(Boolean validBooking);
 }

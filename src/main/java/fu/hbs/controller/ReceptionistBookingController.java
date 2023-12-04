@@ -135,7 +135,7 @@ public class ReceptionistBookingController {
     @GetMapping("/receptionist/listBookingReceptionist")
     public String listBooking(Model model) {
         // Sử dụng service để lấy danh sách đặt trước
-        List<HotelBooking> allBookings = bookingService.findAllWithStatusOne();
+        List<HotelBooking> allBookings = bookingService.findAllWithStatusOneAndValidBooking(true);
         model.addAttribute("bookings", allBookings);
         return "receptionist/viewBookingReceptionist";
     }
@@ -184,7 +184,7 @@ public class ReceptionistBookingController {
     @GetMapping("receptionist/checkOutReceptionist")
     public String checkOutReceptionist(@RequestParam("hotelBookingId") Long hotelBookingId, Model model) {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
-        if (hotelBooking != null) {
+        if (hotelBooking != null && hotelBooking.getValidBooking()) {
             List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
             List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
             PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);

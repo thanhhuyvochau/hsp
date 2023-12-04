@@ -312,4 +312,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         roomRepository.saveAll(allBookedRooms);
         return true;
     }
+
+    @Override
+    public List<HotelBooking> findAllWithStatusOneAndValidBooking(Boolean validBooking) {
+        return bookingRepository.findByStatusIdAndValidBooking(1L, true);
+    }
 }
