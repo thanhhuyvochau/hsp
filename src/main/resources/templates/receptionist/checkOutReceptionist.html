@@ -329,7 +329,7 @@
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
                                 <div class="col text-end"><a id="room-price"
-                                                             th:text="${viewCheckoutDTO.getTotalRoomPrice()}"></a></div>
+                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getTotalRoomPrice()), '.00', '').replace('$','')} + ' đ'"></a></div>
                             </div>
                             <div class="row me-4 mt-2">
                                 <div class="col ms-4">
@@ -469,7 +469,7 @@
     /*<![CDATA[*/
     let services = [[${roomServices}]];
     let addedServices = [[${viewCheckoutDTO.getRoomBookingServiceDTOS()}]];
-
+    let roomPrice = [[${viewCheckoutDTO.getTotalRoomPrice()}]];
     /*]]>*/
 
 
@@ -501,7 +501,7 @@
 
             }else{
                 let addedService = addedServices[serviceIndex];
-                addedService.quantity = addedService.quantity + Number(quantity);
+                addedService.quantity = Number(quantity);
                 $("#serviceInputQuantity-"+serviceId).val(addedService.quantity);
             }
             updateUseServiceView();
@@ -587,14 +587,13 @@
     });
 
     function calculatePrices() {
-        let $room = $("#room-price");
+
         let $service = $("#service-price");
         let $surcharge = $("#surcharge-price");
         let $tax = $("#tax-price");
         let $total = $("#total-price");
         let $remain = $("#remain-price");
         let $prepay = $("#prepay-price");
-        let roomPrice = $room.text();
         let servicePrice = reCalculateServicePrice();
         let surchargePrice = $surcharge.val();
         let taxPrice = $tax.text();
