@@ -264,8 +264,8 @@
                                 <td th:text="${bookDetail.getCustomerNumber()}"></td>
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
-                                <td th:text="${bookDetail.getPrice()}"></td>
-                                <td th:text="${bookDetail.getTotalPrice()}"></td>
+                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
+                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
                                 <td></td>
                             </tr>
                             </tbody>
@@ -291,6 +291,18 @@
                             </tr>
                             </thead>
                             <tbody>
+                            <tr th:each="bookDetail, iStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
+                                <th scope="row" th:text="${iStat.index + 1 }"></th>
+                                <td th:text="${bookDetail.getServiceName()}"></td>
+                                <td th:text="${bookDetail.getQuantity()}"></td>
+                                <td th:text="${bookDetail.getServicePrice()}"></td>
+                                <td th:text="${bookDetail.getTotalPrice()}"></td>
+                                <td>
+                                    <button th:id="'delete-btn-service-'+${bookDetail.getServiceId()}" type="button" th:onclick="'deleteRow(\'' + ${bookDetail.getServiceId()} + '\');'" class="btn button btn-dark"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
                             <tr>
                                 <th scope="row"></th>
                                 <td></td>
@@ -301,18 +313,7 @@
                                     <button type="button" id="openButton" class="btn btn-dark">Thêm</button>
                                 </td>
                             </tr>
-                            <tr th:each="bookDetail, iStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
-                                <th scope="row">1</th>
-                                <td th:text="${bookDetail.getServiceName()}"></td>
-                                <td th:text="${bookDetail.getQuantity()}"></td>
-                                <td th:text="${bookDetail.getServicePrice()}"></td>
-                                <td th:text="${bookDetail.getTotalPrice()}"></td>
-                                <td>
-                                    <button class="btn button btn-dark"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-
-                            </tbody>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -415,19 +416,19 @@
                         </tr>
                         </thead>
                         <tbody id="service-data">
-                        <tr th:id="${'service-row-'+iStat.index}" th:each="service, iStat : ${roomServices}">
+                        <tr th:id="${'service-row-'+service.getServiceId()}" th:each="service, iStat : ${roomServices}">
                             <td th:text="${iStat.index + 1}"></td>
-                            <td th:id="${'service-name-'+iStat.index}" th:text="${service.getServiceName()}"></td>
-                            <td th:id="${'service-price-'+iStat.index}" th:text="${service.getServicePrice()}"></td>
+                            <td th:id="${'service-name-'+service.getServiceId()}" th:text="${service.getServiceName()}"></td>
+                            <td th:id="${'service-price-'+service.getServiceId()}" th:text="${service.getServicePrice()}"></td>
                             <td>
                                 <label>
-                                    <input min="0" value="0" th:id="${'service-quantity-'+iStat.index}" id="quantity"
+                                    <input min="0" value="0" th:id="${'service-quantity-'+service.getServiceId()}"
                                            type="number">
                                 </label>
                             </td>
                             <td id="">
                                 <button type="button"
-                                        th:onclick="'addHotelService(\'' + ${iStat.index} + '\');'"
+                                        th:onclick="'addHotelService(\'' + ${service.getServiceId()} + '\');'"
                                         class="btn btn-danger">Thêm
                                 </button>
                             </td>
@@ -448,11 +449,11 @@
     </div>
     <input type="hidden" th:value="${viewCheckoutDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
     <div id="service-used-container">
-        <div th:each="useService, iterStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
+        <div th:id="'service-'+${useService.getServiceId()}" th:each="useService, iterStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
             <h1 th:text="${iterStat.index}"></h1>
-            <input th:value="${useService.getServiceId()}" type="hidden"
+            <input th:id="'serviceInputID-'+${useService.getServiceId()}" th:value="${useService.getServiceId()}" type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].serviceId}">
-            <input  th:value="${useService.getQuantity()}" type="hidden"
+            <input th:id="'serviceInputQuantity-'+${useService.getServiceId()}"  th:value="${useService.getQuantity()}" type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].quantity}">
         </div>
     </div>
@@ -472,32 +473,36 @@
     /*]]>*/
 
 
-    function addHotelService(rowID) {
-        let $quantity = $('#service-quantity-' + rowID);
+    function addHotelService(serviceId) {
+        let $quantity = $('#service-quantity-' + serviceId);
         let quantity = $quantity.val();
-        let $serviceID = $('#service-id-' + rowID);
-        let serviceId = $serviceID.val();
+        // let $serviceID = $('#service-id-' + rowID);
+        // let serviceId = $serviceID.val();
         let container = document.getElementById('service-used-container');
         let index = container.children.length; // Get the current index
 
         if (quantity > 0) {
-            let addedService = services[rowID];
-            let serviceIndex = addedServices.findIndex(service => service.serviceId === serviceId);
-            if (serviceIndex < 0){
+
+            let serviceIndex = addedServices.findIndex(service => service.serviceId == serviceId);
+            console.log("INDEX:"+serviceIndex)
+;            if (serviceIndex < 0){
+                let addedService = services.find(service => service.serviceId == serviceId);
+
                 addedServices.push({...addedService, quantity});
                 let detailDiv = document.createElement('div');
-                detailDiv.id = `service-${index}`;
+                detailDiv.id = `service-${serviceId}`;
                 detailDiv.innerHTML = `
-            <input id="serviceInputID-${serviceIndex}" value="${serviceId}" type="hidden"
+            <input id="serviceInputID-${serviceId}" value="${serviceId}" type="hidden"
                    name="hotelServices[${index}].serviceId">
-            <input id="serviceInputQuantity-${serviceIndex}" value="${quantity}" type="hidden"
+            <input id="serviceInputQuantity-${serviceId}" value="${quantity}" type="hidden"
                    name="hotelServices[${index}].quantity">
         `;
                 container.appendChild(detailDiv);
 
             }else{
-                addedService.quantity = addedService.quantity + quantity;
-                $("#serviceInputQuantity-"+serviceIndex).val(addedService.quantity);
+                let addedService = addedServices[serviceIndex];
+                addedService.quantity = addedService.quantity + Number(quantity);
+                $("#serviceInputQuantity-"+serviceId).val(addedService.quantity);
             }
             updateUseServiceView();
         } else {
@@ -509,14 +514,14 @@
         // Select the table body
         const tbody = $("#use-service-table > tbody");
         tbody.empty(); // clean old data
-        var index = tbody.toArray().length;
+        var index = 1;
 
         console.log("LIST SERVICE:"+JSON.stringify(addedServices))
 
         addedServices.forEach(addService => {
-            var row = $("<tr></tr>");
+            let row = $("<tr></tr>");
             row.id = 'input-service-id-' + addService.serviceId;
-            row.append("<th scope='row'>" + Number(index + 1) + "</th>");
+            row.append("<th scope='row'>" + index + "</th>");
             row.append("<td>" + addService.serviceName + "</td>");
             // Add other columns based on room properties
 
@@ -526,19 +531,20 @@
             row.append("<td>" + formatCurrency(addService.servicePrice * addService.quantity) + "</td>");
 
             const buttonColumn = $("<td></td>");
-            const addButton = $("<button></button>")
+            const trashButton = $("<button type='button'></button>")
                 .addClass("btn button btn-dark")
                 .html("<i class='bi bi-trash'></i>")
                 .on("click", function () {
-                    deleteRow(this, rowId);
-                    addHotelService(addService.serviceId);
+                    deleteRow(addService.serviceId);
                 });
-            buttonColumn.append(addButton);
+            trashButton.attr("id", "delete-btn-service-"+addService.serviceId);
+            buttonColumn.append(trashButton);
 
             row.append(buttonColumn);
             // Append the row to the table body
             tbody.append(row);
-        })
+            index++;
+        });
         // Update the table with new data
         calculatePrices();
     }
@@ -606,15 +612,18 @@
         $service.text(formatCurrency(servicePrice));
     }
 
-    function deleteRow(button, rowIndex) {
-        let row = button.parentNode.parentNode;
-        row.parentNode.removeChild(row);
-        deleteServiceInput(rowIndex);
+    function deleteRow(serviceId) {
+        let button = $("#delete-btn-service-"+serviceId);
+        let row = button.parent().parent();
+        row.parent().remove(row);
+        addedServices = addedServices.filter(service => service.serviceId != serviceId);
+        deleteServiceInput(serviceId);
+        updateUseServiceView();
     }
 
-    function deleteServiceInput(rowIndex) {
+    function deleteServiceInput(serviceId) {
 // Create the class name pattern
-        var idServiceInput = 'service-' + rowIndex;
+        var idServiceInput = 'service-' + serviceId;
 // Select and remove all elements with the specified class name pattern
         var elementsToRemove = document.getElementById(idServiceInput);
         elementsToRemove.parentNode.removeChild(elementsToRemove);
@@ -625,10 +634,11 @@
         var total = 0;
 
         for (var i = 1; i < table.rows.length; i++) {
-            var cell = table.rows[i].cells[4]; // Index 4 corresponds to the 'Thành tiền' column
-            // Parse the cell content as a float and add it to the total
-            var value = parseFloat(cell.textContent || cell.innerText);
-            total += isNaN(value) ? 0 : value;
+            let priceCell = table.rows[i].cells[3]; // Index 4 corresponds to the 'Thành tiền' column
+            let quantityCell = table.rows[i].cells[2];
+            // Parse the priceCell content as a float and add it to the total
+            let price = parseFloat(priceCell.textContent || priceCell.innerText)*Number(quantityCell.textContent || quantityCell.innerText);
+            total += isNaN(price) ? 0 : price;
         }
         console.log("TOTAL SERVICE:" + total);
         return total;
