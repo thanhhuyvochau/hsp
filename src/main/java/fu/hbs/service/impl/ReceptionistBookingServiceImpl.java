@@ -132,6 +132,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setCreatedDate(Instant.now());
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
             transaction.setContent("Thanh toán đặt phòng");
+            hotelBooking.setValidBooking(true);
             transactionsRepository.save(transaction);
         }
         hotelBooking.setTotalPrice(totalPrice);

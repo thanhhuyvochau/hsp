@@ -13,13 +13,12 @@ import java.math.BigDecimal;
 public class RoomBookingServiceDTO {
     private Long serviceId;
     private String serviceName;
-    private BigDecimal servicePrice;
+    private BigDecimal servicePrice = BigDecimal.ZERO;
     private String serviceDes;
     private String serviceNote;
     private Boolean status;
     private String serviceImage;
     private int quantity;
-    private BigDecimal pricePer = BigDecimal.ZERO;
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
     public static RoomBookingServiceDTO valueOf(RoomService roomService, int quantity) {
@@ -30,6 +29,6 @@ public class RoomBookingServiceDTO {
                 roomService.getServiceNote(),
                 roomService.getStatus(),
                 roomService.getServiceImage(),
-                quantity, roomService.getServicePrice(), BookingUtil.calculateTotalPriceOfUseService(roomService, quantity));
+                quantity, BookingUtil.calculateTotalPriceOfUseService(roomService, quantity));
     }
 }

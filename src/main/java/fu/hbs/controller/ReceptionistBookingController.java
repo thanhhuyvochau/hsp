@@ -284,6 +284,10 @@ public class ReceptionistBookingController {
             vnpayTransactions.setStatus("Thành công");
             vnpayTransactions.setPaymentId(1L);
             transactionsService.save(vnpayTransactions);
+
+            HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
+            hotelBooking.setValidBooking(true);
+            hotelBookingService.save(hotelBooking);
             return "customer/ordersuccess";
         }
         return "customer/orderfail";

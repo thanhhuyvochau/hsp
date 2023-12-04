@@ -305,7 +305,7 @@
                                 <th scope="row">1</th>
                                 <td th:text="${bookDetail.getServiceName()}"></td>
                                 <td th:text="${bookDetail.getQuantity()}"></td>
-                                <td th:text="${bookDetail.getPricePer()}"></td>
+                                <td th:text="${bookDetail.getServicePrice()}"></td>
                                 <td th:text="${bookDetail.getTotalPrice()}"></td>
                                 <td>
                                     <button class="btn button btn-dark"><i class="bi bi-trash"></i></button>
@@ -475,61 +475,71 @@
     function addHotelService(rowID) {
         let $quantity = $('#service-quantity-' + rowID);
         let quantity = $quantity.val();
+        let $serviceID = $('#service-id-' + rowID);
+        let serviceId = $serviceID.val();
+        let container = document.getElementById('service-used-container');
+        let index = container.children.length; // Get the current index
+
         if (quantity > 0) {
             let addedService = services[rowID];
-            addedServices.findIndex(service => service.id)
-            addedServices.push(addedService)
-            let $serviceID = $('#service-id-' + rowID);
-
-            let name = $('#service-name-' + rowID).text();
-            let price = $('#service-price-' + rowID).text();
-            let serviceId = $serviceID.val();
-
-            let container = document.getElementById('service-used-container');
-            let index = container.children.length; // Get the current index
-            let detailDiv = document.createElement('div');
-            detailDiv.id = `service-${index}`;            detailDiv.innerHTML = `
-            <input value="${serviceId}" type="hidden"
+            let serviceIndex = addedServices.findIndex(service => service.serviceId === serviceId);
+            if (serviceIndex < 0){
+                addedServices.push({...addedService, quantity});
+                let detailDiv = document.createElement('div');
+                detailDiv.id = `service-${index}`;
+                detailDiv.innerHTML = `
+            <input id="serviceInputID-${serviceIndex}" value="${serviceId}" type="hidden"
                    name="hotelServices[${index}].serviceId">
-            <input value="${quantity}" type="hidden"
+            <input id="serviceInputQuantity-${serviceIndex}" value="${quantity}" type="hidden"
                    name="hotelServices[${index}].quantity">
         `;
-            container.appendChild(detailDiv);
-            updateUseServiceView(index, serviceId, name, quantity, price);
+                container.appendChild(detailDiv);
+
+            }else{
+                addedService.quantity = addedService.quantity + quantity;
+                $("#serviceInputQuantity-"+serviceIndex).val(addedService.quantity);
+            }
+            updateUseServiceView();
         } else {
             alert("Không thể thêm dịch vụ nếu số lượng bằng không");
         }
     }
 
-    function updateUseServiceView(rowId, serviceId, serviceName, quantity, pricePer) {
+    function updateUseServiceView() {
         // Select the table body
         const tbody = $("#use-service-table > tbody");
+        tbody.empty(); // clean old data
         var index = tbody.toArray().length;
+
+        console.log("LIST SERVICE:"+JSON.stringify(addedServices))
+
+        addedServices.forEach(addService => {
+            var row = $("<tr></tr>");
+            row.id = 'input-service-id-' + addService.serviceId;
+            row.append("<th scope='row'>" + Number(index + 1) + "</th>");
+            row.append("<td>" + addService.serviceName + "</td>");
+            // Add other columns based on room properties
+
+            // Example columns for demonstration, replace with actual data
+            row.append("<td>" + addService.quantity + "</td>");
+            row.append("<td>" + formatCurrency(addService.servicePrice) + "</td>");
+            row.append("<td>" + formatCurrency(addService.servicePrice * addService.quantity) + "</td>");
+
+            const buttonColumn = $("<td></td>");
+            const addButton = $("<button></button>")
+                .addClass("btn button btn-dark")
+                .html("<i class='bi bi-trash'></i>")
+                .on("click", function () {
+                    deleteRow(this, rowId);
+                    addHotelService(addService.serviceId);
+                });
+            buttonColumn.append(addButton);
+
+            row.append(buttonColumn);
+            // Append the row to the table body
+            tbody.append(row);
+        })
         // Update the table with new data
-        var row = $("<tr></tr>");
-        row.id = 'input-service-id-' + serviceId;
-        row.append("<th scope='row'>" + Number(index + 1) + "</th>");
-        row.append("<td>" + serviceName + "</td>");
-        // Add other columns based on room properties
-
-        // Example columns for demonstration, replace with actual data
-        row.append("<td>" + quantity + "</td>");
-        row.append("<td>" + formatCurrency(pricePer) + "</td>");
-        row.append("<td>" + formatCurrency(pricePer * quantity) + "</td>");
-
-        const buttonColumn = $("<td></td>");
-        const addButton = $("<button></button>")
-            .addClass("btn button btn-dark")
-            .html("<i class='bi bi-trash'></i>")
-            .on("click", function () {
-                deleteRow(this, rowId);
-
-            });
-        buttonColumn.append(addButton);
-
-        row.append(buttonColumn);
-        // Append the row to the table body
-        tbody.append(row);
         calculatePrices();
     }
 
