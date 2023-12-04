@@ -915,8 +915,13 @@
         }
         document.getElementById('btnContinue').addEventListener('click', function () {
             // Use Bootstrap's Tab JavaScript API to switch to the "profile" tab
-            var tab = new bootstrap.Tab(document.getElementById('profile-tab'));
-            tab.show();
+
+            if (selectedRooms.length > 0){
+                let tab = new bootstrap.Tab(document.getElementById('profile-tab'));
+                tab.show();
+            }else{
+                alert("Bạn phải chọn phòng trước khi điền thông tin khách hàng")
+            }
         });
         document.getElementById('btnBack').addEventListener('click', function () {
             // Switch to the "chooseRoom" tab
@@ -926,8 +931,14 @@
 
         document.getElementById('btnContinueProfile').addEventListener('click', function () {
             // Switch to the "confirm" tab
-            var tab = new bootstrap.Tab(document.getElementById('confirm-tab'));
-            tab.show();
+            if ( validateName() & validatePhone() & validateAddress() & validateEmail()){
+
+                var tab = new bootstrap.Tab(document.getElementById('confirm-tab'));
+                tab.show();
+            }else{
+            alert("Điền đúng thông tin khách hàng trước khi xác nhận thanh toán")
+        }
+
         });
 
         document.getElementById('btnBackConfirm').addEventListener('click', function () {
