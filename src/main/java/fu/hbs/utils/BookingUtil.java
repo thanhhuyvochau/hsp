@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +30,14 @@ public class BookingUtil {
 
     private static RoomCategoryService staticRoomCategoryService;
 
-    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService, HotelBookingServiceService hotelBookingServiceService, ServiceService roomServiceService, RoomCategoryService roomCategoryService) {
+    private static fu.hbs.service.dao.HotelBookingService staticHotelBookingService;
+
+    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService, HotelBookingServiceService hotelBookingServiceService, ServiceService roomServiceService, RoomCategoryService roomCategoryService, fu.hbs.service.dao.HotelBookingService hotelBookingService) {
         BookingUtil.staticCategoryRoomPriceService = categoryRoomPriceService;
         BookingUtil.statichHotelBookingServiceService = hotelBookingServiceService;
         BookingUtil.staticRoomServiceService = roomServiceService;
         BookingUtil.staticRoomCategoryService = roomCategoryService;
+        BookingUtil.staticHotelBookingService = hotelBookingService;
     }
 
     public static long calculateRoomNumber(RoomCategories roomCategories, List<BookingRoomDetails> bookingRoomDetails) {
@@ -41,20 +46,42 @@ public class BookingUtil {
                 .count();
     }
 
-    public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId) {
+    public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId, Boolean isCalculateForCheckout) {
 //        long diffInDays = checkIn.until(checkout, ChronoUnit.HOURS);
         Duration durationOfStay = Duration.between(checkIn, checkout);
-        Duration durationOfCheckoutSooner = Duration.between(Instant.now(), checkout);
 
         BigDecimal pricePer = getPriceOfRoom(categoryId);
         // If the user checked out earlier than 24 hours, deduct 1 day's price as a refund
         long durationOfStayDays = durationOfStay.toDays();
-        long soonerDays = durationOfCheckoutSooner.toDays();
-        BigDecimal totalPrice = pricePer.multiply(BigDecimal.valueOf(durationOfStayDays));
-        if (soonerDays > 1) {
-            BigDecimal refund = pricePer.multiply(BigDecimal.valueOf(soonerDays));
-            return totalPrice.subtract(refund);
+        float multipler = 0L;
+        checkIn = checkIn.truncatedTo(ChronoUnit.DAYS);
+        checkout = checkout.truncatedTo(ChronoUnit.DAYS);
+
+        while (checkIn.isBefore(checkout) || checkIn.equals(checkout)){
+            int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate());
+            if (dayType == 3){
+                multipler+=3;
+            } else if (dayType == 2) {
+                multipler+=1.5F;
+            }else{
+                multipler+=1;
+            }
+            checkIn = checkIn.plus(1,ChronoUnit.DAYS);
         }
+
+        BigDecimal totalPrice  = BigDecimal.ZERO;
+        if (isCalculateForCheckout){
+            Duration durationOfCheckoutSooner = Duration.between(Instant.now(), checkout);
+            long soonerDays = durationOfCheckoutSooner.toDays();
+             totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
+            if (soonerDays > 1) {
+                BigDecimal refund = pricePer.multiply(BigDecimal.valueOf(soonerDays));
+                return totalPrice.subtract(refund);
+            }
+        }else{
+             totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
+        }
+
         return totalPrice;
 
     }
@@ -85,6 +112,4 @@ public class BookingUtil {
         BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
         return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
     }
-
-
 }

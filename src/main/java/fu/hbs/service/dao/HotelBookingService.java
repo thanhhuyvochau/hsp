@@ -51,4 +51,6 @@ public interface HotelBookingService {
 
     void updateRoomStatus(Room room);
     HotelBooking findById(Long id);
+
+    int getDayType(LocalDate startDate);
 }

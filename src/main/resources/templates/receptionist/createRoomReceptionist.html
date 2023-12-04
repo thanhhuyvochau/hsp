@@ -819,7 +819,8 @@
             selectedRooms.forEach(room => {
                 const price = room.price;
                 const numberOfBooking = room.quantity;
-                roomPrice += isNaN(price) ? 0 : price * numberOfBooking * daysDifference;
+                const totalARoomPrice = calculateRoomPrice(checkinDate, checkoutDate, price)*numberOfBooking;
+                roomPrice += totalARoomPrice;
             })
 
 
@@ -1054,12 +1055,61 @@
         }
     }
 
-    function getFormatDateTime(date) {
+    function getFormatDateTime(date,includeYear = true) {
         var day = ("0" + date.getDate()).slice(-2);
         var month = ("0" + (date.getMonth() + 1)).slice(-2);
-        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+        var today = includeYear ? date.getFullYear() + "-" + (month) + "-" + (day) : (month) + "-" + (day);
         return today;
     }
+    function isNormalDayOrHoliday(date) {
+        // Check if the date is a weekend (Saturday or Sunday) - Use 3 to represents Holiday
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            return 2;
+        }
+
+        // Check if the date is a predefined holiday
+        const holidays = [
+            // Add your list of holidays here (in the format YYYY-MM-DD)
+           "01-01","04-30","05-01","09-02",
+            // Add more holidays as needed
+        ];
+
+        const formattedDate = getFormatDateTime(date,false);
+        console.log("Format Date:"+formattedDate);
+        if (holidays.includes(formattedDate)) { //- Use 3 to represents Weekend
+            return 3;
+        }
+
+        return 1;
+    }
+
+    function calculateRoomPrice(startDate, endDate, roomPrice) {
+        const oneDayInMillis = 24 * 60 * 60 * 1000;
+        let totalPrice = 0;
+
+        // Iterate through each day in the date range
+        for (let currentDate = new Date(startDate); currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+            // Check if the current day is a normal day, weekend, or holiday
+            const dayType = isNormalDayOrHoliday(currentDate);
+
+            // Adjust the multiplier based on the day type
+            let multiplier = 1;
+            if (dayType == 2) {
+                multiplier = 1.5; // If it's a weekend, multiply by 1.5
+            } else if (dayType == 3) {
+                multiplier = 3; // If it's a holiday, multiply by 2 (adjust as needed)
+            }
+            console.log("MULTIPLER:"+multiplier);
+            // Add the room price multiplied by the multiplier to the total
+            totalPrice += roomPrice * multiplier;
+        }
+
+        return totalPrice;
+    }
+
+
+
 </script>
 
 

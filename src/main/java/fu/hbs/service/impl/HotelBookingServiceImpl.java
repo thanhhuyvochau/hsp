@@ -690,7 +690,7 @@ public class HotelBookingServiceImpl implements HotelBookingService {
      * @return An integer representing the day type (1: weekday, 2: weekend, 3:
      * holiday).
      */
-    private int getDayType(LocalDate startDate) {
+    public int getDayType(LocalDate startDate) {
         if (getHolidays(startDate.getYear()).contains(startDate)) {
             return 3; // holidays
         }

@@ -314,4 +314,6 @@ public class ReceptionistBookingController {
             return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
