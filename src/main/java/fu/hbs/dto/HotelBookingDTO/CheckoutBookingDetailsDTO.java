@@ -27,13 +27,18 @@ public class CheckoutBookingDetailsDTO {
     private BigDecimal price = BigDecimal.ZERO;
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    public static CheckoutBookingDetailsDTO valueOf(RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Instant checkIn, Instant checkOut) {
+    public static CheckoutBookingDetailsDTO valueOf(HotelBooking hotelBooking,RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Instant checkIn, Instant checkOut) {
         CheckoutBookingDetailsDTO detailsDTO = new CheckoutBookingDetailsDTO();
         detailsDTO.setCategoryId(detailsDTO.getCategoryId());
         detailsDTO.setCategoryName(roomCategory.getRoomCategoryName());
         detailsDTO.setRoomNumber(BookingUtil.calculateRoomNumber(roomCategory, bookingRoomDetails));
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        if (hotelBooking.getStatusId() == 3L){
+             totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, hotelBooking.getCheckOut(), roomCategory.getRoomCategoryId(), true);
+        }else{
+            totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, checkOut, roomCategory.getRoomCategoryId(), true);
+        }
         detailsDTO.setPrice(BookingUtil.getPriceOfRoom(roomCategory.getRoomCategoryId()));
-        BigDecimal totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, checkOut, roomCategory.getRoomCategoryId(), true);
         detailsDTO.setTotalPrice(totalPrice.multiply(BigDecimal.valueOf(detailsDTO.getRoomNumber())));
         return detailsDTO;
     }

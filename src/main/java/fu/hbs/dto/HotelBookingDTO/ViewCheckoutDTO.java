@@ -67,7 +67,8 @@ public class ViewCheckoutDTO {
             List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()
                     .filter(bookingRoomDetail -> bookingRoomDetail.getRoomCategoryId().equals(category.getRoomCategoryId()))
                     .toList();
-            CheckoutBookingDetailsDTO detailsDTO = CheckoutBookingDetailsDTO.valueOf(category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
+            CheckoutBookingDetailsDTO detailsDTO1 = CheckoutBookingDetailsDTO.valueOf(hotelBooking, category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
+            CheckoutBookingDetailsDTO detailsDTO = detailsDTO1;
             viewCheckoutDto.getBookingDetails().add(detailsDTO);
         }
 
