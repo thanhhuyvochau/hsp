@@ -498,7 +498,6 @@
                    name="hotelServices[${index}].quantity">
         `;
                 container.appendChild(detailDiv);
-
             }else{
                 let addedService = addedServices[serviceIndex];
                 addedService.quantity = Number(quantity);
@@ -583,7 +582,7 @@
                 $(this).val('');
             }
         });
-        calculatePrices()
+        calculatePrices();
     });
 
     function calculatePrices() {

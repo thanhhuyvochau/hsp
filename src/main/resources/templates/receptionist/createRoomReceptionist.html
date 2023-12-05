@@ -1089,7 +1089,7 @@
         let totalPrice = 0;
 
         // Iterate through each day in the date range
-        for (let currentDate = new Date(startDate); currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+        for (let currentDate = new Date(startDate); currentDate < endDate; currentDate.setDate(currentDate.getDate() + 1)) {
             // Check if the current day is a normal day, weekend, or holiday
             const dayType = isNormalDayOrHoliday(currentDate);
 

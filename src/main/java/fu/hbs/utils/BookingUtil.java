@@ -57,7 +57,7 @@ public class BookingUtil {
         checkIn = checkIn.truncatedTo(ChronoUnit.DAYS);
         checkout = checkout.truncatedTo(ChronoUnit.DAYS);
 
-        while (checkIn.isBefore(checkout) || checkIn.equals(checkout)){
+        while (checkIn.isBefore(checkout)){
             int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate());
             if (dayType == 3){
                 multipler+=3;
