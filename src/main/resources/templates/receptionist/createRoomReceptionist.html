@@ -190,6 +190,9 @@
                                             <tbody>
                                             </tbody>
                                         </table>
+                                        <div class="alert alert-warning" id="empty-error-message" role="alert">
+                                            <i class="bi bi-exclamation-triangle"></i> <span>Không tìm thấy phòng trống!!</span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -736,13 +739,22 @@
                 $("#bookedRoomNumber").text(updateRoomNumber());
             })
         }
-
+        updateTableView("[]"); // Default state of first load
         function updateTableView(response) {
             // Assuming the response is a JSON object with room details
             rooms = JSON.parse(response);
             // Select the table body
             const tbody = $("#roomTable tbody");
+            const emptyErrorMessage = $("#empty-error-message");
 
+            if (rooms.length == 0 ){
+                tbody.parent().css("display","none");
+                emptyErrorMessage.css("display","block");
+            }else{
+                tbody.parent().css("display","block");
+                emptyErrorMessage.css("display","none");
+
+            }
             // Clear existing table rows
             tbody.empty();
             let index = 1;
