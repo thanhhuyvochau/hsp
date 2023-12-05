@@ -717,22 +717,25 @@
             tbody.empty();
             const childNumber = document.querySelector("#bookingInformationRooms > tbody").childElementCount + 1;
             console.log(tbody);
+            let index = 1;
+            var checkinDate = new Date(document.getElementById('checkIn').value);
+            var checkoutDate = new Date(document.getElementById('checkOut').value);
             selectedRooms.forEach(selectedRoom => {
-                var row = $("<tr></tr>");
-                row.id = selectedRoom.categoryId;
-                row.append("<th scope='row'>" + childNumber + "</th>");
-                row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
-                // Add other columns based on room properties
+                console.log("LAST PAGE:" + JSON.stringify(selectedRoom))
+                let row = $("<tr></tr>");
 
-                // Example columns for demonstration, replace with actual data
+                row.append("<th scope='row'>" + index + "</th>");
+                row.append("<td>" + selectedRoom.roomCategoryName + "</td>");
                 row.append("<td>" + selectedRoom.quantity + "</td>");
-                row.append("<td>" + selectedRoom.description + "</td>");
+                row.append("<td>" + getFormatDateTime(checkinDate) + "</td>");
+                row.append("<td>" + getFormatDateTime(checkoutDate) + "</td>");
                 row.append("<td>" + selectedRoom.bed + "</td>");
                 row.append("<td>" + selectedRoom.square + "</td>");
-                row.append("<td>" + selectedRoom.numberPerson + "</td>");
+                row.append("<td>" + "Không" + "</td>");
                 row.append("<td>" + formatCurrency(selectedRoom.price) + "</td>");
                 // Append the row to the table body
                 tbody.append(row);
+                index++;
                 $("#bookedRoomNumber").text(selectedRoom.length);
             })
         }
