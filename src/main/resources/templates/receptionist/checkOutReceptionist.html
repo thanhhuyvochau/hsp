@@ -235,7 +235,9 @@
                         <p class="fw-bold">Ngày nhận phòng: <a th:text="${viewCheckoutDTO.getCheckIn()}"></a></p>
                     </div>
                     <div class="col-lg-6 mt-3">
-                        <p class="fw-bold text-end">Ngày trả phòng: <a th:text="${viewCheckoutDTO.getCheckOut()}"></a>
+                        <p class="fw-bold text-end">Ngày trả phòng đã đặt: <a th:text="${viewCheckoutDTO.getCheckOutBooking()}"></a>
+                        </p>
+                        <p class="fw-bold text-end">Ngày trả phòng thực tế: <a th:text="${viewCheckoutDTO.getCheckOut()}"></a>
                         </p>
                     </div>
                 </div>
@@ -367,7 +369,8 @@
                                     <h6 class="fw-bold">Đã thanh toán:</h6>
                                 </div>
                                 <div class="col text-end"><a id="prepay-price"
-                                                             th:text="${viewCheckoutDTO.getPrepay()}"></a></div>
+                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getPrepay()), '.00', '').replace('$','')} + ' đ'"></a></div>
+                                <input type="hidden" th:value="${viewCheckoutDTO.getPrepay()}" id="prepay-price-hidden"/>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
@@ -592,13 +595,13 @@
         let $tax = $("#tax-price");
         let $total = $("#total-price");
         let $remain = $("#remain-price");
-        let $prepay = $("#prepay-price");
+        let $prepay = $("#prepay-price-hidden");
         let servicePrice = reCalculateServicePrice();
         let surchargePrice = $surcharge.val();
         let taxPrice = $tax.text();
         let totalPrice = $total.text();
         let remainPrice = $remain.text();
-        let prepayPrice = $prepay.text();
+        let prepayPrice = $prepay.val();
 
         taxPrice = (Number(roomPrice) + Number(servicePrice) + Number(surchargePrice)) * 0.1;
         totalPrice = Number(roomPrice) + Number(servicePrice) + Number(surchargePrice) + Number(taxPrice);

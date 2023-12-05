@@ -28,6 +28,7 @@ public class ViewCheckoutDTO {
     private BigDecimal depositPrice = BigDecimal.ZERO;
     private String checkIn;
     private String checkOut;
+    private String checkOutBooking;
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;
@@ -55,8 +56,10 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
         if (hotelBooking.getStatusId() == 2L){
             viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(Instant.now()));
+            viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
         }else{
             viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+            viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
         }
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
@@ -67,8 +70,7 @@ public class ViewCheckoutDTO {
             List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()
                     .filter(bookingRoomDetail -> bookingRoomDetail.getRoomCategoryId().equals(category.getRoomCategoryId()))
                     .toList();
-            CheckoutBookingDetailsDTO detailsDTO1 = CheckoutBookingDetailsDTO.valueOf(hotelBooking, category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
-            CheckoutBookingDetailsDTO detailsDTO = detailsDTO1;
+            CheckoutBookingDetailsDTO detailsDTO = CheckoutBookingDetailsDTO.valueOf(hotelBooking,category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
             viewCheckoutDto.getBookingDetails().add(detailsDTO);
         }
 
