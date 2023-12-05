@@ -265,7 +265,7 @@
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
                                 <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
-                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
+                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getTotalPrice()), '.00', '').replace('$','')} + ' đ'"></td>
                                 <td></td>
                             </tr>
                             </tbody>
