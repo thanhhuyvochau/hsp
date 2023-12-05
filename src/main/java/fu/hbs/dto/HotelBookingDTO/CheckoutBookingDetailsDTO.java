@@ -33,7 +33,8 @@ public class CheckoutBookingDetailsDTO {
         detailsDTO.setCategoryName(roomCategory.getRoomCategoryName());
         detailsDTO.setRoomNumber(BookingUtil.calculateRoomNumber(roomCategory, bookingRoomDetails));
         detailsDTO.setPrice(BookingUtil.getPriceOfRoom(roomCategory.getRoomCategoryId()));
-        detailsDTO.setTotalPrice(BookingUtil.calculatePriceBetweenDate(checkIn, checkOut, roomCategory.getRoomCategoryId(), true));
+        BigDecimal totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, checkOut, roomCategory.getRoomCategoryId(), true);
+        detailsDTO.setTotalPrice(totalPrice.multiply(BigDecimal.valueOf(detailsDTO.getRoomNumber())));
         return detailsDTO;
     }
 }

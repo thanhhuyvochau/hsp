@@ -419,7 +419,7 @@
                         <tr th:id="${'service-row-'+service.getServiceId()}" th:each="service, iStat : ${roomServices}">
                             <td th:text="${iStat.index + 1}"></td>
                             <td th:id="${'service-name-'+service.getServiceId()}" th:text="${service.getServiceName()}"></td>
-                            <td th:id="${'service-price-'+service.getServiceId()}" th:text="${service.getServicePrice()}"></td>
+                            <td th:id="${'service-price-'+service.getServiceId()}" th:text="${#strings.replace(#numbers.formatCurrency(service.getServicePrice()), '.00', '').replace('$','')} + ' đ'"></td>
                             <td>
                                 <label>
                                     <input min="0" value="0" th:id="${'service-quantity-'+service.getServiceId()}"

@@ -693,10 +693,7 @@
                 // Append the row to the table body
                 tbody.append(row);
             })
-            console.log("RÔM BUMBER: " + totalNumber)
-            for (let elementsByClassNameElement of document.getElementsByClassName("bookedRoomNumber")) {
-                elementsByClassNameElement.innerHTML = totalNumber;
-            }
+           updateRoomNumber();
 
             calculatePrices();
             updateInformationOfBooking();
@@ -736,7 +733,7 @@
                 // Append the row to the table body
                 tbody.append(row);
                 index++;
-                $("#bookedRoomNumber").text(selectedRoom.length);
+                $("#bookedRoomNumber").text(updateRoomNumber());
             })
         }
 
@@ -1111,8 +1108,16 @@
         return totalPrice;
     }
 
-
-
+    function updateRoomNumber(){
+        let totalNumber = selectedRooms.reduce(
+            (accumulator, currentValue) => Number(accumulator) + Number(currentValue.quantity),
+            0,
+        );
+        for (let elementsByClassNameElement of document.getElementsByClassName("bookedRoomNumber")) {
+            elementsByClassNameElement.innerHTML = totalNumber;
+        }
+        return totalNumber;
+    }
 </script>
 
 

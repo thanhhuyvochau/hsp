@@ -56,18 +56,23 @@ public class BookingUtil {
         float multipler = 0L;
         checkIn = checkIn.truncatedTo(ChronoUnit.DAYS);
         checkout = checkout.truncatedTo(ChronoUnit.DAYS);
-
-        while (checkIn.isBefore(checkout)){
-            int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate());
-            if (dayType == 3){
-                multipler+=3;
-            } else if (dayType == 2) {
-                multipler+=1.5F;
-            }else{
-                multipler+=1;
+        // If checkin same day multipler equal 1 => mean 1 day
+        if (checkIn.equals(checkout)){
+            multipler = 1;
+        }else{
+            while (checkIn.isBefore(checkout)){
+                int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate());
+                if (dayType == 3){
+                    multipler+=3;
+                } else if (dayType == 2) {
+                    multipler+=1.5F;
+                }else{
+                    multipler+=1;
+                }
+                checkIn = checkIn.plus(1,ChronoUnit.DAYS);
             }
-            checkIn = checkIn.plus(1,ChronoUnit.DAYS);
         }
+
 
         BigDecimal totalPrice  = BigDecimal.ZERO;
         if (isCalculateForCheckout){

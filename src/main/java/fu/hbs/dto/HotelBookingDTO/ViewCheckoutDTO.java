@@ -89,7 +89,7 @@ public class ViewCheckoutDTO {
 
         viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
         viewCheckoutDto.setTotalServicePrice(totalHotelServicePrice);
-        viewCheckoutDto.setPrepay(BigDecimal.ZERO);
+        viewCheckoutDto.setPrepay(hotelBooking.getDepositPrice());
         return viewCheckoutDto;
     }
 }

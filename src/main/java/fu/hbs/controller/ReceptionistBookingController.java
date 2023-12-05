@@ -200,7 +200,7 @@ public class ReceptionistBookingController {
             for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckoutDTO.getRoomBookingServiceDTOS()) {
                 SaveCheckoutHotelServiceDTO saveCheckoutHotelServiceDTO = new SaveCheckoutHotelServiceDTO();
                 saveCheckoutHotelServiceDTO.setServiceId(roomBookingServiceDTO.getServiceId());
-                saveCheckoutHotelServiceDTO.setQuantity(1);
+                saveCheckoutHotelServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity());
                 hotelServices.add(saveCheckoutHotelServiceDTO);
 
             }
