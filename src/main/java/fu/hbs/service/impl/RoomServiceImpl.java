@@ -67,6 +67,11 @@ public class RoomServiceImpl implements RoomService {
             List<Room> allRoomsByIdCategory = roomRepository.findByRoomCategoryId(room.getRoomCategoryId()); // All room by category
             List<Room> availableRoomsByCategoryId = roomRepository.findAvailableRoomsByCategoryId(room.getRoomCategoryId(), checkIn, checkOut);
 
+            if (localDate.equals(checkIn)){
+                availableRoomsByCategoryId = availableRoomsByCategoryId.stream().filter(roomCategory -> roomCategory.getRoomStatusId().longValue() == 3).collect(Collectors.toList());
+            }
+
+
             RoomCategories category = roomCategoryAsMap.get(room.getRoomCategoryId());
             CategoryRoomPrice categoryRoomPrice = categoryRoomPriceRepository.findByRoomCategoryId(category.getRoomCategoryId());
             SearchingResultRoomDTO searchingRoomDTO = new SearchingResultRoomDTO
