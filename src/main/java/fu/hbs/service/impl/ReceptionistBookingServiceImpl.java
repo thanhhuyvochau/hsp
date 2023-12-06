@@ -221,7 +221,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
 
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
-                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice());
+                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(),saveCheckoutDTO.getPaymentTypeId());
+
                 transactionsRepository.save(transactions);
             }
             hotelBookingServiceRepository.saveAll(hotelBookingServiceList);
@@ -236,13 +237,14 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         hotelBooking.setTotalPrice(totalPrice);
     }
 
-    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay) {
+    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay, Long paymentTypeId) {
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
         transactions.setAmount(totalPrice.subtract(prePay));
         transactions.setCreatedDate(Instant.now());
         transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
+        transactions.setPaymentId(paymentTypeId);
         return transactions;
     }
 

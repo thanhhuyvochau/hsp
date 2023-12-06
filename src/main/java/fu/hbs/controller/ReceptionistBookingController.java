@@ -220,6 +220,9 @@ public class ReceptionistBookingController {
             bookingService.checkout(checkoutDTO);
             if (checkoutDTO.getPaymentTypeId() == 1) {
                 HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
+                if (hotelBooking.getTotalPrice().compareTo(hotelBooking.getDepositPrice()) <= 0){
+                    return "redirect:/receptionist/listRoomInUse";
+                }
                 if (hotelBooking == null) {
                     return "error";
                 }
@@ -280,7 +283,7 @@ public class ReceptionistBookingController {
             vnpayTransactions.setVnpayTransactionId(transactionId);
             vnpayTransactions.setHotelBookingId(hotelBookingId);
             vnpayTransactions.setAmount(bigDecimalValue);
-            vnpayTransactions.setCreatedDate(Instant.from(parsedDate));
+            vnpayTransactions.setCreatedDate(parsedDate.toInstant(ZoneOffset.UTC));
             vnpayTransactions.setStatus("Thành công");
             vnpayTransactions.setPaymentId(1L);
             transactionsService.save(vnpayTransactions);

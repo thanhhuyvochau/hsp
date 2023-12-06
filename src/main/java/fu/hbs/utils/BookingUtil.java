@@ -115,6 +115,8 @@ public class BookingUtil {
 
     public static BigDecimal calculateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, BigDecimal prePay) {
         BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
-        return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
+//        return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
+        return servicePrice.add(roomPrice).add(taxPrice); // Total is not related to prepay
+
     }
 }
