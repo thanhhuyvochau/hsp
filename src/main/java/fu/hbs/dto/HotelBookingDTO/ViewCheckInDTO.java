@@ -7,7 +7,6 @@ import fu.hbs.utils.DateUtil;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
-public class ViewCheckoutDTO {
+public class ViewCheckInDTO {
     private Long hotelBookingId;
     private Long userId;
     private Long statusId;
@@ -29,21 +28,21 @@ public class ViewCheckoutDTO {
     private BigDecimal depositPrice = BigDecimal.ZERO;
     private String checkIn;
     private String checkOut;
-    private String checkOutBooking;
+    private String checkInBooking;
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;
-    private List<CheckoutBookingDetailsDTO> bookingDetails = new ArrayList<>();
+    private List<CheckInBookingDetailsDTO> bookingDetails = new ArrayList<>();
     private List<RoomBookingServiceDTO> roomBookingServiceDTOS = new ArrayList<>();
     private BigDecimal prepay = BigDecimal.ZERO;
     private BigDecimal taxPrice = BigDecimal.ZERO;
+    private BigDecimal totalPriceOfBooking = BigDecimal.ZERO;
+    public static ViewCheckInDTO valueOf(HotelBooking hotelBooking,
+                                         List<BookingRoomDetails> bookingRoomDetails,
+                                         PaymentType paymentType,
+                                         Map<Long, RoomCategories> roomCategoriesMap) {
 
-    public static ViewCheckoutDTO valueOf(HotelBooking hotelBooking,
-                                          List<BookingRoomDetails> bookingRoomDetails,
-                                          PaymentType paymentType,
-                                          Map<Long, RoomCategories> roomCategoriesMap) {
-
-        ViewCheckoutDTO viewCheckoutDto = new ViewCheckoutDTO();
+        ViewCheckInDTO viewCheckoutDto = new ViewCheckInDTO();
         viewCheckoutDto.setHotelBookingId(hotelBooking.getHotelBookingId());
         viewCheckoutDto.setUserId(hotelBooking.getUserId());
         viewCheckoutDto.setStatusId(hotelBooking.getStatusId());
@@ -54,24 +53,24 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setAddress(hotelBooking.getAddress());
         viewCheckoutDto.setPhone(hotelBooking.getPhone());
         viewCheckoutDto.setDepositPrice(hotelBooking.getDepositPrice());
-        viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
-        if (hotelBooking.getStatusId() == 2L){
-            viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(Instant.now()));
-            viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+        viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+        if (hotelBooking.getStatusId() == 1L){
+            viewCheckoutDto.setCheckInBooking(DateUtil.formatInstantToPattern(Instant.now()));
+            viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
         }else{
-            viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
-            viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
+            viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
+            viewCheckoutDto.setCheckInBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
         }
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
-        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).toList();
+        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).collect(Collectors.toList());
 
         for (RoomCategories category : allBookingCategories) {
             List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()
                     .filter(bookingRoomDetail -> bookingRoomDetail.getRoomCategoryId().equals(category.getRoomCategoryId()))
                     .collect(Collectors.toList());
-            CheckoutBookingDetailsDTO detailsDTO = CheckoutBookingDetailsDTO.valueOf(hotelBooking,category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
+            CheckInBookingDetailsDTO detailsDTO = CheckInBookingDetailsDTO.valueOf(hotelBooking,category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
             viewCheckoutDto.getBookingDetails().add(detailsDTO);
         }
 
@@ -90,7 +89,12 @@ public class ViewCheckoutDTO {
         BigDecimal totalHotelServicePrice = viewCheckoutDto.getRoomBookingServiceDTOS().stream()
                 .reduce(BigDecimal.ZERO, (subTotal, useHotelService) -> subTotal.add(useHotelService.getTotalPrice()), BigDecimal::add);
 
+        BigDecimal totalWithoutTax = totalRoomPrice.add(totalHotelServicePrice);
+        BigDecimal taxPrice = totalWithoutTax.multiply(BigDecimal.valueOf(0.1));
+        BigDecimal totalOfBooking = totalWithoutTax.add(taxPrice);
 
+        viewCheckoutDto.setTaxPrice(taxPrice);
+        viewCheckoutDto.setTotalPriceOfBooking(totalOfBooking);
         viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
         viewCheckoutDto.setTotalServicePrice(totalHotelServicePrice);
         viewCheckoutDto.setPrepay(hotelBooking.getDepositPrice());

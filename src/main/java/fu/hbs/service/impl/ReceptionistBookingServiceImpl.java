@@ -272,7 +272,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     private void changeRoomStatus(List<BookingRoomDetails> hotelBookingDetails) {
-        List<Long> bookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).toList();
+        List<Long> bookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
         List<Room> bookedRooms = roomRepository.findAllById(bookedRoomIds);
         for (Room bookedRoom : bookedRooms) {
             bookedRoom.setRoomStatusId(3L);
@@ -296,7 +296,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             return false;
         }
         List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
-        List<Long> allBookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).toList();
+        List<Long> allBookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
         List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
         boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
         if (isExistNotReadyRoom) {

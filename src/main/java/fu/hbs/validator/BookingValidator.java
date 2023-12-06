@@ -15,7 +15,7 @@ public class BookingValidator {
     }
 
     public static boolean isExistNotReadyRoom(List<Room> allBookedRooms) {
-        return allBookedRooms.stream().anyMatch(room -> room.getRoomStatusId() != 2L);
+        return allBookedRooms.stream().anyMatch(room -> room.getRoomStatusId() != 3L);
     }
 
     public static boolean haveCheckedInOrNot(HotelBooking hotelBooking) {

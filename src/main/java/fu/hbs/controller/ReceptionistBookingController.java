@@ -24,11 +24,9 @@ import fu.hbs.utils.EmailUtil;
 import fu.hbs.utils.StringDealer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,8 +38,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fu.hbs.repository.HotelBookingRepository;
 import fu.hbs.repository.RoomStatusRepository;
-
-import javax.naming.Binding;
 
 @Controller
 public class ReceptionistBookingController {
@@ -307,7 +303,7 @@ public class ReceptionistBookingController {
         return "receptionist/createRoomReceptionist";
     }
 
-    @PostMapping("/checkIn")
+    @PostMapping("receptionist/checkIn")
     public ResponseEntity<String> saveCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId) {
         Boolean result = this.bookingService.checkIn(hotelBookingId);
         // Return to Page you want
@@ -316,6 +312,43 @@ public class ReceptionistBookingController {
         } else {
             return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("receptionist/checkIn")
+    public String getCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId, Model model) {
+        HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
+        if (hotelBooking != null && hotelBooking.getValidBooking()) {
+            List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
+            List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
+            PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);
+            List<fu.hbs.entities.HotelBookingService> usedServices = hotelBookingServiceService.findAllByHotelBookingId(hotelBookingId);
+
+            Map<Long, RoomCategories> roomCategoriesMap = this.roomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
+            ViewCheckInDTO viewCheckInDto = ViewCheckInDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType, roomCategoriesMap);
+            model.addAttribute("viewCheckInDTO", viewCheckInDto);
+            model.addAttribute("roomServices", roomServices);
+            model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
+
+            SaveCheckoutDTO checkoutModel = makeSaveCheckoutDTO(hotelBookingId, viewCheckInDto);
+            model.addAttribute("saveCheckoutDTO", checkoutModel);
+        } else {
+            return "error";
+        }
+        return "receptionist/checkInRecetionist";
+    }
+
+    private static SaveCheckoutDTO makeSaveCheckoutDTO(Long hotelBookingId, ViewCheckInDTO viewCheckInDto) {
+        SaveCheckoutDTO checkoutModel = new SaveCheckoutDTO();
+        List<SaveCheckoutHotelServiceDTO> hotelServices = checkoutModel.getHotelServices();
+        for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckInDto.getRoomBookingServiceDTOS()) {
+            SaveCheckoutHotelServiceDTO saveCheckoutHotelServiceDTO = new SaveCheckoutHotelServiceDTO();
+            saveCheckoutHotelServiceDTO.setServiceId(roomBookingServiceDTO.getServiceId());
+            saveCheckoutHotelServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity());
+            hotelServices.add(saveCheckoutHotelServiceDTO);
+
+        }
+        checkoutModel.setHotelBookingId(hotelBookingId);
+        checkoutModel.setServicePrice(viewCheckInDto.getTotalServicePrice());
+        return checkoutModel;
     }
 
 

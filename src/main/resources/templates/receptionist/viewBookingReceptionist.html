@@ -144,7 +144,7 @@
 										tiết</a></button>
 								<button type="button" id="btn-checkin" class="btn btn-dark"
 									th:attr="data-booking-id=${hotelbooking.hotelBookingId}" data-toggle="modal"
-									data-target="#confirmCheckInModal" onclick="checkInConfirm(this)">Check In
+									data-target="#confirmCheckInModal"><a th:href="@{'/receptionist/checkIn?hotelBookingId='+${hotelbooking.getHotelBookingId()}}">Check in</a>
 								</button>
 
 							</td>
@@ -205,32 +205,7 @@
 
 
 	<script>
-		function checkInConfirm(event) {
-			let text = "Bạn có muốn đổi trạng thái đặt này thành 'đã check-in'";
-			var hotelBookingId = $(event).attr("data-booking-id");
-			if (confirm(text) === true) {
-				$.ajax({
-					type: "POST",
-					url: "/checkIn?hotelBookingId=" + hotelBookingId,
-					contentType: "application/json",
-					data: JSON.stringify(hotelBookingId),
-					success: function (data,status) {
-						alert('Check-in thành công')
-						location.reload();
-					},
-					error: function (error) {
-						if (error.status === 200){
-							alert('Check-in thành công')
-							location.reload();
-						}else{
-							console.error("Error during AJAX request:", error);
-						}
-					}
-				});
 
-
-			}
-		}
 		$(document).ready(function () {
 			var table = $('#bookingTable').DataTable({
 				"paging": true,

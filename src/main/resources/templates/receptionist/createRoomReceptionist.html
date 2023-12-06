@@ -743,6 +743,7 @@
         function updateTableView(response) {
             // Assuming the response is a JSON object with room details
             rooms = JSON.parse(response);
+            console.log(rooms)
             // Select the table body
             const tbody = $("#roomTable tbody");
             const emptyErrorMessage = $("#empty-error-message");
@@ -756,6 +757,7 @@
 
             }
             // Clear existing table rows
+            if(rooms && rooms.length > 0){
             tbody.empty();
             let index = 1;
             // Update the table with new data
@@ -801,7 +803,8 @@
                 // Append the row to the table body
                 tbody.append(row);
                 index++;
-            })
+            });
+            }
         }
 
         function calculatePrices() {
