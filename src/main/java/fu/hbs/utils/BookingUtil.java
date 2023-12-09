@@ -1,5 +1,6 @@
 package fu.hbs.utils;
 
+import fu.hbs.dto.HotelBookingDTO.SearchingResultRoomDTO;
 import fu.hbs.entities.*;
 import fu.hbs.service.dao.CategoryRoomPriceService;
 import fu.hbs.service.dao.HotelBookingServiceService;
@@ -10,10 +11,7 @@ import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +29,19 @@ public class BookingUtil {
     private static RoomCategoryService staticRoomCategoryService;
 
     private static fu.hbs.service.dao.HotelBookingService staticHotelBookingService;
-
-    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService, HotelBookingServiceService hotelBookingServiceService, ServiceService roomServiceService, RoomCategoryService roomCategoryService, fu.hbs.service.dao.HotelBookingService hotelBookingService) {
+    private static fu.hbs.service.dao.RoomService staticRoomService;
+    public BookingUtil(CategoryRoomPriceService categoryRoomPriceService,
+                       HotelBookingServiceService hotelBookingServiceService,
+                       ServiceService roomServiceService,
+                       RoomCategoryService roomCategoryService,
+                       fu.hbs.service.dao.HotelBookingService hotelBookingService,
+                       fu.hbs.service.dao.RoomService roomService) {
         BookingUtil.staticCategoryRoomPriceService = categoryRoomPriceService;
         BookingUtil.statichHotelBookingServiceService = hotelBookingServiceService;
         BookingUtil.staticRoomServiceService = roomServiceService;
         BookingUtil.staticRoomCategoryService = roomCategoryService;
         BookingUtil.staticHotelBookingService = hotelBookingService;
+        BookingUtil.staticRoomService = roomService;
     }
 
     public static long calculateRoomNumber(RoomCategories roomCategories, List<BookingRoomDetails> bookingRoomDetails) {
@@ -118,5 +122,11 @@ public class BookingUtil {
 //        return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
         return servicePrice.add(roomPrice).add(taxPrice); // Total is not related to prepay
 
+    }
+    public static List<Room> findAvailableRoom(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut){
+        return staticRoomService.findAvailableRoom(roomCategoryId,checkIn,checkOut);
+    }
+    public static Room findRoomById(Long roomId){
+        return staticRoomService.findRoomById(roomId);
     }
 }

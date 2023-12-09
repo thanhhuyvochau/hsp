@@ -318,4 +318,47 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     public List<HotelBooking> findAllWithStatusOneAndValidBooking(Boolean validBooking) {
         return bookingRepository.findByStatusIdAndValidBooking(1L, true);
     }
+
+    @Override
+    public Boolean checkIn(SaveCheckinDTO checkinDTO) {
+        Long hotelBookingId = checkinDTO.getHotelBookingId();
+        HotelBooking hotelBooking = bookingRepository.findByHotelBookingId(hotelBookingId);
+        if (!BookingValidator.isValidToCheckIn(hotelBooking.getCheckIn())) {
+            return false;
+        }
+        List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        Map<Long, SaveCheckinDetailDTO> newCheckinDetailMap = checkinDTO.getSaveCheckinDetailDTOS().stream()
+                .collect(Collectors.toMap(SaveCheckinDetailDTO::getBookingRoomId, Function.identity()));
+
+        // Update new room user choose when checkIn
+        List<BookingRoomDetails> updateBookingRooms = hotelBookingDetails.stream()
+                .map(hotelBookingDetail -> {
+                    SaveCheckinDetailDTO chosenRoom = newCheckinDetailMap.get(hotelBookingDetail.getBookingRoomId());
+                    Long bookingRoomId = hotelBookingDetail.getRoomId();
+                    Long newBookingRoomId = chosenRoom.getRoomID();
+                    if (!bookingRoomId.equals(newBookingRoomId)) {
+                        hotelBookingDetail.setRoomId(chosenRoom.getRoomID());
+                    }
+                    return hotelBookingDetail;
+                }).collect(Collectors.toList());
+
+
+        List<Long> allBookedRoomIds = updateBookingRooms.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
+
+        List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
+        boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
+        if (isExistNotReadyRoom) {
+            return false;
+        }
+        // Change status room / booking
+        hotelBooking.setStatusId(2L);
+        hotelBooking.setCheckIn(Instant.now());
+
+        for (Room room : allBookedRooms) {
+            room.setRoomStatusId(1L);
+        }
+        bookingRepository.save(hotelBooking);
+        roomRepository.saveAll(allBookedRooms);
+        return true;
+    }
 }

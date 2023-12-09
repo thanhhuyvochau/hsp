@@ -32,8 +32,7 @@ public class ViewCheckInDTO {
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;
-    private List<CheckInBookingDetailsDTO> bookingDetails = new ArrayList<>();
-    private List<RoomBookingServiceDTO> roomBookingServiceDTOS = new ArrayList<>();
+    private List<CheckInBookingDetailsDTO> bookingDetails = new ArrayList<>(); // Correspond each of booking room detail of this booking
     private BigDecimal prepay = BigDecimal.ZERO;
     private BigDecimal taxPrice = BigDecimal.ZERO;
     private BigDecimal totalPriceOfBooking = BigDecimal.ZERO;
@@ -64,39 +63,26 @@ public class ViewCheckInDTO {
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
-        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).collect(Collectors.toList());
 
-        for (RoomCategories category : allBookingCategories) {
-            List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()
-                    .filter(bookingRoomDetail -> bookingRoomDetail.getRoomCategoryId().equals(category.getRoomCategoryId()))
-                    .collect(Collectors.toList());
-            CheckInBookingDetailsDTO detailsDTO = CheckInBookingDetailsDTO.valueOf(hotelBooking,category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
-            viewCheckoutDto.getBookingDetails().add(detailsDTO);
+        for (BookingRoomDetails bookingRoomDetail : bookingRoomDetails) {
+            CheckInBookingDetailsDTO checkInBookingDetailDTO = CheckInBookingDetailsDTO.valueOf(hotelBooking,
+                    roomCategoriesMap.get(bookingRoomDetail.getRoomCategoryId()),
+                    bookingRoomDetail, hotelBooking.getCheckIn(),
+                    hotelBooking.getCheckOut());
+            viewCheckoutDto.getBookingDetails().add(checkInBookingDetailDTO);
         }
 
 
-        List<HotelBookingService> usedBookingServices = BookingUtil.getAllHotelBookingService(hotelBooking.getHotelBookingId());
-        Map<Long, RoomService> roomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
-        for (HotelBookingService usedBookingService : usedBookingServices) {
-            RoomService roomService = roomServiceAsMap.get(usedBookingService.getServiceId());
-//            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, usedBookingService.getQuantity());
-            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, 1);
 
-            viewCheckoutDto.getRoomBookingServiceDTOS().add(roomBookingServiceDTO);
-        }
         BigDecimal totalRoomPrice = viewCheckoutDto.getBookingDetails().stream()
                 .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()), BigDecimal::add);
-        BigDecimal totalHotelServicePrice = viewCheckoutDto.getRoomBookingServiceDTOS().stream()
-                .reduce(BigDecimal.ZERO, (subTotal, useHotelService) -> subTotal.add(useHotelService.getTotalPrice()), BigDecimal::add);
 
-        BigDecimal totalWithoutTax = totalRoomPrice.add(totalHotelServicePrice);
-        BigDecimal taxPrice = totalWithoutTax.multiply(BigDecimal.valueOf(0.1));
-        BigDecimal totalOfBooking = totalWithoutTax.add(taxPrice);
+        BigDecimal taxPrice = totalRoomPrice.multiply(BigDecimal.valueOf(0.1));
+        BigDecimal totalOfBooking = totalRoomPrice.add(taxPrice);
 
         viewCheckoutDto.setTaxPrice(taxPrice);
         viewCheckoutDto.setTotalPriceOfBooking(totalOfBooking);
         viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
-        viewCheckoutDto.setTotalServicePrice(totalHotelServicePrice);
         viewCheckoutDto.setPrepay(hotelBooking.getDepositPrice());
         return viewCheckoutDto;
     }

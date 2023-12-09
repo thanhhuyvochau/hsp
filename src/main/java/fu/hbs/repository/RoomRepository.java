@@ -50,7 +50,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "INNER JOIN hotel_booking hb ON brd.hotel_booking_id = hb.hotel_booking_id\n" +
             "WHERE ((hb.check_in BETWEEN ?2 AND ?3 )\n" +
             "OR (hb.check_out BETWEEN ?2 AND ?3 ))" +
-            " AND hb.status_id = 1 );", nativeQuery = true)
+            " AND (hb.status_id = 1 OR hb.status_id = 2));", nativeQuery = true)
     List<Room> findAvailableRoomsByCategoryId(Long id, LocalDate checkIn, LocalDate checkOut);
 
 

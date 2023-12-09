@@ -65,7 +65,7 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
-        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).toList();
+        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).collect(Collectors.toList());
 
         for (RoomCategories category : allBookingCategories) {
             List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()

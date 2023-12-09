@@ -135,7 +135,7 @@
 <body>
 
 <!--	<body data-bs-target=".navbar" data-bs-offset="100"></body>-->
-<form th:action="@{/receptionist/checkOutReceptionist}" method="post" th:object="${saveCheckoutDTO}" class="wrapper">
+<form th:action="@{/receptionist/new-checkIn}" method="post" th:object="${saveCheckinDTO}" class="wrapper">
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header border-bottom">
@@ -251,7 +251,7 @@
                                 <th scope="col">STT</th>
                                 <th scope="col">Loại phòng</th>
                                 <th scope="col">Số phòng đặt</th>
-                                <th scope="col">Số khách</th>
+                                <th scope="col">Chọn phòng</th>
                                 <th scope="col">Ưu đãi</th>
                                 <th scope="col">Chi tiết</th>
                                 <th scope="col">Giá phòng</th>
@@ -263,8 +263,10 @@
                             <tr th:each="bookDetail, iStat : ${viewCheckInDTO.getBookingDetails()}">
                                 <th scope="row" th:text="${iStat.index + 1}"></th>
                                 <td th:text="${bookDetail.getCategoryName()}"></td>
-                                <td th:text="${bookDetail.getRoomNumber()}">2</td>
-                                <td th:text="${bookDetail.getCustomerNumber()}"></td>
+                                <td th:text="${bookDetail.getRoomName()}"></td>
+                                <td><select th:data-booking-detail="${bookDetail.getBookingDetailId()}" class="form-select">
+                                    <option th:selected="${bookDetail.getRoomId() == room.getRoomId()}" th:value="${room.getRoomId()}" th:text="${room.getRoomName()}" th:each="room,iterStat  : ${bookDetail.getOptionRooms()}">101</option>
+                                </select></td>
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
                                 <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
@@ -334,7 +336,15 @@
             </div>
         </main>
     </div>
-    <input type="hidden" th:value="${viewCheckInDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
+    <input type="hidden" th:value="${saveCheckinDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
+    <div  th:each="bookingDetail,iterStat  : ${saveCheckinDTO.getSaveCheckinDetailDTOS()}" class="booking-detail-input-container">
+
+        <input th:id="'roomInputID-'+${bookingDetail.getRoomID()}" th:value="${bookingDetail.getRoomID()}" type="hidden"
+               th:field="*{saveCheckinDetailDTOS[__${iterStat.index}__].roomID}">
+
+        <input th:id="'bookingDetailID-'+${bookingDetail.getBookingRoomId()}"  th:value="${bookingDetail.getBookingRoomId()}" type="hidden"
+               th:field="*{saveCheckinDetailDTOS[__${iterStat.index}__].bookingRoomId}">
+    </div>
 </form>
 
 
@@ -346,11 +356,12 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     let services = [[${roomServices}]];
+    let bookingData = [[${saveCheckinDTO}]]
     /*]]>*/
 
     $(document).ready(function () {
         // Initialize DataTable
-
+        console.log(bookingData)
         $("#openButton").click(function () {
             console.log(services);
             $("#overlay").css("display", "flex");

@@ -48,5 +48,5 @@ public class Room {
     private String bedSize;
     private String viewCity;
     private boolean activity;
-
+    private String roomName;
 }

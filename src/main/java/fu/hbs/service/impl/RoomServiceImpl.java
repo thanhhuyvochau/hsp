@@ -82,4 +82,14 @@ public class RoomServiceImpl implements RoomService {
 
         return searchingResultRoomDTOList;
     }
+
+    public List<Room> findAvailableRoom(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
+        List<Room> rooms = roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, checkIn, checkOut);
+        return rooms.stream().filter(room -> room.getRoomStatusId().equals(3L)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Room findRoomById(Long id) {
+        return roomRepository.findById(id).orElse(null);
+    }
 }

@@ -318,25 +318,21 @@ public class ReceptionistBookingController {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null && hotelBooking.getValidBooking()) {
             List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
-            List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
             PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);
-            List<fu.hbs.entities.HotelBookingService> usedServices = hotelBookingServiceService.findAllByHotelBookingId(hotelBookingId);
-
-            Map<Long, RoomCategories> roomCategoriesMap = this.roomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
-            ViewCheckInDTO viewCheckInDto = ViewCheckInDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType, roomCategoriesMap);
+            Map<Long, RoomCategories> roomCategoriesMap = this.roomCategoryService.
+                    getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
+            ViewCheckInDTO viewCheckInDto = ViewCheckInDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType,roomCategoriesMap);
             model.addAttribute("viewCheckInDTO", viewCheckInDto);
-            model.addAttribute("roomServices", roomServices);
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
-
-            SaveCheckoutDTO checkoutModel = makeSaveCheckoutDTO(hotelBookingId, viewCheckInDto);
-            model.addAttribute("saveCheckoutDTO", checkoutModel);
+            SaveCheckinDTO saveCheckinDTO = SaveCheckinDTO.valueOf(hotelBooking,bookingRoomDetails);
+            model.addAttribute("saveCheckinDTO",saveCheckinDTO);
         } else {
             return "error";
         }
         return "receptionist/checkInRecetionist";
     }
 
-    private static SaveCheckoutDTO makeSaveCheckoutDTO(Long hotelBookingId, ViewCheckInDTO viewCheckInDto) {
+    private static SaveCheckoutDTO makeSaveCheckoutDTO(Long hotelBookingId, ViewCheckoutDTO viewCheckInDto) {
         SaveCheckoutDTO checkoutModel = new SaveCheckoutDTO();
         List<SaveCheckoutHotelServiceDTO> hotelServices = checkoutModel.getHotelServices();
         for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckInDto.getRoomBookingServiceDTOS()) {
@@ -351,5 +347,14 @@ public class ReceptionistBookingController {
         return checkoutModel;
     }
 
-
+    @PostMapping("receptionist/new-checkIn")
+    public ResponseEntity<String> saveCheckInDetail(@ModelAttribute("checkin") SaveCheckinDTO checkinForm) {
+        Boolean result = this.bookingService.checkIn(checkinForm);
+        // Return to Page you want
+        if (result) {
+            return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
+        }
+    }
 }

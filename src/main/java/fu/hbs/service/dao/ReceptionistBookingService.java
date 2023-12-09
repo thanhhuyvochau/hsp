@@ -3,6 +3,7 @@ package fu.hbs.service.dao;
 import java.math.BigDecimal;
 import java.util.List;
 
+import fu.hbs.dto.HotelBookingDTO.SaveCheckinDTO;
 import fu.hbs.dto.HotelBookingDTO.SaveCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.ViewCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
@@ -31,4 +32,6 @@ public interface ReceptionistBookingService {
     Boolean checkIn(Long hotelBookingId);
 
     List<HotelBooking> findAllWithStatusOneAndValidBooking(Boolean validBooking);
+
+    Boolean checkIn(SaveCheckinDTO checkinDTO);
 }
