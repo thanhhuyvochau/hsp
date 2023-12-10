@@ -326,6 +326,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (!BookingValidator.isValidToCheckIn(hotelBooking.getCheckIn())) {
             return false;
         }
+        if (!hotelBooking.getStatusId().equals(1L)){
+            return false;
+        }
         List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
         Map<Long, SaveCheckinDetailDTO> newCheckinDetailMap = checkinDTO.getSaveCheckinDetailDTOS().stream()
                 .collect(Collectors.toMap(SaveCheckinDetailDTO::getBookingRoomId, Function.identity()));
@@ -358,6 +361,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             room.setRoomStatusId(1L);
         }
         bookingRepository.save(hotelBooking);
+        bookingRoomDetailsRepository.saveAll(updateBookingRooms);
         roomRepository.saveAll(allBookedRooms);
         return true;
     }

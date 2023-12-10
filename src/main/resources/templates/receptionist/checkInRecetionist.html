@@ -135,7 +135,7 @@
 <body>
 
 <!--	<body data-bs-target=".navbar" data-bs-offset="100"></body>-->
-<form th:action="@{/receptionist/new-checkIn}" method="post" th:object="${saveCheckinDTO}" class="wrapper">
+<form id="checkinForm" th:action="@{/receptionist/new-checkIn}" method="post" th:object="${saveCheckinDTO}" class="wrapper">
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header border-bottom">
@@ -264,7 +264,7 @@
                                 <th scope="row" th:text="${iStat.index + 1}"></th>
                                 <td th:text="${bookDetail.getCategoryName()}"></td>
                                 <td th:text="${bookDetail.getRoomName()}"></td>
-                                <td><select th:data-booking-detail="${bookDetail.getBookingDetailId()}" class="form-select">
+                                <td><select onchange="handleChangeRoom(this)" th:data-booking-detail="${bookDetail.getBookingDetailId()}" class="form-select">
                                     <option th:selected="${bookDetail.getRoomId() == room.getRoomId()}" th:value="${room.getRoomId()}" th:text="${room.getRoomName()}" th:each="room,iterStat  : ${bookDetail.getOptionRooms()}">101</option>
                                 </select></td>
                                 <td>Bữa sáng</td>
@@ -339,7 +339,7 @@
     <input type="hidden" th:value="${saveCheckinDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
     <div  th:each="bookingDetail,iterStat  : ${saveCheckinDTO.getSaveCheckinDetailDTOS()}" class="booking-detail-input-container">
 
-        <input th:id="'roomInputID-'+${bookingDetail.getRoomID()}" th:value="${bookingDetail.getRoomID()}" type="hidden"
+        <input class="roomInputId" th:id="'roomInputID-'+${bookingDetail.getBookingRoomId()}" th:value="${bookingDetail.getRoomID()}" type="hidden"
                th:field="*{saveCheckinDetailDTOS[__${iterStat.index}__].roomID}">
 
         <input th:id="'bookingDetailID-'+${bookingDetail.getBookingRoomId()}"  th:value="${bookingDetail.getBookingRoomId()}" type="hidden"
@@ -357,11 +357,13 @@
     /*<![CDATA[*/
     let services = [[${roomServices}]];
     let bookingData = [[${saveCheckinDTO}]]
+    let errorMessage = [[${errorMessage}]]
     /*]]>*/
-
+    if (errorMessage){
+        alert(errorMessage);
+    }
     $(document).ready(function () {
         // Initialize DataTable
-        console.log(bookingData)
         $("#openButton").click(function () {
             console.log(services);
             $("#overlay").css("display", "flex");
@@ -396,28 +398,32 @@
     });
     function checkInConfirm() {
         let text = "Bạn có muốn đổi trạng thái đặt này thành 'đã check-in'";
-        var hotelBookingId = $("#hotelBookingId").val();
+        let $checkinForm = $("#checkinForm");
         if (confirm(text) === true) {
-            $.ajax({
-                type: "POST",
-                url: "/receptionist/checkIn?hotelBookingId=" + hotelBookingId,
-                contentType: "application/json",
-                data: JSON.stringify(hotelBookingId),
-                success: function (data,status) {
-                    alert('Check-in thành công')
-                    location.replace('/receptionist/listBookingReceptionist');
-                },
-                error: function (error) {
-                    if (error.status === 200){
-                        alert('Check-in thành công')
-                        location.replace('/receptionist/listBookingReceptionist');
-                    }else{
-                        alert('Check-in thất bại')
-
-                    }
-                }
-            });
+            $checkinForm.trigger( "submit" );
         }
+    }
+    function handleChangeRoom(roomChangeElement){
+        let roomId = roomChangeElement.value;
+        let bookingDetailId = $(roomChangeElement).attr("data-booking-detail");
+        if (isDuplicateRoom(roomId)){
+            document.getElementById("roomInputID-"+bookingDetailId).value = roomId;
+        }else{
+            alert("Phòng này đã được chọn vui lòng chọn phòng khác");
+            roomChangeElement.value = document.getElementById("roomInputID-"+bookingDetailId).value;
+        }
+
+    }
+    function isDuplicateRoom(roomId){
+        let roomInputId = document.getElementsByClassName('roomInputId');
+        console.log(roomInputId);
+        for (let i = 0; i < roomInputId.length; i++) {
+            let roomInput = roomInputId[i];
+            if (Number(roomInput.value) === Number(roomId)){
+                return false;
+            }
+        }
+        return true
     }
 </script>
 </html>

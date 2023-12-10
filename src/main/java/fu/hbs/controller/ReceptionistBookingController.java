@@ -2,6 +2,9 @@ package fu.hbs.controller;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -314,7 +317,7 @@ public class ReceptionistBookingController {
         }
     }
     @GetMapping("receptionist/checkIn")
-    public String getCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId, Model model) {
+    public String getCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId,@RequestParam(value = "error", required = false) String errorMessage, Model model) {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null && hotelBooking.getValidBooking()) {
             List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
@@ -326,6 +329,10 @@ public class ReceptionistBookingController {
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
             SaveCheckinDTO saveCheckinDTO = SaveCheckinDTO.valueOf(hotelBooking,bookingRoomDetails);
             model.addAttribute("saveCheckinDTO",saveCheckinDTO);
+            if (errorMessage!=null){
+                String decodedErrorMessage = URLDecoder.decode(errorMessage, StandardCharsets.UTF_8);
+                model.addAttribute("errorMessage",decodedErrorMessage);
+            }
         } else {
             return "error";
         }
@@ -348,13 +355,15 @@ public class ReceptionistBookingController {
     }
 
     @PostMapping("receptionist/new-checkIn")
-    public ResponseEntity<String> saveCheckInDetail(@ModelAttribute("checkin") SaveCheckinDTO checkinForm) {
+    public String saveCheckInDetail(@ModelAttribute("checkin") SaveCheckinDTO checkinForm) {
         Boolean result = this.bookingService.checkIn(checkinForm);
         // Return to Page you want
         if (result) {
-            return new ResponseEntity<>("Check In thành công", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
+            return "redirect:/receptionist/listBookingReceptionist";
+        }else{
+            String errorMessage = "Đơn đặt này đã check-in!";
+            String encodedErrorMessage = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
+            return "redirect:/receptionist/checkIn?hotelBookingId="+checkinForm.getHotelBookingId() + "&error="+ encodedErrorMessage;
         }
     }
 }
