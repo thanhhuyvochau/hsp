@@ -115,7 +115,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         // Base on request and then create booking detail
         List<BookingRoomDetails> bookingDetails = createBookingDetails(bookingRequest, checkIn, checkOut, hotelBooking);
         bookingRoomDetailsRepository.saveAll(bookingDetails);
-        BigDecimal totalPrice = this.calculateTotalPrice(bookingDetails,checkIn,checkOut);
+        BigDecimal totalPrice = this.calculateTotalPrice(bookingDetails, checkIn, checkOut);
         totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(0.1))).setScale(0, RoundingMode.HALF_DOWN);
         // Deposit Option Yes/No
         if (bookingRequest.isPayFull()) {
@@ -183,7 +183,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (BookingRoomDetails bookingRoomDetails : bookingRoomDetailsList) {
             categoryRoomPriceRepository.getCategoryId(bookingRoomDetails.getRoomCategoryId());
-            BigDecimal priceWithDate = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetails.getRoomCategoryId(),false);
+            BigDecimal priceWithDate = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetails.getRoomCategoryId(), false);
             totalPrice = totalPrice.add(priceWithDate);
         }
         return totalPrice;
@@ -200,7 +200,6 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
                 throw new CheckoutException("Trạng thái của đặt phòng chưa sẵn sàng cho checkout!");
             }
             Instant exptectedCheckoutDate = hotelBooking.getCheckOut();
-            hotelBooking.setStatusId(3L);
             hotelBooking.setCheckOut(Instant.now());
 
             // Change room status
@@ -216,13 +215,13 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             servicePrice = calculateServicePrice(hotelBookingServices, allRoomServiceAsMap, servicePrice, hotelBooking, hotelBookingServiceList);
 
             BigDecimal roomPrice = BigDecimal.ZERO;
-            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(),exptectedCheckoutDate);
+            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(), exptectedCheckoutDate);
 
             updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
 
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
-                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(),saveCheckoutDTO.getPaymentTypeId());
-
+                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(), saveCheckoutDTO.getPaymentTypeId());
+                hotelBooking.setStatusId(3L);
                 transactionsRepository.save(transactions);
             }
             hotelBookingServiceRepository.saveAll(hotelBookingServiceList);
@@ -248,9 +247,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return transactions;
     }
 
-    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice, Instant checkin,Instant checkout) {
+    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice, Instant checkin, Instant checkout) {
         for (BookingRoomDetails bookingRoomDetail : hotelBookingDetails) {
-            BigDecimal price = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetail.getRoomCategoryId(),true);
+            BigDecimal price = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetail.getRoomCategoryId(), true);
             roomPrice = roomPrice.add(price);
         }
         return roomPrice;
@@ -326,7 +325,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (!BookingValidator.isValidToCheckIn(hotelBooking.getCheckIn())) {
             return false;
         }
-        if (!hotelBooking.getStatusId().equals(1L)){
+        if (!hotelBooking.getStatusId().equals(1L)) {
             return false;
         }
         List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
