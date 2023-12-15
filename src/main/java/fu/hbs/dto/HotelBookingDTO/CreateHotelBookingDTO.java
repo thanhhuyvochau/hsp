@@ -46,7 +46,7 @@ public class CreateHotelBookingDTO {
     private String phone;
     private LocalDate checkIn = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()).toLocalDate();
     private LocalDate checkOut =  LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()).toLocalDate().plusDays(1);
-    private String notes;
+    private String notes ="";
     private Long paymentTypeId = 1L;
     private List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
     private boolean payFull = true;

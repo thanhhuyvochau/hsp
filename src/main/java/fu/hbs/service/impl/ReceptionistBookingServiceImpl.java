@@ -3,6 +3,7 @@ package fu.hbs.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -89,6 +90,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         hotelBooking.setEmail(bookingRequest.getEmail());
         hotelBooking.setAddress(bookingRequest.getAddress());
         hotelBooking.setPhone(bookingRequest.getPhone());
+        hotelBooking.setNote(bookingRequest.getNotes().trim());
         LocalDate checkInLocalDate = bookingRequest.getCheckIn();
         LocalDate checkOutLocalDate = bookingRequest.getCheckOut();
 
@@ -215,12 +217,13 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             servicePrice = calculateServicePrice(hotelBookingServices, allRoomServiceAsMap, servicePrice, hotelBooking, hotelBookingServiceList);
 
             BigDecimal roomPrice = BigDecimal.ZERO;
-            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(), exptectedCheckoutDate);
+            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(), hotelBooking.getCheckOut());
 
             updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
 
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
-                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(), saveCheckoutDTO.getPaymentTypeId());
+                String content = getCheckoutContent(hotelBooking);
+                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(), saveCheckoutDTO.getPaymentTypeId(),content);
                 hotelBooking.setStatusId(3L);
                 transactionsRepository.save(transactions);
             }
@@ -232,11 +235,15 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     private static void updateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, HotelBooking hotelBooking) {
-        BigDecimal totalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking.getDepositPrice());
-        hotelBooking.setTotalPrice(totalPrice);
+        BigDecimal actualTotalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice);
+        BigDecimal refund = hotelBooking.getDepositPrice().subtract(actualTotalPrice);
+        if (refund.compareTo(BigDecimal.ZERO) > 0){
+            hotelBooking.setRefundPrice(refund);
+        }
+        hotelBooking.setTotalPrice(actualTotalPrice);
     }
 
-    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay, Long paymentTypeId) {
+    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay, Long paymentTypeId,String content) {
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
@@ -244,12 +251,15 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         transactions.setCreatedDate(Instant.now());
         transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
         transactions.setPaymentId(paymentTypeId);
+        transactions.setContent(content);
         return transactions;
     }
 
-    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice, Instant checkin, Instant checkout) {
+    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice, Instant checkIn, Instant checkOut) {
+        LocalDate checkInDate = LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate();
+        LocalDate checkoutDate = LocalDateTime.ofInstant(checkOut, ZoneId.systemDefault()).toLocalDate();
         for (BookingRoomDetails bookingRoomDetail : hotelBookingDetails) {
-            BigDecimal price = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetail.getRoomCategoryId(), true);
+            BigDecimal price = BookingUtil.calculateRoomCostForCheckOut(checkInDate, checkoutDate, bookingRoomDetail.getRoomCategoryId());
             roomPrice = roomPrice.add(price);
         }
         return roomPrice;
@@ -348,9 +358,15 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         List<Long> allBookedRoomIds = updateBookingRooms.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
 
         List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
-        boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
-        if (isExistNotReadyRoom) {
-            return false;
+
+        Instant bookCheckInTime = hotelBooking.getCheckIn().truncatedTo(ChronoUnit.DAYS);
+        Instant actualCheckInTime = Instant.now().truncatedTo(ChronoUnit.DAYS);
+
+        if (!bookCheckInTime.equals(actualCheckInTime)) {
+            boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
+            if (isExistNotReadyRoom) {
+                return false;
+            }
         }
         // Change status room / booking
         hotelBooking.setStatusId(2L);
@@ -363,5 +379,12 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         bookingRoomDetailsRepository.saveAll(updateBookingRooms);
         roomRepository.saveAll(allBookedRooms);
         return true;
+    }
+    public static String getCheckoutContent(HotelBooking hotelBooking){
+        if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0){
+            return "Hoàn tiền đặt phòng";
+        }else{
+            return "Thanh toán đặt phòng";
+        }
     }
 }

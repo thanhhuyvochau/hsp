@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.Instant;
-import java.time.Period;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +26,15 @@ public class CheckoutBookingDetailsDTO {
     private BigDecimal price = BigDecimal.ZERO;
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    public static CheckoutBookingDetailsDTO valueOf(HotelBooking hotelBooking,RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Instant checkIn, Instant checkOut) {
+    public static CheckoutBookingDetailsDTO valueOf(HotelBooking hotelBooking, RoomCategories roomCategory, List<BookingRoomDetails> bookingRoomDetails, Instant checkIn, Instant checkOut) {
         CheckoutBookingDetailsDTO detailsDTO = new CheckoutBookingDetailsDTO();
         detailsDTO.setCategoryId(detailsDTO.getCategoryId());
         detailsDTO.setCategoryName(roomCategory.getRoomCategoryName());
         detailsDTO.setRoomNumber(BookingUtil.calculateRoomNumber(roomCategory, bookingRoomDetails));
         BigDecimal totalPrice = BigDecimal.ZERO;
-        if (hotelBooking.getStatusId() == 3L){
-             totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, hotelBooking.getCheckOut(), roomCategory.getRoomCategoryId(), true);
-        }else{
-            totalPrice = BookingUtil.calculatePriceBetweenDate(checkIn, checkOut, roomCategory.getRoomCategoryId(), true);
-        }
+        LocalDate checkInDate = LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate();
+        LocalDate checkoutDate = LocalDateTime.ofInstant(checkOut, ZoneId.systemDefault()).toLocalDate();
+        totalPrice = BookingUtil.calculateRoomCostForCheckOut(checkInDate, checkoutDate, roomCategory.getRoomCategoryId());
         detailsDTO.setPrice(BookingUtil.getPriceOfRoom(roomCategory.getRoomCategoryId()));
         detailsDTO.setTotalPrice(totalPrice.multiply(BigDecimal.valueOf(detailsDTO.getRoomNumber())));
         return detailsDTO;

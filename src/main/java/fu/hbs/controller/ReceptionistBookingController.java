@@ -329,7 +329,7 @@ public class ReceptionistBookingController {
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
             SaveCheckinDTO saveCheckinDTO = SaveCheckinDTO.valueOf(hotelBooking,bookingRoomDetails);
             model.addAttribute("saveCheckinDTO",saveCheckinDTO);
-            if (errorMessage!=null){
+            if (errorMessage!=null && !errorMessage.isEmpty()){
                 String decodedErrorMessage = URLDecoder.decode(errorMessage, StandardCharsets.UTF_8);
                 model.addAttribute("errorMessage",decodedErrorMessage);
             }

@@ -63,7 +63,22 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public String handleRuntimeException(Model model, RuntimeException ex) {
-        model.addAttribute("error", "Bạn đã không đặt phòng nào.");
+        String errorMessage = ex.getMessage();
+
+        if (errorMessage != null) {
+            if (errorMessage.equals("Bạn chưa đặt phòng nào")) {
+                model.addAttribute("error", "Bạn đã không đặt phòng nào.");
+            } else if (errorMessage.equals("Số lượng phòng không hợp lệ")) {
+                model.addAttribute("error", "Số lượng phòng không hợp lệ.");
+            } else if (errorMessage.equals("Số lượng phòng không khớp với loại phòng")) {
+                model.addAttribute("error", "Số lượng phòng không khớp với loại phòng.");
+            } else {
+                model.addAttribute("error", "Có lỗi xảy ra."); // Trường hợp mặc định nếu không phù hợp với các điều kiện trên
+            }
+        } else {
+            model.addAttribute("error", "Có lỗi xảy ra.");
+        }
+
         return "customer/errorBooking";
     }
 
@@ -84,6 +99,4 @@ public class ApplicationExceptionHandler {
         model.addAttribute("error", ex.getMessage());
         return "errorPage"; // Create an error page for displaying the error message.
     }
-
-
 }

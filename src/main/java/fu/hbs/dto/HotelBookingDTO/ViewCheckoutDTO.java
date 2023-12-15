@@ -37,6 +37,7 @@ public class ViewCheckoutDTO {
     private List<RoomBookingServiceDTO> roomBookingServiceDTOS = new ArrayList<>();
     private BigDecimal prepay = BigDecimal.ZERO;
     private BigDecimal taxPrice = BigDecimal.ZERO;
+    private BigDecimal refund = BigDecimal.ZERO;
 
     public static ViewCheckoutDTO valueOf(HotelBooking hotelBooking,
                                           List<BookingRoomDetails> bookingRoomDetails,

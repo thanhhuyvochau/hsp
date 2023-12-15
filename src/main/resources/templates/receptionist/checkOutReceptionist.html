@@ -374,6 +374,13 @@
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
+                                    <h6 class="fw-bold">Hoàn tiền:</h6>
+                                </div>
+                                <div class="col text-end"><span id="refund-price" class="fw-bold"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-2 me-4">
+                                <div class="col ms-4">
                                     <h6 class="fw-bold">Còn lại:</h6>
                                 </div>
                                 <div class="col text-end"><span id="remain-price" class="fw-bold"></span>
@@ -596,6 +603,7 @@
         let $total = $("#total-price");
         let $remain = $("#remain-price");
         let $prepay = $("#prepay-price-hidden");
+        let $refund = $("#refund-price");
         let servicePrice = reCalculateServicePrice();
         let surchargePrice = $surcharge.val();
         let taxPrice = $tax.text();
@@ -609,7 +617,13 @@
 
         $tax.text(formatCurrency(taxPrice));
         $total.text(formatCurrency(totalPrice));
-        $remain.text(formatCurrency(remainPrice));
+        if (remainPrice < 0){
+            $remain.text(formatCurrency(0));
+            $refund.text(formatCurrency(remainPrice*-1));
+        }else{
+            $remain.text(formatCurrency(remainPrice));
+            $refund.text(formatCurrency(0));
+        }
         $service.text(formatCurrency(servicePrice));
     }
 

@@ -52,7 +52,9 @@ public class HotelBooking {
     private String phone;
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private BigDecimal depositPrice = BigDecimal.ZERO;
+    private BigDecimal refundPrice = BigDecimal.ZERO;
     private Instant checkIn;
     private Instant checkOut;
     private Boolean validBooking = false;
+    private String note;
 }

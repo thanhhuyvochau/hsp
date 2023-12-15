@@ -92,7 +92,6 @@ public class BookingUtil {
         }
 
         return totalPrice;
-
     }
 
     public static BigDecimal getPriceOfRoom(Long categoryId) {
@@ -117,7 +116,7 @@ public class BookingUtil {
         return staticRoomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
     }
 
-    public static BigDecimal calculateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, BigDecimal prePay) {
+    public static BigDecimal calculateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice) {
         BigDecimal taxPrice = servicePrice.add(roomPrice).multiply(BigDecimal.valueOf(0.1));
 //        return servicePrice.add(roomPrice).add(taxPrice).subtract(prePay);
         return servicePrice.add(roomPrice).add(taxPrice); // Total is not related to prepay
@@ -129,4 +128,56 @@ public class BookingUtil {
     public static Room findRoomById(Long roomId){
         return staticRoomService.findRoomById(roomId);
     }
+
+
+    public static BigDecimal calculateRoomCostForCheckOut(LocalDate checkInDate, LocalDate checkOutDate,
+                                           Long categoryId) {
+        // Set default check-in and check-out times
+        LocalTime defaultCheckInTime = LocalTime.of(14, 30);
+        LocalTime defaultCheckOutTime = LocalTime.of(12, 0);
+
+        // Calculate the total number of days for reservation
+        long totalDays = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+        totalDays = totalDays == 0 ? totalDays + 1:totalDays;
+        // Initialize total cost
+        BigDecimal totalCost = BigDecimal.ZERO;
+        BigDecimal totalRefundCost = BigDecimal.ZERO;
+        BigDecimal dailyPrice = getPriceOfRoom(categoryId);
+        // Loop through each day of the reservation
+        for (int i = 0; i < totalDays; i++) {
+            LocalDate currentDate = checkInDate.plusDays(i);
+            double multiplier = getMultiplier(currentDate);
+
+            // Calculate cost for the day based on the multiplier
+            BigDecimal dailyCost = dailyPrice.multiply(BigDecimal.valueOf(multiplier));
+
+            // Check for early check-out and apply refund if applicable
+            if (currentDate.equals(checkOutDate.minusDays(1)) && LocalTime.now().isBefore(defaultCheckOutTime)) {
+                long hours = defaultCheckOutTime.until(LocalTime.now(), ChronoUnit.HOURS);
+                BigDecimal refundAmount = dailyCost.multiply(BigDecimal.valueOf(hours).divide(BigDecimal.valueOf(24), 10, BigDecimal.ROUND_HALF_UP));
+                totalRefundCost = totalRefundCost.add(refundAmount);
+            } else {
+                totalCost = totalCost.add(dailyCost);
+            }
+        }
+
+        // Check for late check-out and apply additional fee if applicable
+        if (LocalTime.now().isAfter(defaultCheckOutTime) && LocalTime.now().minus(defaultCheckOutTime.getHour(), ChronoUnit.HOURS).isAfter(LocalTime.of(3, 0))) {
+            BigDecimal additionalFee = totalCost.multiply(BigDecimal.valueOf(0.15));
+            totalCost = totalCost.add(additionalFee);
+        }
+
+        return totalCost.subtract(totalRefundCost);
+    }
+    private static double getMultiplier(LocalDate date) {
+        int dayType = staticHotelBookingService.getDayType(date);
+        if (dayType == 3){
+           return 3;
+        } else if (dayType == 2) {
+            return 1.5;
+        }else{
+            return 1;
+        }
+    }
+
 }

@@ -49,7 +49,7 @@ public class RoomServiceImpl implements RoomService {
         Instant now = Instant.now();
         LocalDate localDate = LocalDateTime.ofInstant(now, ZoneId.systemDefault()).toLocalDate();
         if (localDate.equals(checkIn)){
-            rooms = rooms.stream().filter(room -> room.getRoomStatusId().longValue() == 3).collect(Collectors.toList());
+            rooms = rooms.stream().filter(room -> room.getRoomStatusId().equals(3L)).collect(Collectors.toList());
         }
 
 
