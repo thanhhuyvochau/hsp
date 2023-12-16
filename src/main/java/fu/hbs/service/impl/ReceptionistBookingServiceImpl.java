@@ -23,6 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class ReceptionistBookingServiceImpl implements ReceptionistBookingService {
+    private static final String PRE_PAY_MESSAGE = "Trả trước đặt phòng";
+    private static final String PAY_MESSAGE = "Thanh toán đặt phòng";
+    private static final String REFUND_MESSAGE = "Hoàn tiền đặt phòng";
+
+
     @Autowired
     private HotelBookingRepository bookingRepository;
     @Autowired
@@ -131,7 +136,6 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0,
                     RoundingMode.HALF_DOWN));
         }
-
         if (bookingRequest.getPaymentTypeId() != 1L) {
             Transactions transaction = new Transactions();
             transaction.setVnpayTransactionId(RandomKey.generateRandomKey());
@@ -139,7 +143,11 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setAmount(hotelBooking.getDepositPrice());
             transaction.setCreatedDate(Instant.now());
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
-            transaction.setContent("Thanh toán đặt phòng");
+            if (bookingRequest.isPayFull()) {
+                transaction.setContent(PAY_MESSAGE);
+            } else {
+                transaction.setContent(PRE_PAY_MESSAGE);
+            }
             transaction.setPaymentId(bookingRequest.getPaymentTypeId());
             hotelBooking.setValidBooking(true);
             transactionsRepository.save(transaction);
@@ -417,9 +425,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
     public static String getCheckoutContent(HotelBooking hotelBooking) {
         if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
-            return "Hoàn tiền đặt phòng";
+            return REFUND_MESSAGE;
         } else {
-            return "Thanh toán đặt phòng";
+            return PAY_MESSAGE;
         }
     }
 }
