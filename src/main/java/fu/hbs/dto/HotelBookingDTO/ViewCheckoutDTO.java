@@ -77,7 +77,8 @@ public class ViewCheckoutDTO {
         }
 
 
-        List<HotelBookingService> usedBookingServices = BookingUtil.getAllHotelBookingService(hotelBooking.getHotelBookingId());
+        List<HotelBookingService> usedBookingServices =
+                BookingUtil.getAllHotelBookingService(hotelBooking.getHotelBookingId());
         Map<Long, RoomService> roomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
         for (HotelBookingService usedBookingService : usedBookingServices) {
             RoomService roomService = roomServiceAsMap.get(usedBookingService.getServiceId());

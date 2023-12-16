@@ -269,8 +269,8 @@
                                 <td th:text="${bookDetail.getCustomerNumber()}"></td>
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
-                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getPrice()), '.00', '').replace('$','')} + ' đ'"></td>
-                                <td th:text="${#strings.replace(#numbers.formatCurrency(bookDetail.getTotalPrice()), '.00', '').replace('$','')} + ' đ'"></td>
+                                <td th:text="${#numbers.formatDecimal(bookDetail.getPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
+                                <td th:text="${#numbers.formatDecimal(bookDetail.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
                                 <td></td>
                             </tr>
                             </tbody>
@@ -336,7 +336,7 @@
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
                                 <div class="col text-end"><a id="room-price"
-                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getTotalRoomPrice()), '.00', '').replace('$','')} + ' đ'"></a>
+                                                             th:text="${#numbers.formatDecimal(viewCheckoutDTO.getTotalRoomPrice(), 0, 'COMMA', 0, 'POINT')}"></a>
                                 </div>
                             </div>
                             <div class="row me-4 mt-2">
@@ -375,7 +375,7 @@
                                     <h6 class="fw-bold">Đã thanh toán:</h6>
                                 </div>
                                 <div class="col text-end"><a id="prepay-price"
-                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getPrepay()), '.00', '').replace('$','')} + ' đ'"></a>
+                                                             th:text="${#numbers.formatDecimal(viewCheckoutDTO.getPrepay(), 0,'COMMA', 0, 'POINT')}"></a>
                                 </div>
                                 <input type="hidden" th:value="${viewCheckoutDTO.getPrepay()}"
                                        id="prepay-price-hidden"/>
@@ -440,7 +440,8 @@
                             <td th:id="${'service-name-'+service.getServiceId()}"
                                 th:text="${service.getServiceName()}"></td>
                             <td th:id="${'service-price-'+service.getServiceId()}"
-                                th:text="${#strings.replace(#numbers.formatCurrency(service.getServicePrice()), '.00', '').replace('$','')} + ' đ'"></td>
+                                th:text="${#numbers.formatDecimal(service.getServicePrice(), 0, 'COMMA', 0, 'POINT')}"></td>
+
                             <td>
                                 <label>
                                     <input min="0" value="0" th:id="${'service-quantity-'+service.getServiceId()}"

@@ -7,6 +7,7 @@ import fu.hbs.service.dao.HotelBookingServiceService;
 import fu.hbs.service.dao.RoomCategoryService;
 import fu.hbs.service.dao.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Controller
+@Component
 public class BookingUtil {
 
     private static CategoryRoomPriceService staticCategoryRoomPriceService;
@@ -30,6 +31,7 @@ public class BookingUtil {
 
     private static fu.hbs.service.dao.HotelBookingService staticHotelBookingService;
     private static fu.hbs.service.dao.RoomService staticRoomService;
+
     public BookingUtil(CategoryRoomPriceService categoryRoomPriceService,
                        HotelBookingServiceService hotelBookingServiceService,
                        ServiceService roomServiceService,
@@ -50,7 +52,8 @@ public class BookingUtil {
                 .count();
     }
 
-    public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId, Boolean isCalculateForCheckout) {
+    public static BigDecimal calculatePriceBetweenDate(Instant checkIn, Instant checkout, Long categoryId,
+                                                       Boolean isCalculateForCheckout) {
 //        long diffInDays = checkIn.until(checkout, ChronoUnit.HOURS);
         Duration durationOfStay = Duration.between(checkIn, checkout);
 
@@ -61,34 +64,35 @@ public class BookingUtil {
         checkIn = checkIn.truncatedTo(ChronoUnit.DAYS);
         checkout = checkout.truncatedTo(ChronoUnit.DAYS);
         // If checkin same day multipler equal 1 => mean 1 day
-        if (checkIn.equals(checkout)){
+        if (checkIn.equals(checkout)) {
             multipler = 1;
-        }else{
-            while (checkIn.isBefore(checkout)){
-                int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate());
-                if (dayType == 3){
-                    multipler+=3;
+        } else {
+            while (checkIn.isBefore(checkout)) {
+                int dayType = staticHotelBookingService.getDayType(LocalDateTime.ofInstant(checkIn,
+                        ZoneId.systemDefault()).toLocalDate());
+                if (dayType == 3) {
+                    multipler += 3;
                 } else if (dayType == 2) {
-                    multipler+=1.5F;
-                }else{
-                    multipler+=1;
+                    multipler += 1.5F;
+                } else {
+                    multipler += 1;
                 }
-                checkIn = checkIn.plus(1,ChronoUnit.DAYS);
+                checkIn = checkIn.plus(1, ChronoUnit.DAYS);
             }
         }
 
 
-        BigDecimal totalPrice  = BigDecimal.ZERO;
-        if (isCalculateForCheckout){
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        if (isCalculateForCheckout) {
             Duration durationOfCheckoutSooner = Duration.between(Instant.now(), checkout);
             long soonerDays = durationOfCheckoutSooner.toDays();
-             totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
+            totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
             if (soonerDays > 1) {
                 BigDecimal refund = pricePer.multiply(BigDecimal.valueOf(soonerDays));
                 return totalPrice.subtract(refund);
             }
-        }else{
-             totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
+        } else {
+            totalPrice = pricePer.multiply(BigDecimal.valueOf(multipler));
         }
 
         return totalPrice;
@@ -109,7 +113,8 @@ public class BookingUtil {
     }
 
     public static Map<Long, RoomService> getAllRoomServiceAsMap() {
-        return staticRoomServiceService.getAllServices().stream().collect(Collectors.toMap(RoomService::getServiceId, Function.identity()));
+        return staticRoomServiceService.getAllServices().stream().collect(Collectors.toMap(RoomService::getServiceId,
+                Function.identity()));
     }
 
     public static Map<Long, RoomCategories> getAllRoomCategoryAsMap() {
@@ -122,23 +127,25 @@ public class BookingUtil {
         return servicePrice.add(roomPrice).add(taxPrice); // Total is not related to prepay
 
     }
-    public static List<Room> findAvailableRoom(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut){
-        return staticRoomService.findAvailableRoom(roomCategoryId,checkIn,checkOut);
+
+    public static List<Room> findAvailableRoom(Long roomCategoryId, LocalDate checkIn, LocalDate checkOut) {
+        return staticRoomService.findAvailableRoom(roomCategoryId, checkIn, checkOut);
     }
-    public static Room findRoomById(Long roomId){
+
+    public static Room findRoomById(Long roomId) {
         return staticRoomService.findRoomById(roomId);
     }
 
 
     public static BigDecimal calculateRoomCostForCheckOut(LocalDate checkInDate, LocalDate checkOutDate,
-                                           Long categoryId) {
+                                                          Long categoryId) {
         // Set default check-in and check-out times
         LocalTime defaultCheckInTime = LocalTime.of(14, 30);
         LocalTime defaultCheckOutTime = LocalTime.of(12, 0);
 
         // Calculate the total number of days for reservation
         long totalDays = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
-        totalDays = totalDays == 0 ? totalDays + 1:totalDays;
+        totalDays = totalDays == 0 ? totalDays + 1 : totalDays;
         // Initialize total cost
         BigDecimal totalCost = BigDecimal.ZERO;
         BigDecimal totalRefundCost = BigDecimal.ZERO;
@@ -154,7 +161,8 @@ public class BookingUtil {
             // Check for early check-out and apply refund if applicable
             if (currentDate.equals(checkOutDate.minusDays(1)) && LocalTime.now().isBefore(defaultCheckOutTime)) {
                 long hours = defaultCheckOutTime.until(LocalTime.now(), ChronoUnit.HOURS);
-                BigDecimal refundAmount = dailyCost.multiply(BigDecimal.valueOf(hours).divide(BigDecimal.valueOf(24), 10, BigDecimal.ROUND_HALF_UP));
+                BigDecimal refundAmount = dailyCost.multiply(BigDecimal.valueOf(hours).divide(BigDecimal.valueOf(24),
+                        10, BigDecimal.ROUND_HALF_UP));
                 totalRefundCost = totalRefundCost.add(refundAmount);
             } else {
                 totalCost = totalCost.add(dailyCost);
@@ -162,20 +170,22 @@ public class BookingUtil {
         }
 
         // Check for late check-out and apply additional fee if applicable
-        if (LocalTime.now().isAfter(defaultCheckOutTime) && LocalTime.now().minus(defaultCheckOutTime.getHour(), ChronoUnit.HOURS).isAfter(LocalTime.of(3, 0))) {
+        if (LocalTime.now().isAfter(defaultCheckOutTime) && LocalTime.now().minus(defaultCheckOutTime.getHour(),
+                ChronoUnit.HOURS).isAfter(LocalTime.of(3, 0))) {
             BigDecimal additionalFee = totalCost.multiply(BigDecimal.valueOf(0.15));
             totalCost = totalCost.add(additionalFee);
         }
 
         return totalCost.subtract(totalRefundCost);
     }
+
     private static double getMultiplier(LocalDate date) {
         int dayType = staticHotelBookingService.getDayType(date);
-        if (dayType == 3){
-           return 3;
+        if (dayType == 3) {
+            return 3;
         } else if (dayType == 2) {
             return 1.5;
-        }else{
+        } else {
             return 1;
         }
     }

@@ -23,11 +23,11 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css"/>
 
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
     <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/manager.css"/>
     <link rel="stylesheet" href="/assets/css/sidebar.css">
     <script src="/assets/js/sidebar.js"></script>
     <script src="/assets/js/manager.js"></script>
@@ -320,10 +320,11 @@
                                             </div>
                                             <div class="row mt-2">
                                                 <h6>Phương thức đặt:</h6>
-                                                <select th:field="*{paymentTypeId}" class="form-select">
-                                                    <option value="1" selected>Qua cổng thanh toán</option>
-                                                    <option value="2">Tiền mặt</option>
-                                                    <option value="3">Chuyển khoản</option>
+                                                <select onchange="handleChangePaymentType()"
+                                                        th:field="*{paymentTypeId}"
+                                                        class="form-select">
+                                                    <option value="1" selected>Trực tuyến</option>
+                                                    <option value="2">Trực tiếp</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -431,7 +432,8 @@
                                                     <h6 class="fw-bold">Ghi chú: <a id="confirmNote"></a></h6>
                                                 </div>
                                                 <div class="row mt-2 me-5">
-                                                    <h6 class="fw-bold">Phương thức đặt: <a>Tại quầy lễ tân</a></h6>
+                                                    <h6 class="fw-bold">Phương thức đặt: <a
+                                                            id="confirm-payment-type"></a></h6>
                                                 </div>
                                             </div>
                                         </div>
@@ -578,6 +580,7 @@
                 return false;
             }
         })
+
         function addBookingDetailID() {
             var container = document.getElementById('bookingDetailsContainer');
             container.innerText = "";
@@ -696,7 +699,7 @@
                 // Append the row to the table body
                 tbody.append(row);
             })
-           updateRoomNumber();
+            updateRoomNumber();
 
             calculatePrices();
             updateInformationOfBooking();
@@ -739,6 +742,7 @@
                 $("#bookedRoomNumber").text(updateRoomNumber());
             })
         }
+
         updateTableView("[]"); // Default state of first load
         function updateTableView(response) {
             // Assuming the response is a JSON object with room details
@@ -748,62 +752,62 @@
             const tbody = $("#roomTable tbody");
             const emptyErrorMessage = $("#empty-error-message");
 
-            if (rooms.length == 0 ){
-                tbody.parent().css("display","none");
-                emptyErrorMessage.css("display","block");
-            }else{
-                tbody.parent().css("display","block");
-                emptyErrorMessage.css("display","none");
+            if (rooms.length == 0) {
+                tbody.parent().css("display", "none");
+                emptyErrorMessage.css("display", "block");
+            } else {
+                tbody.parent().css("display", "block");
+                emptyErrorMessage.css("display", "none");
 
             }
             // Clear existing table rows
-            if(rooms && rooms.length > 0){
-            tbody.empty();
-            let index = 1;
-            // Update the table with new data
-            rooms.forEach(room => {
-                var row = $("<tr></tr>");
-                row.append("<th scope='row'>" + index + "</th>");
-                row.append("<td>" + room.roomCategoryName + "</td>");
-                // Add other columns based on room properties
+            if (rooms && rooms.length > 0) {
+                tbody.empty();
+                let index = 1;
+                // Update the table with new data
+                rooms.forEach(room => {
+                    var row = $("<tr></tr>");
+                    row.append("<th scope='row'>" + index + "</th>");
+                    row.append("<td>" + room.roomCategoryName + "</td>");
+                    // Add other columns based on room properties
 
-                // Example columns for demonstration, replace with actual data
-                row.append("<td>" + room.numberAvailable + "</td>");
-                row.append("<td>" + room.description + "</td>");
-                row.append("<td>" + room.bed + "</td>");
-                row.append("<td>" + room.square + "</td>");
-                row.append("<td>" + room.numberPerson + "</td>");
-                row.append("<td>" + formatCurrency(room.price) + "</td>");
+                    // Example columns for demonstration, replace with actual data
+                    row.append("<td>" + room.numberAvailable + "</td>");
+                    row.append("<td>" + room.description + "</td>");
+                    row.append("<td>" + room.bed + "</td>");
+                    row.append("<td>" + room.square + "</td>");
+                    row.append("<td>" + room.numberPerson + "</td>");
+                    row.append("<td>" + formatCurrency(room.price) + "</td>");
 
-                const buttonColumn = $("<td></td>");
-                const addButton = $("<button type='button'></button>")
-                    .addClass("btn button btn-dark")
-                    .text("Thêm")
-                    .on("click", function () {
-                        console.log("CLICK");
-                        let numberAvailable = room.numberAvailable;
-                        let existRoom = selectedRooms.find(r => r.roomCategoryId === room.roomCategoryId);
+                    const buttonColumn = $("<td></td>");
+                    const addButton = $("<button type='button'></button>")
+                        .addClass("btn button btn-dark")
+                        .text("Thêm")
+                        .on("click", function () {
+                            console.log("CLICK");
+                            let numberAvailable = room.numberAvailable;
+                            let existRoom = selectedRooms.find(r => r.roomCategoryId === room.roomCategoryId);
 
-                        if (!existRoom) {
-                            selectedRooms.push({...room, "quantity": 1});
-                        } else {
-                            if (existRoom.quantity == room.numberAvailable) {
-                                alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                            if (!existRoom) {
+                                selectedRooms.push({...room, "quantity": 1});
                             } else {
-                                existRoom.quantity = existRoom.quantity + 1;
+                                if (existRoom.quantity == room.numberAvailable) {
+                                    alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                                } else {
+                                    existRoom.quantity = existRoom.quantity + 1;
+                                }
                             }
-                        }
-                        addBookingDetail();
-                        addBookingDetailID();
-                        // Add your logic here for button click
-                    });
-                buttonColumn.append(addButton);
+                            addBookingDetail();
+                            addBookingDetailID();
+                            // Add your logic here for button click
+                        });
+                    buttonColumn.append(addButton);
 
-                row.append(buttonColumn);
-                // Append the row to the table body
-                tbody.append(row);
-                index++;
-            });
+                    row.append(buttonColumn);
+                    // Append the row to the table body
+                    tbody.append(row);
+                    index++;
+                });
             }
         }
 
@@ -834,10 +838,9 @@
             selectedRooms.forEach(room => {
                 const price = room.price;
                 const numberOfBooking = room.quantity;
-                const totalARoomPrice = calculateRoomPrice(checkinDate, checkoutDate, price)*numberOfBooking;
+                const totalARoomPrice = calculateRoomPrice(checkinDate, checkoutDate, price) * numberOfBooking;
                 roomPrice += totalARoomPrice;
             })
-
 
 
             let taxPrice = roomPrice * 0.1;
@@ -929,13 +932,14 @@
                 index++;
             });
         }
+
         document.getElementById('btnContinue').addEventListener('click', function () {
             // Use Bootstrap's Tab JavaScript API to switch to the "profile" tab
 
-            if (selectedRooms.length > 0){
+            if (selectedRooms.length > 0) {
                 let tab = new bootstrap.Tab(document.getElementById('profile-tab'));
                 tab.show();
-            }else{
+            } else {
                 alert("Bạn phải chọn phòng trước khi điền thông tin khách hàng")
             }
         });
@@ -947,13 +951,13 @@
 
         document.getElementById('btnContinueProfile').addEventListener('click', function () {
             // Switch to the "confirm" tab
-            if ( validateName() & validatePhone() & validateAddress() & validateEmail()){
+            if (validateName() & validatePhone() & validateAddress() & validateEmail()) {
 
                 var tab = new bootstrap.Tab(document.getElementById('confirm-tab'));
                 tab.show();
-            }else{
-            alert("Điền đúng thông tin khách hàng trước khi xác nhận thanh toán")
-        }
+            } else {
+                alert("Điền đúng thông tin khách hàng trước khi xác nhận thanh toán")
+            }
 
         });
 
@@ -962,6 +966,8 @@
             var tab = new bootstrap.Tab(document.getElementById('profile-tab'));
             tab.show();
         });
+
+
     });
 
     function validateName() {
@@ -1011,6 +1017,7 @@
             return true;
         }
     }
+
     function validateAddress() {
         var address = document.getElementById("addressCustomer");
         var addressError = document.getElementById("addressError");
@@ -1070,12 +1077,13 @@
         }
     }
 
-    function getFormatDateTime(date,includeYear = true) {
+    function getFormatDateTime(date, includeYear = true) {
         var day = ("0" + date.getDate()).slice(-2);
         var month = ("0" + (date.getMonth() + 1)).slice(-2);
         var today = includeYear ? date.getFullYear() + "-" + (month) + "-" + (day) : (month) + "-" + (day);
         return today;
     }
+
     function isNormalDayOrHoliday(date) {
         // Check if the date is a weekend (Saturday or Sunday) - Use 3 to represents Holiday
         const dayOfWeek = date.getDay();
@@ -1086,12 +1094,12 @@
         // Check if the date is a predefined holiday
         const holidays = [
             // Add your list of holidays here (in the format YYYY-MM-DD)
-           "01-01","04-30","05-01","09-02",
+            "01-01", "04-30", "05-01", "09-02",
             // Add more holidays as needed
         ];
 
-        const formattedDate = getFormatDateTime(date,false);
-        console.log("Format Date:"+formattedDate);
+        const formattedDate = getFormatDateTime(date, false);
+        console.log("Format Date:" + formattedDate);
         if (holidays.includes(formattedDate)) { //- Use 3 to represents Weekend
             return 3;
         }
@@ -1115,7 +1123,7 @@
             } else if (dayType == 3) {
                 multiplier = 3; // If it's a holiday, multiply by 2 (adjust as needed)
             }
-            console.log("MULTIPLER:"+multiplier);
+            console.log("MULTIPLER:" + multiplier);
             // Add the room price multiplied by the multiplier to the total
             totalPrice += roomPrice * multiplier;
         }
@@ -1123,7 +1131,7 @@
         return totalPrice;
     }
 
-    function updateRoomNumber(){
+    function updateRoomNumber() {
         let totalNumber = selectedRooms.reduce(
             (accumulator, currentValue) => Number(accumulator) + Number(currentValue.quantity),
             0,
@@ -1133,6 +1141,21 @@
         }
         return totalNumber;
     }
+
+    function handleChangePaymentType() {
+        let $paymentSelect = $("#paymentTypeId");
+        let selectedPayment = $paymentSelect.val();
+        let $paymentDisplayer = $("#confirm-payment-type");
+        console.log("selectedPayment:" + selectedPayment);
+        if (selectedPayment == 1) {
+            $paymentDisplayer.text("Trực tuyến")
+        } else {
+            $paymentDisplayer.text("Trực tiếp")
+        }
+        console.log("VALUE: " + selectedPayment);
+    }
+
+    handleChangePaymentType();
 </script>
 
 
