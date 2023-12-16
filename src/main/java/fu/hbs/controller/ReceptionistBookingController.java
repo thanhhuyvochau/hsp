@@ -311,20 +311,20 @@ public class ReceptionistBookingController {
         return "receptionist/checkInRecetionist";
     }
 
-    private static SaveCheckoutDTO makeSaveCheckoutDTO(Long hotelBookingId, ViewCheckoutDTO viewCheckInDto) {
-        SaveCheckoutDTO checkoutModel = new SaveCheckoutDTO();
-        List<SaveCheckoutHotelServiceDTO> hotelServices = checkoutModel.getHotelServices();
-        for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckInDto.getRoomBookingServiceDTOS()) {
-            SaveCheckoutHotelServiceDTO saveCheckoutHotelServiceDTO = new SaveCheckoutHotelServiceDTO();
-            saveCheckoutHotelServiceDTO.setServiceId(roomBookingServiceDTO.getServiceId());
-            saveCheckoutHotelServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity());
-            hotelServices.add(saveCheckoutHotelServiceDTO);
-
-        }
-        checkoutModel.setHotelBookingId(hotelBookingId);
-        checkoutModel.setServicePrice(viewCheckInDto.getTotalServicePrice());
-        return checkoutModel;
-    }
+//    private static SaveCheckoutDTO makeSaveCheckoutDTO(Long hotelBookingId, ViewCheckoutDTO viewCheckInDto) {
+//        SaveCheckoutDTO checkoutModel = new SaveCheckoutDTO();
+//        List<SaveCheckoutHotelServiceDTO> hotelServices = checkoutModel.getHotelServices();
+//        for (RoomBookingServiceDTO roomBookingServiceDTO : viewCheckInDto.getRoomBookingServiceDTOS()) {
+//            SaveCheckoutHotelServiceDTO saveCheckoutHotelServiceDTO = new SaveCheckoutHotelServiceDTO();
+//            saveCheckoutHotelServiceDTO.setServiceId(roomBookingServiceDTO.getServiceId());
+//            saveCheckoutHotelServiceDTO.setQuantity(roomBookingServiceDTO.getQuantity());
+//            hotelServices.add(saveCheckoutHotelServiceDTO);
+//
+//        }
+//        checkoutModel.setHotelBookingId(hotelBookingId);
+//        checkoutModel.setServicePrice(viewCheckInDto.getTotalServicePrice());
+//        return checkoutModel;
+//    }
 
     @PostMapping("receptionist/new-checkIn")
     public String saveCheckInDetail(@ModelAttribute("checkin") SaveCheckinDTO checkinForm) {

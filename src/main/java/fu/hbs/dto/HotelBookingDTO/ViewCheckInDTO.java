@@ -32,10 +32,13 @@ public class ViewCheckInDTO {
     private Long paymentTypeId = 1L;
     private String paymentTypeName;
     private BigDecimal totalServicePrice = BigDecimal.ZERO;
-    private List<CheckInBookingDetailsDTO> bookingDetails = new ArrayList<>(); // Correspond each of booking room detail of this booking
+    private List<CheckInBookingDetailsDTO> bookingDetails = new ArrayList<>(); // Correspond each of booking room
+    // detail of this booking
     private BigDecimal prepay = BigDecimal.ZERO;
     private BigDecimal taxPrice = BigDecimal.ZERO;
     private BigDecimal totalPriceOfBooking = BigDecimal.ZERO;
+    private String note = "";
+
     public static ViewCheckInDTO valueOf(HotelBooking hotelBooking,
                                          List<BookingRoomDetails> bookingRoomDetails,
                                          PaymentType paymentType,
@@ -53,10 +56,10 @@ public class ViewCheckInDTO {
         viewCheckoutDto.setPhone(hotelBooking.getPhone());
         viewCheckoutDto.setDepositPrice(hotelBooking.getDepositPrice());
         viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
-        if (hotelBooking.getStatusId() == 1L){
+        if (hotelBooking.getStatusId() == 1L) {
             viewCheckoutDto.setCheckInBooking(DateUtil.formatInstantToPattern(Instant.now()));
             viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
-        }else{
+        } else {
             viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
             viewCheckoutDto.setCheckInBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
         }
@@ -73,9 +76,9 @@ public class ViewCheckInDTO {
         }
 
 
-
         BigDecimal totalRoomPrice = viewCheckoutDto.getBookingDetails().stream()
-                .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()), BigDecimal::add);
+                .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()),
+                        BigDecimal::add);
 
         BigDecimal taxPrice = totalRoomPrice.multiply(BigDecimal.valueOf(0.1));
         BigDecimal totalOfBooking = totalRoomPrice.add(taxPrice);
@@ -84,6 +87,7 @@ public class ViewCheckInDTO {
         viewCheckoutDto.setTotalPriceOfBooking(totalOfBooking);
         viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
         viewCheckoutDto.setPrepay(hotelBooking.getDepositPrice());
+        viewCheckoutDto.setNote(hotelBooking.getNote());
         return viewCheckoutDto;
     }
 }

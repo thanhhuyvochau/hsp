@@ -38,6 +38,7 @@ public class ViewCheckoutDTO {
     private BigDecimal prepay = BigDecimal.ZERO;
     private BigDecimal taxPrice = BigDecimal.ZERO;
     private BigDecimal refund = BigDecimal.ZERO;
+    private String note = "";
 
     public static ViewCheckoutDTO valueOf(HotelBooking hotelBooking,
                                           List<BookingRoomDetails> bookingRoomDetails,
@@ -56,23 +57,25 @@ public class ViewCheckoutDTO {
         viewCheckoutDto.setPhone(hotelBooking.getPhone());
         viewCheckoutDto.setDepositPrice(hotelBooking.getDepositPrice());
         viewCheckoutDto.setCheckIn(DateUtil.formatInstantToPattern(hotelBooking.getCheckIn()));
-        if (hotelBooking.getStatusId() == 2L){
+        if (hotelBooking.getStatusId() == 2L) {
             viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(Instant.now()));
             viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
-        }else{
+        } else {
             viewCheckoutDto.setCheckOut(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
             viewCheckoutDto.setCheckOutBooking(DateUtil.formatInstantToPattern(hotelBooking.getCheckOut()));
         }
         viewCheckoutDto.setPaymentTypeId(paymentType.getPaymentId());
         viewCheckoutDto.setPaymentTypeName(paymentType.getPaymentName());
 
-        List<RoomCategories> allBookingCategories = bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).collect(Collectors.toList());
+        List<RoomCategories> allBookingCategories =
+                bookingRoomDetails.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().map(roomCategoriesMap::get).collect(Collectors.toList());
 
         for (RoomCategories category : allBookingCategories) {
             List<BookingRoomDetails> bookingRoomDetailsByCategory = bookingRoomDetails.stream()
                     .filter(bookingRoomDetail -> bookingRoomDetail.getRoomCategoryId().equals(category.getRoomCategoryId()))
                     .collect(Collectors.toList());
-            CheckoutBookingDetailsDTO detailsDTO = CheckoutBookingDetailsDTO.valueOf(hotelBooking,category, bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
+            CheckoutBookingDetailsDTO detailsDTO = CheckoutBookingDetailsDTO.valueOf(hotelBooking, category,
+                    bookingRoomDetailsByCategory, hotelBooking.getCheckIn(), Instant.now());
             viewCheckoutDto.getBookingDetails().add(detailsDTO);
         }
 
@@ -82,20 +85,24 @@ public class ViewCheckoutDTO {
         Map<Long, RoomService> roomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
         for (HotelBookingService usedBookingService : usedBookingServices) {
             RoomService roomService = roomServiceAsMap.get(usedBookingService.getServiceId());
-//            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, usedBookingService.getQuantity());
+//            RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService,
+//            usedBookingService.getQuantity());
             RoomBookingServiceDTO roomBookingServiceDTO = RoomBookingServiceDTO.valueOf(roomService, 1);
 
             viewCheckoutDto.getRoomBookingServiceDTOS().add(roomBookingServiceDTO);
         }
         BigDecimal totalRoomPrice = viewCheckoutDto.getBookingDetails().stream()
-                .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()), BigDecimal::add);
+                .reduce(BigDecimal.ZERO, (subTotal, bookingDetail) -> subTotal.add(bookingDetail.getTotalPrice()),
+                        BigDecimal::add);
         BigDecimal totalHotelServicePrice = viewCheckoutDto.getRoomBookingServiceDTOS().stream()
-                .reduce(BigDecimal.ZERO, (subTotal, useHotelService) -> subTotal.add(useHotelService.getTotalPrice()), BigDecimal::add);
+                .reduce(BigDecimal.ZERO, (subTotal, useHotelService) -> subTotal.add(useHotelService.getTotalPrice())
+                        , BigDecimal::add);
 
 
         viewCheckoutDto.setTotalRoomPrice(totalRoomPrice);
         viewCheckoutDto.setTotalServicePrice(totalHotelServicePrice);
         viewCheckoutDto.setPrepay(hotelBooking.getDepositPrice());
+        viewCheckoutDto.setNote(hotelBooking.getNote());
         return viewCheckoutDto;
     }
 }
