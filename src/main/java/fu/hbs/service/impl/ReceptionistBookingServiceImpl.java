@@ -94,8 +94,12 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         LocalDate checkInLocalDate = bookingRequest.getCheckIn();
         LocalDate checkOutLocalDate = bookingRequest.getCheckOut();
 
-        LocalDateTime checkInWithSpecificTime = LocalDateTime.of(checkInLocalDate.getYear(), checkInLocalDate.getMonth(), checkInLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day, Hour, Minute, Second
-        LocalDateTime checkoutWithSpecificTime = LocalDateTime.of(checkOutLocalDate.getYear(), checkOutLocalDate.getMonth(), checkOutLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day, Hour, Minute, Second
+        LocalDateTime checkInWithSpecificTime = LocalDateTime.of(checkInLocalDate.getYear(),
+                checkInLocalDate.getMonth(), checkInLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day, Hour,
+        // Minute, Second
+        LocalDateTime checkoutWithSpecificTime = LocalDateTime.of(checkOutLocalDate.getYear(),
+                checkOutLocalDate.getMonth(), checkOutLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day,
+        // Hour, Minute, Second
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
 
         Instant checkOut = checkoutWithSpecificTime.atZone(zoneId).toInstant();
@@ -108,7 +112,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             throw new RuntimeException("Thời gian đặt phòng không hợp lệ!");
         }
         // Calculate total room number
-        Optional<Integer> totalRoomNumberOp = bookingRequest.getBookingDetails().stream().map(CreateHotelBookingDetailDTO::getRoomNumber).reduce(Integer::sum);
+        Optional<Integer> totalRoomNumberOp =
+                bookingRequest.getBookingDetails().stream().map(CreateHotelBookingDetailDTO::getRoomNumber).reduce(Integer::sum);
         totalRoomNumberOp.ifPresent(hotelBooking::setTotalRoom);
 
         // Save to get id before create Booking Details
@@ -123,7 +128,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (bookingRequest.isPayFull()) {
             hotelBooking.setDepositPrice(totalPrice);
         } else {
-            hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0, RoundingMode.HALF_DOWN));
+            hotelBooking.setDepositPrice(totalPrice.multiply(BigDecimal.valueOf(0.5)).setScale(0,
+                    RoundingMode.HALF_DOWN));
         }
 
         if (bookingRequest.getPaymentTypeId() != 1L) {
@@ -134,6 +140,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setCreatedDate(Instant.now());
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
             transaction.setContent("Thanh toán đặt phòng");
+            transaction.setPaymentId(bookingRequest.getPaymentTypeId());
             hotelBooking.setValidBooking(true);
             transactionsRepository.save(transaction);
         }
@@ -141,16 +148,21 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return hotelBooking.getHotelBookingId();
     }
 
-    private List<BookingRoomDetails> createBookingDetails(CreateHotelBookingDTO bookingRequest, Instant checkIn, Instant checkOut, HotelBooking hotelBooking) {
+    private List<BookingRoomDetails> createBookingDetails(CreateHotelBookingDTO bookingRequest, Instant checkIn,
+                                                          Instant checkOut, HotelBooking hotelBooking) {
         List<BookingRoomDetails> bookingRoomDetails = new ArrayList<>(); // All result of BookingRoomDetails
-        Map<Long, List<Room>> availableRoomWithCategoryMap = new HashMap<>(); // Map for save temporary all available room in this creating session
+        Map<Long, List<Room>> availableRoomWithCategoryMap = new HashMap<>(); // Map for save temporary all available
+        // room in this creating session
 
         for (CreateHotelBookingDetailDTO bookingDetailRequest : bookingRequest.getBookingDetails()) {
             // Get available room from DB if we not yet store in map
-            List<Room> availableRoomsByCategoryIdAndDateBetween = availableRoomWithCategoryMap.get(bookingDetailRequest.getRoomCategoryId());
+            List<Room> availableRoomsByCategoryIdAndDateBetween =
+                    availableRoomWithCategoryMap.get(bookingDetailRequest.getRoomCategoryId());
             if (availableRoomsByCategoryIdAndDateBetween == null) {
-                availableRoomsByCategoryIdAndDateBetween = this.findAvailableRoomsByCategoryIdAndDateBetween(checkIn, checkOut, bookingDetailRequest.getRoomCategoryId());
-                availableRoomWithCategoryMap.put(bookingDetailRequest.getRoomCategoryId(), availableRoomsByCategoryIdAndDateBetween);
+                availableRoomsByCategoryIdAndDateBetween = this.findAvailableRoomsByCategoryIdAndDateBetween(checkIn,
+                        checkOut, bookingDetailRequest.getRoomCategoryId());
+                availableRoomWithCategoryMap.put(bookingDetailRequest.getRoomCategoryId(),
+                        availableRoomsByCategoryIdAndDateBetween);
             }
             // Check if available room number less than booking number
             Integer bookingRoomNumber = bookingDetailRequest.getRoomNumber();
@@ -176,16 +188,21 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         LocalDateTime startDateTime = LocalDateTime.ofInstant(start, ZoneOffset.UTC);
         LocalDateTime endDateTime = LocalDateTime.ofInstant(end, ZoneOffset.UTC);
 
-        return roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, startDateTime.toLocalDate(), endDateTime.toLocalDate());
+        return roomRepository.findAvailableRoomsByCategoryId(roomCategoryId, startDateTime.toLocalDate(),
+                endDateTime.toLocalDate());
     }
 
-    private BigDecimal calculateTotalPrice(List<BookingRoomDetails> bookingRoomDetailsList, Instant checkin, Instant checkout) {
-        List<Long> bookRoomCategoryIds = bookingRoomDetailsList.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().collect(Collectors.toList());
-        Map<Long, CategoryRoomPrice> priceMap = categoryRoomPriceRepository.findAllById(bookRoomCategoryIds).stream().collect(Collectors.toMap(CategoryRoomPrice::getRoomCategoryId, Function.identity()));
+    private BigDecimal calculateTotalPrice(List<BookingRoomDetails> bookingRoomDetailsList, Instant checkin,
+                                           Instant checkout) {
+        List<Long> bookRoomCategoryIds =
+                bookingRoomDetailsList.stream().map(BookingRoomDetails::getRoomCategoryId).distinct().collect(Collectors.toList());
+        Map<Long, CategoryRoomPrice> priceMap =
+                categoryRoomPriceRepository.findAllById(bookRoomCategoryIds).stream().collect(Collectors.toMap(CategoryRoomPrice::getRoomCategoryId, Function.identity()));
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (BookingRoomDetails bookingRoomDetails : bookingRoomDetailsList) {
             categoryRoomPriceRepository.getCategoryId(bookingRoomDetails.getRoomCategoryId());
-            BigDecimal priceWithDate = BookingUtil.calculatePriceBetweenDate(checkin, checkout, bookingRoomDetails.getRoomCategoryId(), false);
+            BigDecimal priceWithDate = BookingUtil.calculatePriceBetweenDate(checkin, checkout,
+                    bookingRoomDetails.getRoomCategoryId(), false);
             totalPrice = totalPrice.add(priceWithDate);
         }
         return totalPrice;
@@ -205,25 +222,30 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             hotelBooking.setCheckOut(Instant.now());
 
             // Change room status
-            List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBooking.getHotelBookingId());
+            List<BookingRoomDetails> hotelBookingDetails =
+                    bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBooking.getHotelBookingId());
             changeRoomStatus(hotelBookingDetails);
 
             List<SaveCheckoutHotelServiceDTO> hotelBookingServices = saveCheckoutDTO.getHotelServices();
-            hotelBookingServiceRepository.deleteAllByHotelBookingId(hotelBooking.getHotelBookingId()); // Clean all old used service and use latest ones
+            hotelBookingServiceRepository.deleteAllByHotelBookingId(hotelBooking.getHotelBookingId()); // Clean all
+            // old used service and use latest ones
             Map<Long, RoomService> allRoomServiceAsMap = BookingUtil.getAllRoomServiceAsMap();
 
             List<HotelBookingService> hotelBookingServiceList = new ArrayList<>();
             BigDecimal servicePrice = BigDecimal.ZERO;
-            servicePrice = calculateServicePrice(hotelBookingServices, allRoomServiceAsMap, servicePrice, hotelBooking, hotelBookingServiceList);
+            servicePrice = calculateServicePrice(hotelBookingServices, allRoomServiceAsMap, servicePrice,
+                    hotelBooking, hotelBookingServiceList);
 
             BigDecimal roomPrice = BigDecimal.ZERO;
-            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(), hotelBooking.getCheckOut());
+            roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(),
+                    hotelBooking.getCheckOut());
 
             updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
 
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
                 String content = getCheckoutContent(hotelBooking);
-                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking, hotelBooking.getDepositPrice(), saveCheckoutDTO.getPaymentTypeId(),content);
+                Transactions transactions = makeTransaction(hotelBooking.getTotalPrice(), hotelBooking,
+                        hotelBooking.getDepositPrice(), saveCheckoutDTO.getPaymentTypeId(), content);
                 hotelBooking.setStatusId(3L);
                 transactionsRepository.save(transactions);
             }
@@ -234,16 +256,18 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return false;
     }
 
-    private static void updateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice, HotelBooking hotelBooking) {
+    private static void updateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice,
+                                                  HotelBooking hotelBooking) {
         BigDecimal actualTotalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice);
         BigDecimal refund = hotelBooking.getDepositPrice().subtract(actualTotalPrice);
-        if (refund.compareTo(BigDecimal.ZERO) > 0){
+        if (refund.compareTo(BigDecimal.ZERO) > 0) {
             hotelBooking.setRefundPrice(refund);
         }
         hotelBooking.setTotalPrice(actualTotalPrice);
     }
 
-    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay, Long paymentTypeId,String content) {
+    private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay,
+                                                Long paymentTypeId, String content) {
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
@@ -255,20 +279,25 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         return transactions;
     }
 
-    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice, Instant checkIn, Instant checkOut) {
+    private static BigDecimal calculateRoomPrice(List<BookingRoomDetails> hotelBookingDetails, BigDecimal roomPrice,
+                                                 Instant checkIn, Instant checkOut) {
         LocalDate checkInDate = LocalDateTime.ofInstant(checkIn, ZoneId.systemDefault()).toLocalDate();
         LocalDate checkoutDate = LocalDateTime.ofInstant(checkOut, ZoneId.systemDefault()).toLocalDate();
         for (BookingRoomDetails bookingRoomDetail : hotelBookingDetails) {
-            BigDecimal price = BookingUtil.calculateRoomCostForCheckOut(checkInDate, checkoutDate, bookingRoomDetail.getRoomCategoryId());
+            BigDecimal price = BookingUtil.calculateRoomCostForCheckOut(checkInDate, checkoutDate,
+                    bookingRoomDetail.getRoomCategoryId());
             roomPrice = roomPrice.add(price);
         }
         return roomPrice;
     }
 
-    private static BigDecimal calculateServicePrice(List<SaveCheckoutHotelServiceDTO> hotelBookingServices, Map<Long, RoomService> allRoomServiceAsMap, BigDecimal servicePrice, HotelBooking hotelBooking, List<HotelBookingService> hotelBookingServiceList) {
+    private static BigDecimal calculateServicePrice(List<SaveCheckoutHotelServiceDTO> hotelBookingServices, Map<Long,
+            RoomService> allRoomServiceAsMap, BigDecimal servicePrice, HotelBooking hotelBooking,
+                                                    List<HotelBookingService> hotelBookingServiceList) {
         for (SaveCheckoutHotelServiceDTO hotelBookingService : hotelBookingServices) {
             RoomService roomService = allRoomServiceAsMap.get(hotelBookingService.getServiceId());
-            servicePrice = servicePrice.add(roomService.getServicePrice().multiply(BigDecimal.valueOf(hotelBookingService.getQuantity())));
+            servicePrice =
+                    servicePrice.add(roomService.getServicePrice().multiply(BigDecimal.valueOf(hotelBookingService.getQuantity())));
 
             HotelBookingService newHotelBookingService = new HotelBookingService();
             newHotelBookingService.setHotelBookingId(hotelBooking.getHotelBookingId());
@@ -281,7 +310,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     private void changeRoomStatus(List<BookingRoomDetails> hotelBookingDetails) {
-        List<Long> bookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
+        List<Long> bookedRoomIds =
+                hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
         List<Room> bookedRooms = roomRepository.findAllById(bookedRoomIds);
         for (Room bookedRoom : bookedRooms) {
             bookedRoom.setRoomStatusId(3L);
@@ -304,8 +334,10 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (!BookingValidator.isValidToCheckIn(hotelBooking.getCheckIn())) {
             return false;
         }
-        List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
-        List<Long> allBookedRoomIds = hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
+        List<BookingRoomDetails> hotelBookingDetails =
+                bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        List<Long> allBookedRoomIds =
+                hotelBookingDetails.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
         List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
         boolean isExistNotReadyRoom = BookingValidator.isExistNotReadyRoom(allBookedRooms);
         if (isExistNotReadyRoom) {
@@ -338,7 +370,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         if (!hotelBooking.getStatusId().equals(1L)) {
             return false;
         }
-        List<BookingRoomDetails> hotelBookingDetails = bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
+        List<BookingRoomDetails> hotelBookingDetails =
+                bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBookingId);
         Map<Long, SaveCheckinDetailDTO> newCheckinDetailMap = checkinDTO.getSaveCheckinDetailDTOS().stream()
                 .collect(Collectors.toMap(SaveCheckinDetailDTO::getBookingRoomId, Function.identity()));
 
@@ -355,7 +388,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
                 }).collect(Collectors.toList());
 
 
-        List<Long> allBookedRoomIds = updateBookingRooms.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
+        List<Long> allBookedRoomIds =
+                updateBookingRooms.stream().map(BookingRoomDetails::getRoomId).collect(Collectors.toList());
 
         List<Room> allBookedRooms = roomRepository.findAllById(allBookedRoomIds);
 
@@ -380,10 +414,11 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         roomRepository.saveAll(allBookedRooms);
         return true;
     }
-    public static String getCheckoutContent(HotelBooking hotelBooking){
-        if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0){
+
+    public static String getCheckoutContent(HotelBooking hotelBooking) {
+        if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
             return "Hoàn tiền đặt phòng";
-        }else{
+        } else {
             return "Thanh toán đặt phòng";
         }
     }

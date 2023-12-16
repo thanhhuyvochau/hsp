@@ -88,34 +88,6 @@ public class ReceptionistBookingController {
         return "redirect:/receptionist/createRoomReceptionist";
     }
 
-//    @GetMapping("/test-save")
-//    public String testSaveBooking() {
-//        CreateHotelBookingDTO hotelBookingDTO = new CreateHotelBookingDTO();
-//        hotelBookingDTO.setStatusId(1L);
-//        hotelBookingDTO.setName("John Doe");
-//        hotelBookingDTO.setEmail("john.doe@example.com");
-//        hotelBookingDTO.setAddress("123 Main Street");
-//        hotelBookingDTO.setPhone("123-456-7890");
-////        hotelBookingDTO.setCheckIn(Instant.ofEpochSecond(LocalDate.of(2023, 11, 25).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
-////        hotelBookingDTO.setCheckOut(Instant.ofEpochSecond(LocalDate.of(2023, 11, 28).toEpochSecond(LocalTime.of(12, 0), ZoneOffset.UTC)));
-//        // Create sample data for CreateHotelBookingDetailDTO
-//        CreateHotelBookingDetailDTO bookingDetailDTO1 = new CreateHotelBookingDetailDTO();
-//        bookingDetailDTO1.setRoomCategoryId(1L);
-//        bookingDetailDTO1.setRoomNumber(1);
-//
-//        CreateHotelBookingDetailDTO bookingDetailDTO2 = new CreateHotelBookingDetailDTO();
-//        bookingDetailDTO2.setRoomCategoryId(1L);
-//        bookingDetailDTO2.setRoomNumber(2);
-//
-//        // Add booking details to the list in CreateHotelBookingDTO
-//        List<CreateHotelBookingDetailDTO> bookingDetails = new ArrayList<>();
-//        bookingDetails.add(bookingDetailDTO1);
-//        bookingDetails.add(bookingDetailDTO2);
-//
-////        hotelBookingDTO.setBookingDetails(bookingDetails);
-//        bookingService.createHotelBookingByReceptionist(hotelBookingDTO);
-//        return "redirect:/listBookingReceptionist";
-//    }
 
     @PostMapping("/handle-payment")
     public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO")  ViewCheckoutDTO checkoutDTO, Model model) {
