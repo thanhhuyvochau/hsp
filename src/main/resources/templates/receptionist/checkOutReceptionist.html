@@ -135,7 +135,8 @@
 <body>
 
 <!--	<body data-bs-target=".navbar" data-bs-offset="100"></body>-->
-<form th:action="@{/receptionist/checkOutReceptionist}" method="post" th:object="${saveCheckoutDTO}" class="wrapper">
+<form id="checkout-form" th:action="@{/receptionist/checkOutReceptionist}" method="post" th:object="${saveCheckoutDTO}"
+      class="wrapper">
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header border-bottom">
@@ -235,9 +236,11 @@
                         <p class="fw-bold">Ngày nhận phòng: <a th:text="${viewCheckoutDTO.getCheckIn()}"></a></p>
                     </div>
                     <div class="col-lg-6 mt-3">
-                        <p class="fw-bold text-end">Ngày trả phòng đã đặt: <a th:text="${viewCheckoutDTO.getCheckOutBooking()}"></a>
+                        <p class="fw-bold text-end">Ngày trả phòng đã đặt: <a
+                                th:text="${viewCheckoutDTO.getCheckOutBooking()}"></a>
                         </p>
-                        <p class="fw-bold text-end">Ngày trả phòng thực tế: <a th:text="${viewCheckoutDTO.getCheckOut()}"></a>
+                        <p class="fw-bold text-end">Ngày trả phòng thực tế: <a
+                                th:text="${viewCheckoutDTO.getCheckOut()}"></a>
                         </p>
                     </div>
                 </div>
@@ -300,7 +303,9 @@
                                 <td th:text="${bookDetail.getServicePrice()}"></td>
                                 <td th:text="${bookDetail.getTotalPrice()}"></td>
                                 <td>
-                                    <button th:id="'delete-btn-service-'+${bookDetail.getServiceId()}" type="button" th:onclick="'deleteRow(\'' + ${bookDetail.getServiceId()} + '\');'" class="btn button btn-dark"><i class="bi bi-trash"></i></button>
+                                    <button th:id="'delete-btn-service-'+${bookDetail.getServiceId()}" type="button"
+                                            th:onclick="'deleteRow(\'' + ${bookDetail.getServiceId()} + '\');'"
+                                            class="btn button btn-dark"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
                             </tbody>
@@ -331,7 +336,8 @@
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
                                 <div class="col text-end"><a id="room-price"
-                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getTotalRoomPrice()), '.00', '').replace('$','')} + ' đ'"></a></div>
+                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getTotalRoomPrice()), '.00', '').replace('$','')} + ' đ'"></a>
+                                </div>
                             </div>
                             <div class="row me-4 mt-2">
                                 <div class="col ms-4">
@@ -369,8 +375,10 @@
                                     <h6 class="fw-bold">Đã thanh toán:</h6>
                                 </div>
                                 <div class="col text-end"><a id="prepay-price"
-                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getPrepay()), '.00', '').replace('$','')} + ' đ'"></a></div>
-                                <input type="hidden" th:value="${viewCheckoutDTO.getPrepay()}" id="prepay-price-hidden"/>
+                                                             th:text="${#strings.replace(#numbers.formatCurrency(viewCheckoutDTO.getPrepay()), '.00', '').replace('$','')} + ' đ'"></a>
+                                </div>
+                                <input type="hidden" th:value="${viewCheckoutDTO.getPrepay()}"
+                                       id="prepay-price-hidden"/>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
@@ -403,10 +411,11 @@
                     <div class="btn-end text-center">
                         <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
                         <button type="button" class="btn btn-secondary"
-                                style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;"><a th:href="@{/receptionist/listRoomInUse}">Quay
+                                style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;"><a
+                                th:href="@{/receptionist/listRoomInUse}">Quay
                             lại</a>
                         </button>
-                        <button type="submit" class="btn btn-dark" style="margin-right: 2rem; margin-top:
+                        <button onclick="handleOnClickCheckout()" type="button" class="btn btn-dark" style="margin-right: 2rem; margin-top:
                                 2rem;margin-bottom: 2rem;">Check-out
                         </button>
                     </div>
@@ -428,8 +437,10 @@
                         <tbody id="service-data">
                         <tr th:id="${'service-row-'+service.getServiceId()}" th:each="service, iStat : ${roomServices}">
                             <td th:text="${iStat.index + 1}"></td>
-                            <td th:id="${'service-name-'+service.getServiceId()}" th:text="${service.getServiceName()}"></td>
-                            <td th:id="${'service-price-'+service.getServiceId()}" th:text="${#strings.replace(#numbers.formatCurrency(service.getServicePrice()), '.00', '').replace('$','')} + ' đ'"></td>
+                            <td th:id="${'service-name-'+service.getServiceId()}"
+                                th:text="${service.getServiceName()}"></td>
+                            <td th:id="${'service-price-'+service.getServiceId()}"
+                                th:text="${#strings.replace(#numbers.formatCurrency(service.getServicePrice()), '.00', '').replace('$','')} + ' đ'"></td>
                             <td>
                                 <label>
                                     <input min="0" value="0" th:id="${'service-quantity-'+service.getServiceId()}"
@@ -459,11 +470,14 @@
     </div>
     <input type="hidden" th:value="${viewCheckoutDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
     <div id="service-used-container">
-        <div th:id="'service-'+${useService.getServiceId()}" th:each="useService, iterStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
+        <div th:id="'service-'+${useService.getServiceId()}"
+             th:each="useService, iterStat : ${viewCheckoutDTO.getRoomBookingServiceDTOS()}">
             <h1 th:text="${iterStat.index}"></h1>
-            <input th:id="'serviceInputID-'+${useService.getServiceId()}" th:value="${useService.getServiceId()}" type="hidden"
+            <input th:id="'serviceInputID-'+${useService.getServiceId()}" th:value="${useService.getServiceId()}"
+                   type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].serviceId}">
-            <input th:id="'serviceInputQuantity-'+${useService.getServiceId()}"  th:value="${useService.getQuantity()}" type="hidden"
+            <input th:id="'serviceInputQuantity-'+${useService.getServiceId()}" th:value="${useService.getQuantity()}"
+                   type="hidden"
                    th:field="*{hotelServices[__${iterStat.index}__].quantity}">
         </div>
     </div>
@@ -480,6 +494,7 @@
     let services = [[${roomServices}]];
     let addedServices = [[${viewCheckoutDTO.getRoomBookingServiceDTOS()}]];
     let roomPrice = [[${viewCheckoutDTO.getTotalRoomPrice()}]];
+
     /*]]>*/
 
 
@@ -494,8 +509,9 @@
         if (quantity > 0) {
 
             let serviceIndex = addedServices.findIndex(service => service.serviceId == serviceId);
-            console.log("INDEX:"+serviceIndex)
-;            if (serviceIndex < 0){
+            console.log("INDEX:" + serviceIndex)
+            ;
+            if (serviceIndex < 0) {
                 let addedService = services.find(service => service.serviceId == serviceId);
 
                 addedServices.push({...addedService, quantity});
@@ -508,10 +524,10 @@
                    name="hotelServices[${index}].quantity">
         `;
                 container.appendChild(detailDiv);
-            }else{
+            } else {
                 let addedService = addedServices[serviceIndex];
                 addedService.quantity = Number(quantity);
-                $("#serviceInputQuantity-"+serviceId).val(addedService.quantity);
+                $("#serviceInputQuantity-" + serviceId).val(addedService.quantity);
             }
             updateUseServiceView();
         } else {
@@ -525,7 +541,7 @@
         tbody.empty(); // clean old data
         var index = 1;
 
-        console.log("LIST SERVICE:"+JSON.stringify(addedServices))
+        console.log("LIST SERVICE:" + JSON.stringify(addedServices))
 
         addedServices.forEach(addService => {
             let row = $("<tr></tr>");
@@ -546,7 +562,7 @@
                 .on("click", function () {
                     deleteRow(addService.serviceId);
                 });
-            trashButton.attr("id", "delete-btn-service-"+addService.serviceId);
+            trashButton.attr("id", "delete-btn-service-" + addService.serviceId);
             buttonColumn.append(trashButton);
 
             row.append(buttonColumn);
@@ -617,10 +633,10 @@
 
         $tax.text(formatCurrency(taxPrice));
         $total.text(formatCurrency(totalPrice));
-        if (remainPrice < 0){
+        if (remainPrice < 0) {
             $remain.text(formatCurrency(0));
-            $refund.text(formatCurrency(remainPrice*-1));
-        }else{
+            $refund.text(formatCurrency(remainPrice * -1));
+        } else {
             $remain.text(formatCurrency(remainPrice));
             $refund.text(formatCurrency(0));
         }
@@ -628,7 +644,7 @@
     }
 
     function deleteRow(serviceId) {
-        let button = $("#delete-btn-service-"+serviceId);
+        let button = $("#delete-btn-service-" + serviceId);
         let row = button.parent().parent();
         row.parent().remove(row);
         addedServices = addedServices.filter(service => service.serviceId != serviceId);
@@ -652,12 +668,13 @@
             let priceCell = table.rows[i].cells[3]; // Index 4 corresponds to the 'Thành tiền' column
             let quantityCell = table.rows[i].cells[2];
             // Parse the priceCell content as a float and add it to the total
-            let price = parseFloat(priceCell.textContent || priceCell.innerText)*Number(quantityCell.textContent || quantityCell.innerText);
+            let price = parseFloat(priceCell.textContent || priceCell.innerText) * Number(quantityCell.textContent || quantityCell.innerText);
             total += isNaN(price) ? 0 : price;
         }
         console.log("TOTAL SERVICE:" + total);
         return total;
     }
+
     function formatCurrency(amount) {
         if (typeof Intl.NumberFormat === 'function') {
             const formattedAmount = new Intl.NumberFormat('vi-VN', {
@@ -669,6 +686,12 @@
             return formattedAmount;
         } else {
             return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+        }
+    }
+
+    function handleOnClickCheckout() {
+        if (confirm("Bạn có muốn đổi trạng thái thành 'Đã checkout'")) {
+            $("#checkout-form").trigger("submit");
         }
     }
 
