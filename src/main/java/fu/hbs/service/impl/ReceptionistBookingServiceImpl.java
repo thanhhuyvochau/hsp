@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fu.hbs.constant.TransactionMessage;
 import fu.hbs.dto.HotelBookingDTO.*;
 import fu.hbs.entities.*;
 import fu.hbs.exceptionHandler.CheckoutException;
@@ -23,10 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class ReceptionistBookingServiceImpl implements ReceptionistBookingService {
-    private static final String PRE_PAY_MESSAGE = "Trả trước đặt phòng";
-    private static final String PAY_MESSAGE = "Thanh toán đặt phòng";
-    private static final String REFUND_MESSAGE = "Hoàn tiền đặt phòng";
-
 
     @Autowired
     private HotelBookingRepository bookingRepository;
@@ -144,9 +141,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setCreatedDate(Instant.now());
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
             if (bookingRequest.isPayFull()) {
-                transaction.setContent(PAY_MESSAGE);
+                transaction.setContent(TransactionMessage.PAY.getMessage());
             } else {
-                transaction.setContent(PRE_PAY_MESSAGE);
+                transaction.setContent(TransactionMessage.PRE_PAY.getMessage());
             }
             transaction.setPaymentId(bookingRequest.getPaymentTypeId());
             hotelBooking.setValidBooking(true);
@@ -425,9 +422,10 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
     public static String getCheckoutContent(HotelBooking hotelBooking) {
         if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
-            return REFUND_MESSAGE;
+            return TransactionMessage.PRE_PAY.getMessage();
         } else {
-            return PAY_MESSAGE;
+            return TransactionMessage.PAY.getMessage();
         }
     }
+
 }

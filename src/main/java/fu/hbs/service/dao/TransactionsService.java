@@ -11,4 +11,7 @@ public interface TransactionsService {
     Transactions save(Transactions vnpayTransactions);
 
     List<ViewPaymentDTO> findByCreateDateAndPaymentId(LocalDate createDate, Long paymentId);
+
+    Transactions findFirstTransactionOfHotelBooking(Long hotelBookingId);
+
 }

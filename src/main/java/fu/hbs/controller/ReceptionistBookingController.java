@@ -73,7 +73,8 @@ public class ReceptionistBookingController {
     private TransactionsService transactionsService;
 
     @PostMapping("/receptionist-save-booking")
-    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, BindingResult result, HttpSession session, Model model) {
+    public String saveBooking(@ModelAttribute("booking") CreateHotelBookingDTO bookingRequest, BindingResult result,
+                              HttpSession session, Model model) {
         Long hotelBookingId = bookingService.createHotelBookingByReceptionist(bookingRequest);
         if (bookingRequest.getPaymentTypeId() == 1L) {
             HotelBooking hotelBooking = bookingService.findById(hotelBookingId);
@@ -82,7 +83,8 @@ public class ReceptionistBookingController {
             }
             session.setAttribute("userEmail", hotelBooking.getEmail().trim());
             session.setAttribute("orderTotal", hotelBooking.getDepositPrice());
-            session.setAttribute("orderInfo", "Thanh toán tiền cọc phòng cho đơn đặt:" + hotelBooking.getHotelBookingId());
+            session.setAttribute("orderInfo",
+                    "Thanh toán tiền cọc phòng cho đơn đặt:" + hotelBooking.getHotelBookingId());
             return "redirect:/payment";
         }
         return "redirect:/receptionist/createRoomReceptionist";
@@ -90,11 +92,13 @@ public class ReceptionistBookingController {
 
 
     @PostMapping("/handle-payment")
-    public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO")  ViewCheckoutDTO checkoutDTO, Model model) {
+    public String saveCheckoutPaymentReceptionist(@ModelAttribute("checkoutDTO") ViewCheckoutDTO checkoutDTO,
+                                                  Model model) {
         // Retrieve booking details based on the bookingId
         // Replace the following line with your actual logic to fetch booking details
         HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
-        List<BookingRoomDetails> bookingDetailsList = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
+        List<BookingRoomDetails> bookingDetailsList =
+                bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBooking.getHotelBookingId());
 
         // Add booking details to the model
         model.addAttribute("hotelBooking", hotelBooking);
@@ -156,13 +160,18 @@ public class ReceptionistBookingController {
     public String checkOutReceptionist(@RequestParam("hotelBookingId") Long hotelBookingId, Model model) {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null && hotelBooking.getValidBooking()) {
-            List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
+            List<BookingRoomDetails> bookingRoomDetails =
+                    bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
             List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
-            PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);
-            List<fu.hbs.entities.HotelBookingService> usedServices = hotelBookingServiceService.findAllByHotelBookingId(hotelBookingId);
+            Transactions transaction = transactionsService.findFirstTransactionOfHotelBooking(hotelBookingId);
+            PaymentType paymentType = paymentTypeService.getPaymentTypeById(transaction.getPaymentId());
+            List<fu.hbs.entities.HotelBookingService> usedServices =
+                    hotelBookingServiceService.findAllByHotelBookingId(hotelBookingId);
 
-            Map<Long, RoomCategories> roomCategoriesMap = this.roomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
-            ViewCheckoutDTO viewCheckoutDTO = ViewCheckoutDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType, roomCategoriesMap);
+            Map<Long, RoomCategories> roomCategoriesMap =
+                    this.roomCategoryService.getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
+            ViewCheckoutDTO viewCheckoutDTO = ViewCheckoutDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType,
+                    roomCategoriesMap);
             model.addAttribute("viewCheckoutDTO", viewCheckoutDTO);
             model.addAttribute("roomServices", roomServices);
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
@@ -186,12 +195,13 @@ public class ReceptionistBookingController {
 
 
     @PostMapping("receptionist/checkOutReceptionist")
-    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO")  SaveCheckoutDTO checkoutDTO, HttpSession session) {
+    public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO,
+                                           HttpSession session) {
         try {
             bookingService.checkout(checkoutDTO);
             if (checkoutDTO.getPaymentTypeId() == 1) {
                 HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
-                if (hotelBooking.getTotalPrice().compareTo(hotelBooking.getDepositPrice()) <= 0){
+                if (hotelBooking.getTotalPrice().compareTo(hotelBooking.getDepositPrice()) <= 0) {
                     return "redirect:/receptionist/listRoomInUse";
                 }
                 if (hotelBooking == null) {
@@ -200,7 +210,8 @@ public class ReceptionistBookingController {
                 BigDecimal totalPrice = hotelBooking.getTotalPrice().setScale(0, RoundingMode.UP);
                 session.setAttribute("userEmail", hotelBooking.getEmail().trim());
                 session.setAttribute("orderTotal", totalPrice);
-                session.setAttribute("orderInfo", "Thanh toán tiền phòng cho đơn đặt phòng:" + hotelBooking.getHotelBookingId());
+                session.setAttribute("orderInfo",
+                        "Thanh toán tiền phòng cho đơn đặt phòng:" + hotelBooking.getHotelBookingId());
                 return "redirect:/payment";
             }
         } catch (Exception e) {
@@ -237,7 +248,8 @@ public class ReceptionistBookingController {
         } else {
             return "error";
         }
-        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bigDecimalValue = new BigDecimal(totalPrice).divide(BigDecimal.valueOf(100), 2,
+                BigDecimal.ROUND_HALF_UP);
 
         model.addAttribute("orderId", orderInfo);
         model.addAttribute("totalPrice", bigDecimalValue);
@@ -288,22 +300,28 @@ public class ReceptionistBookingController {
             return new ResponseEntity<>("Check In thất bại", HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping("receptionist/checkIn")
-    public String getCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId,@RequestParam(value = "error", required = false) String errorMessage, Model model) {
+    public String getCheckIn(@RequestParam("hotelBookingId") Long hotelBookingId, @RequestParam(value = "error",
+            required = false) String errorMessage, Model model) {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null && hotelBooking.getValidBooking()) {
-            List<BookingRoomDetails> bookingRoomDetails = bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
-            PaymentType paymentType = paymentTypeService.getPaymentTypeById(2L);
+            List<BookingRoomDetails> bookingRoomDetails =
+                    bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
+            Transactions transaction = transactionsService.findFirstTransactionOfHotelBooking(hotelBookingId);
+            PaymentType paymentType = paymentTypeService.getPaymentTypeById(transaction.getPaymentId());
             Map<Long, RoomCategories> roomCategoriesMap = this.roomCategoryService.
-                    getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId, Function.identity()));
-            ViewCheckInDTO viewCheckInDto = ViewCheckInDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType,roomCategoriesMap);
+                    getAllRoomCategories().stream().collect(Collectors.toMap(RoomCategories::getRoomCategoryId,
+                            Function.identity()));
+            ViewCheckInDTO viewCheckInDto = ViewCheckInDTO.valueOf(hotelBooking, bookingRoomDetails, paymentType,
+                    roomCategoriesMap);
             model.addAttribute("viewCheckInDTO", viewCheckInDto);
             model.addAttribute("currentTime", Date.valueOf(LocalDate.now()));
-            SaveCheckinDTO saveCheckinDTO = SaveCheckinDTO.valueOf(hotelBooking,bookingRoomDetails);
-            model.addAttribute("saveCheckinDTO",saveCheckinDTO);
-            if (errorMessage!=null && !errorMessage.isEmpty()){
+            SaveCheckinDTO saveCheckinDTO = SaveCheckinDTO.valueOf(hotelBooking, bookingRoomDetails);
+            model.addAttribute("saveCheckinDTO", saveCheckinDTO);
+            if (errorMessage != null && !errorMessage.isEmpty()) {
                 String decodedErrorMessage = URLDecoder.decode(errorMessage, StandardCharsets.UTF_8);
-                model.addAttribute("errorMessage",decodedErrorMessage);
+                model.addAttribute("errorMessage", decodedErrorMessage);
             }
         } else {
             return "error";
@@ -332,10 +350,10 @@ public class ReceptionistBookingController {
         // Return to Page you want
         if (result) {
             return "redirect:/receptionist/listBookingReceptionist";
-        }else{
+        } else {
             String errorMessage = "Đơn đặt này đã check-in!";
             String encodedErrorMessage = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
-            return "redirect:/receptionist/checkIn?hotelBookingId="+checkinForm.getHotelBookingId() + "&error="+ encodedErrorMessage;
+            return "redirect:/receptionist/checkIn?hotelBookingId=" + checkinForm.getHotelBookingId() + "&error=" + encodedErrorMessage;
         }
     }
 }

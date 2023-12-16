@@ -11,6 +11,7 @@
  */
 package fu.hbs.service.impl;
 
+import fu.hbs.constant.TransactionMessage;
 import fu.hbs.dto.VnpayDTO.ViewPaymentDTO;
 import fu.hbs.entities.PaymentType;
 import fu.hbs.entities.Transactions;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionsServiceImpl implements TransactionsService {
@@ -43,7 +45,8 @@ public class TransactionsServiceImpl implements TransactionsService {
         Transactions transactions = new Transactions();
         List<ViewPaymentDTO> viewPaymentDTOList = new ArrayList<>();
         PaymentType paymentType = new PaymentType();
-        List<Transactions> vnpayTransactionsList = transactionsRepository.findTransactionsCreatedDateAndPaymentId(createDate, paymentId);
+        List<Transactions> vnpayTransactionsList =
+                transactionsRepository.findTransactionsCreatedDateAndPaymentId(createDate, paymentId);
         for (int i = 0; i < vnpayTransactionsList.size(); i++) {
             ViewPaymentDTO viewPaymentDTO = new ViewPaymentDTO();
             transactions.setPaymentId(vnpayTransactionsList.get(i).getPaymentId());
@@ -60,5 +63,20 @@ public class TransactionsServiceImpl implements TransactionsService {
             viewPaymentDTOList.add(viewPaymentDTO);
         }
         return viewPaymentDTOList;
+    }
+
+    @Override
+    public Transactions findFirstTransactionOfHotelBooking(Long hotelBookingId) {
+        Optional<Transactions> payTransaction =
+                transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId,
+                        TransactionMessage.PAY.getMessage());
+        if (payTransaction.isPresent()) {
+            return payTransaction.get();
+        } else {
+            payTransaction =
+                    transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId,
+                            TransactionMessage.PRE_PAY.getMessage());
+            return payTransaction.orElse(null);
+        }
     }
 }

@@ -9,6 +9,7 @@ import fu.hbs.dto.HotelBookingDTO.ViewCheckoutDTO;
 import fu.hbs.dto.HotelBookingDTO.CreateHotelBookingDTO;
 
 import fu.hbs.entities.HotelBooking;
+import fu.hbs.entities.Transactions;
 
 public interface ReceptionistBookingService {
     public List<HotelBooking> findAll();
@@ -34,4 +35,6 @@ public interface ReceptionistBookingService {
     List<HotelBooking> findAllWithStatusOneAndValidBooking(Boolean validBooking);
 
     Boolean checkIn(SaveCheckinDTO checkinDTO);
+
+
 }
