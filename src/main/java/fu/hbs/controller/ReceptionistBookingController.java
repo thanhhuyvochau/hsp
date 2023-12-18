@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fu.hbs.constant.TransactionMessage;
 import fu.hbs.dto.HotelBookingDTO.*;
 import fu.hbs.dto.RoomCategoryDTO.ViewRoomCategoryDTO;
 import fu.hbs.dto.RoomServiceDTO.RoomBookingServiceDTO;
@@ -234,7 +235,7 @@ public class ReceptionistBookingController {
     @GetMapping("/receptionist-payment")
     public String GetMapping(HttpServletRequest request, Model model) throws ResetExceptionHandler {
         int paymentStatus = vnPayService.orderReturn(request);
-        Transactions vnpayTransactions = new Transactions();
+        Transactions transaction = new Transactions();
 
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
@@ -263,16 +264,16 @@ public class ReceptionistBookingController {
         // Parse the string into a LocalDateTime object
         LocalDateTime parsedDate = LocalDateTime.parse(paymentTime, formatter);
         if (paymentStatus == 1) {
-            vnpayTransactions.setVnpayTransactionId(transactionId);
-            vnpayTransactions.setHotelBookingId(hotelBookingId);
-            vnpayTransactions.setAmount(bigDecimalValue);
-            vnpayTransactions.setCreatedDate(parsedDate.toInstant(ZoneOffset.UTC));
-            vnpayTransactions.setStatus("Thành công");
-            vnpayTransactions.setPaymentId(1L);
-            transactionsService.save(vnpayTransactions);
-
+            transaction.setVnpayTransactionId(transactionId);
+            transaction.setHotelBookingId(hotelBookingId);
+            transaction.setAmount(bigDecimalValue);
+            transaction.setCreatedDate(parsedDate.toInstant(ZoneOffset.UTC));
+            transaction.setStatus("Thành công");
+            transaction.setPaymentId(1L);
+            transaction.setContent(TransactionMessage.PAY.getMessage());
             HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
             hotelBooking.setValidBooking(true);
+            transactionsService.save(transaction);
             hotelBookingService.save(hotelBooking);
             return "customer/ordersuccess";
         }
