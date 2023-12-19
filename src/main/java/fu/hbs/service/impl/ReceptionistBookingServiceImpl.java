@@ -97,10 +97,10 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         LocalDate checkOutLocalDate = bookingRequest.getCheckOut();
 
         LocalDateTime checkInWithSpecificTime = LocalDateTime.of(checkInLocalDate.getYear(),
-                checkInLocalDate.getMonth(), checkInLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day, Hour,
+                checkInLocalDate.getMonth(), checkInLocalDate.getDayOfMonth(), 14, 30, 0); // Year, Month, Day, Hour,
         // Minute, Second
         LocalDateTime checkoutWithSpecificTime = LocalDateTime.of(checkOutLocalDate.getYear(),
-                checkOutLocalDate.getMonth(), checkOutLocalDate.getDayOfMonth(), 12, 30, 0); // Year, Month, Day,
+                checkOutLocalDate.getMonth(), checkOutLocalDate.getDayOfMonth(), 12, 0, 0); // Year, Month, Day,
         // Hour, Minute, Second
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
 
@@ -140,11 +140,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setAmount(hotelBooking.getDepositPrice());
             transaction.setCreatedDate(Instant.now());
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
-            if (bookingRequest.isPayFull()) {
-                transaction.setContent(TransactionMessage.PAY.getMessage());
-            } else {
-                transaction.setContent(TransactionMessage.PRE_PAY.getMessage());
-            }
+            transaction.setContent(TransactionMessage.PRE_PAY.getMessage());
             transaction.setPaymentId(bookingRequest.getPaymentTypeId());
             hotelBooking.setValidBooking(true);
             transactionsRepository.save(transaction);
@@ -225,7 +221,6 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             }
             Instant exptectedCheckoutDate = hotelBooking.getCheckOut();
             hotelBooking.setCheckOut(Instant.now());
-
             // Change room status
             List<BookingRoomDetails> hotelBookingDetails =
                     bookingRoomDetailsRepository.getAllByHotelBookingId(hotelBooking.getHotelBookingId());
@@ -245,7 +240,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             roomPrice = calculateRoomPrice(hotelBookingDetails, roomPrice, hotelBooking.getCheckIn(),
                     hotelBooking.getCheckOut());
 
-            updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking);
+            updateTotalPriceOfBooking(servicePrice, roomPrice, hotelBooking, saveCheckoutDTO.getSurcharge());
 
             if (!(saveCheckoutDTO.getPaymentTypeId() == 1)) {
                 String content = getCheckoutContent(hotelBooking);
@@ -262,13 +257,13 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
     }
 
     private static void updateTotalPriceOfBooking(BigDecimal servicePrice, BigDecimal roomPrice,
-                                                  HotelBooking hotelBooking) {
+                                                  HotelBooking hotelBooking, BigDecimal additionalFee) {
         BigDecimal actualTotalPrice = BookingUtil.calculateTotalPriceOfBooking(servicePrice, roomPrice);
         BigDecimal refund = hotelBooking.getDepositPrice().subtract(actualTotalPrice);
         if (refund.compareTo(BigDecimal.ZERO) > 0) {
             hotelBooking.setRefundPrice(refund);
         }
-        hotelBooking.setTotalPrice(actualTotalPrice);
+        hotelBooking.setTotalPrice(actualTotalPrice.add(additionalFee));
     }
 
     private static Transactions makeTransaction(BigDecimal totalPrice, HotelBooking hotelBooking, BigDecimal prePay,
@@ -422,7 +417,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
 
     public static String getCheckoutContent(HotelBooking hotelBooking) {
         if (hotelBooking.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
-            return TransactionMessage.PRE_PAY.getMessage();
+            return TransactionMessage.REFUND.getMessage();
         } else {
             return TransactionMessage.PAY.getMessage();
         }

@@ -69,13 +69,12 @@ public class TransactionsServiceImpl implements TransactionsService {
     public Transactions findFirstTransactionOfHotelBooking(Long hotelBookingId) {
         Optional<Transactions> payTransaction =
                 transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId,
-                        TransactionMessage.PAY.getMessage());
+                        2L);
         if (payTransaction.isPresent()) {
             return payTransaction.get();
         } else {
             payTransaction =
-                    transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId,
-                            TransactionMessage.PRE_PAY.getMessage());
+                    transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId, 1L);
             return payTransaction.orElse(null);
         }
     }

@@ -203,12 +203,16 @@ public class ReceptionistBookingController {
             if (checkoutDTO.getPaymentTypeId() == 1) {
                 HotelBooking hotelBooking = bookingService.findById(checkoutDTO.getHotelBookingId());
                 if (hotelBooking.getTotalPrice().compareTo(hotelBooking.getDepositPrice()) <= 0) {
+                    hotelBooking.setStatusId(3L);
+                    hotelBookingService.save(hotelBooking);
                     return "redirect:/receptionist/listRoomInUse";
                 }
                 if (hotelBooking == null) {
                     return "error";
                 }
-                BigDecimal totalPrice = hotelBooking.getTotalPrice().setScale(0, RoundingMode.UP);
+                BigDecimal totalPrice =
+                        hotelBooking.getTotalPrice().subtract(hotelBooking.getDepositPrice()).setScale(0,
+                                RoundingMode.UP);
                 session.setAttribute("userEmail", hotelBooking.getEmail().trim());
                 session.setAttribute("orderTotal", totalPrice);
                 session.setAttribute("orderInfo",
@@ -273,6 +277,7 @@ public class ReceptionistBookingController {
             transaction.setContent(TransactionMessage.PAY.getMessage());
             HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
             hotelBooking.setValidBooking(true);
+            hotelBooking.setStatusId(3L);
             transactionsService.save(transaction);
             hotelBookingService.save(hotelBooking);
             return "customer/ordersuccess";

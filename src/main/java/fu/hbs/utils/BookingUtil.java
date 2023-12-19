@@ -170,8 +170,10 @@ public class BookingUtil {
         }
 
         // Check for late check-out and apply additional fee if applicable
-        if (LocalTime.now().isAfter(defaultCheckOutTime) && LocalTime.now().minus(defaultCheckOutTime.getHour(),
-                ChronoUnit.HOURS).isAfter(LocalTime.of(3, 0))) {
+        LocalTime minus = LocalTime.now().minus(defaultCheckOutTime.getHour(),
+                ChronoUnit.HOURS);
+        boolean after = minus.isAfter(LocalTime.of(3, 0));
+        if (LocalDate.now().isAfter(checkOutDate) && after) {
             BigDecimal additionalFee = totalCost.multiply(BigDecimal.valueOf(0.15));
             totalCost = totalCost.add(additionalFee);
         }

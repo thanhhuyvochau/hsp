@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface TransactionsRepository extends JpaRepository<Transactions, Long> {
 
@@ -19,5 +20,5 @@ public interface TransactionsRepository extends JpaRepository<Transactions, Long
     List<Transactions> findTransactionsCreatedDateAndPaymentId(LocalDate createDate, Long paymentId);
 
 
-    Optional<Transactions> findByHotelBookingIdAndContent(Long hotelBookingId, String content);
+    Optional<Transactions> findByHotelBookingIdAndContent(Long hotelBookingId, Long transactionTypeId);
 }
