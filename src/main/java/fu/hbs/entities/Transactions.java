@@ -38,5 +38,6 @@ public class Transactions {
     private String vnpayTransactionId;
     private Instant createdDate;
     private String content;
+    private Long transactionTypeId;
 
 }

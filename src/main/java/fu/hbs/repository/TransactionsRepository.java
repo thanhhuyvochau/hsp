@@ -20,5 +20,5 @@ public interface TransactionsRepository extends JpaRepository<Transactions, Long
     List<Transactions> findTransactionsCreatedDateAndPaymentId(LocalDate createDate, Long paymentId);
 
 
-    Optional<Transactions> findByHotelBookingIdAndContent(Long hotelBookingId, Long transactionTypeId);
+    Optional<Transactions> findByHotelBookingIdAndTransactionTypeId(Long hotelBookingId, Long transactionTypeId);
 }
