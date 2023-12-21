@@ -185,7 +185,7 @@
                 </button>
 
 
-                <button class=" btn bi-person-circle " style="font-size: 2em;"></button>
+                <button type="button" class=" btn bi-person-circle " style="font-size: 2em;"></button>
             </div>
         </nav>
         <main class="content px-3 py-2">
@@ -223,7 +223,8 @@
                                 <h6 class="fw-bold">Ghi chú: <a th:text="${viewCheckoutDTO.getNote()}">Không</a></h6>
                             </div>
                             <div class="row mt-2 me-5">
-                                <h6 class="fw-bold">Phương thức đặt: <a th:text="${viewCheckoutDTO.paymentTypeName}"></a></h6>
+                                <h6 class="fw-bold">Phương thức đặt: <a
+                                        th:text="${viewCheckoutDTO.paymentTypeName}"></a></h6>
                             </div>
                         </div>
                     </div>
@@ -269,8 +270,8 @@
                                 <td th:text="${bookDetail.getCustomerNumber()}"></td>
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
-                                <td th:text="${#numbers.formatDecimal(bookDetail.getPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
-                                <td th:text="${#numbers.formatDecimal(bookDetail.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
+                                <td th:text="${#numbers.formatDecimal(bookDetail.getPrice(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></td>
+                                <td th:text="${#numbers.formatDecimal(bookDetail.getTotalPrice(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></td>
                                 <td></td>
                             </tr>
                             </tbody>
@@ -300,8 +301,8 @@
                                 <th scope="row" th:text="${iStat.index + 1 }"></th>
                                 <td th:text="${bookDetail.getServiceName()}"></td>
                                 <td th:text="${bookDetail.getQuantity()}"></td>
-                                <td th:text="${bookDetail.getServicePrice()}"></td>
-                                <td th:text="${bookDetail.getTotalPrice()}"></td>
+                                <td th:text="${bookDetail.getServicePrice()} + ' VND'"></td>
+                                <td th:text="${bookDetail.getTotalPrice()} + ' VND'"></td>
                                 <td>
                                     <button th:id="'delete-btn-service-'+${bookDetail.getServiceId()}" type="button"
                                             th:onclick="'deleteRow(\'' + ${bookDetail.getServiceId()} + '\');'"
@@ -336,7 +337,7 @@
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
                                 <div class="col text-end"><a id="room-price"
-                                                             th:text="${#numbers.formatDecimal(viewCheckoutDTO.getTotalRoomPrice(), 0, 'COMMA', 0, 'POINT')}"></a>
+                                                             th:text="${#numbers.formatDecimal(viewCheckoutDTO.getTotalRoomPrice(), 0, 'COMMA', 0, 'POINT')} + ' VND'"></a>
                                 </div>
                             </div>
                             <div class="row me-4 mt-2">
@@ -440,7 +441,7 @@
                             <td th:id="${'service-name-'+service.getServiceId()}"
                                 th:text="${service.getServiceName()}"></td>
                             <td th:id="${'service-price-'+service.getServiceId()}"
-                                th:text="${#numbers.formatDecimal(service.getServicePrice(), 0, 'COMMA', 0, 'POINT')}"></td>
+                                th:text="${#numbers.formatDecimal(service.getServicePrice(), 0, 'COMMA', 0, 'POINT') + 'VND'}"></td>
 
                             <td>
                                 <label>
@@ -612,6 +613,15 @@
         calculatePrices();
     });
 
+    function validateServicePrice() {
+        let servicePrice = reCalculateServicePrice();
+        if (Number(servicePrice) >= 1000000000) {
+            alert("Dịch vụ không thể quá 1 tỷ VND, vui lòng giảm số lượng dịch vụ");
+            return false;
+        }
+        return true;
+    }
+
     function calculatePrices() {
 
         let $service = $("#service-price");
@@ -667,9 +677,11 @@
 
         for (var i = 1; i < table.rows.length; i++) {
             let priceCell = table.rows[i].cells[3]; // Index 4 corresponds to the 'Thành tiền' column
+            let numberFromVND = extractNumberFromVND(priceCell.textContent);
+            console.log("PRICE CELL:" + numberFromVND);
             let quantityCell = table.rows[i].cells[2];
             // Parse the priceCell content as a float and add it to the total
-            let price = parseFloat(priceCell.textContent || priceCell.innerText) * Number(quantityCell.textContent || quantityCell.innerText);
+            let price = numberFromVND * Number(quantityCell.textContent || quantityCell.innerText);
             total += isNaN(price) ? 0 : price;
         }
         console.log("TOTAL SERVICE:" + total);
@@ -677,23 +689,45 @@
     }
 
     function formatCurrency(amount) {
-        if (typeof Intl.NumberFormat === 'function') {
-            const formattedAmount = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                minimumFractionDigits: 0  // Set the number of decimal places
-            }).format(amount);
-
-            return formattedAmount;
-        } else {
-            return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+        // Check if the input is a valid number
+        if (isNaN(amount)) {
+            return 'Invalid number';
         }
+
+        // Convert the number to a string and split it into integer and decimal parts
+        const parts = amount.toString().split('.');
+
+        // Format the integer part with commas
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Join the parts and append 'VND'
+        return parts.join('.') + ' VND';
     }
 
     function handleOnClickCheckout() {
         if (confirm("Bạn có muốn đổi trạng thái thành 'Đã checkout'")) {
-            $("#checkout-form").trigger("submit");
+            if (validateServicePrice() && isSurchargeIsAccept()) {
+                $("#checkout-form").trigger("submit");
+            }
         }
+    }
+
+    function isSurchargeIsAccept() {
+        let $surcharge = $("#surcharge-price");
+        let surchargePrice = $surcharge.val();
+        if (Number(surchargePrice) >= 1000000000) {
+            alert("Phụ phí không thể quá 1 tỷ VND, vui lòng giảm phụ phí");
+            return false;
+        }
+        return true;
+    }
+
+    function extractNumberFromVND(vndString) {
+        // Remove commas and any non-digit characters
+        const numericString = vndString.replace(/[^\d]/g, '');
+
+        // Convert the numeric string to a number
+        return parseFloat(numericString);
     }
 
 </script>

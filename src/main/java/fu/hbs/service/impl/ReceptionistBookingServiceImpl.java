@@ -142,6 +142,7 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             transaction.setHotelBookingId(hotelBooking.getHotelBookingId());
             transaction.setContent(TransactionMessage.PRE_PAY.getMessage());
             transaction.setPaymentId(bookingRequest.getPaymentTypeId());
+            transaction.setTransactionTypeId(1L);
             hotelBooking.setValidBooking(true);
             transactionsRepository.save(transaction);
         }
@@ -271,11 +272,17 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         Transactions transactions = new Transactions();
         transactions.setVnpayTransactionId(RandomKey.generateRandomKey());
         transactions.setStatus("Thành công");
-        transactions.setAmount(totalPrice.subtract(prePay));
+        BigDecimal remainPrice = totalPrice.subtract(prePay);
+        transactions.setAmount(remainPrice);
         transactions.setCreatedDate(Instant.now());
         transactions.setHotelBookingId(hotelBooking.getHotelBookingId());
         transactions.setPaymentId(paymentTypeId);
         transactions.setContent(content);
+        if (remainPrice.compareTo(BigDecimal.ZERO) < 0) {
+            transactions.setTransactionTypeId(3L);
+        } else {
+            transactions.setTransactionTypeId(2L);
+        }
         return transactions;
     }
 
@@ -345,7 +352,9 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
         }
         // Change status room / booking
         hotelBooking.setStatusId(2L);
-        hotelBooking.setCheckIn(Instant.now());
+        Instant actualCheckIn = Instant.now();
+        hotelBooking.setCheckIn(
+                actualCheckIn);
 
         for (Room room : allBookedRooms) {
             room.setRoomStatusId(1L);

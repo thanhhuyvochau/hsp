@@ -26,6 +26,7 @@ import fu.hbs.service.dao.HotelBookingService;
 import fu.hbs.service.impl.VNPayService;
 import fu.hbs.utils.EmailUtil;
 import fu.hbs.utils.StringDealer;
+import fu.hbs.validator.BookingValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +162,9 @@ public class ReceptionistBookingController {
     public String checkOutReceptionist(@RequestParam("hotelBookingId") Long hotelBookingId, Model model) {
         HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
         if (hotelBooking != null && hotelBooking.getValidBooking()) {
+            if (!BookingValidator.isValidToCheckOut(hotelBooking)) {
+                return "error";
+            }
             List<BookingRoomDetails> bookingRoomDetails =
                     bookingRoomDetailsService.getBookingDetailsByHotelBookingId(hotelBookingId);
             List<RoomService> roomServices = roomServiceService.getAllServicesByStatus(true);
@@ -198,6 +202,9 @@ public class ReceptionistBookingController {
     @PostMapping("receptionist/checkOutReceptionist")
     public String saveCheckOutReceptionist(@ModelAttribute("saveCheckoutDTO") SaveCheckoutDTO checkoutDTO,
                                            HttpSession session) {
+        if (checkoutDTO.getServicePrice().compareTo(BigDecimal.valueOf(1000000000)) >= 0) {
+            return "error";
+        }
         try {
             bookingService.checkout(checkoutDTO);
             if (checkoutDTO.getPaymentTypeId() == 1) {
@@ -277,7 +284,12 @@ public class ReceptionistBookingController {
             transaction.setContent(TransactionMessage.PAY.getMessage());
             HotelBooking hotelBooking = hotelBookingService.findById(hotelBookingId);
             hotelBooking.setValidBooking(true);
-            hotelBooking.setStatusId(3L);
+
+            if (hotelBooking.getStatusId() == 2) {
+                hotelBooking.setStatusId(3L);
+                transaction.setTransactionTypeId(2L);
+            }
+
             transactionsService.save(transaction);
             hotelBookingService.save(hotelBooking);
             return "customer/ordersuccess";

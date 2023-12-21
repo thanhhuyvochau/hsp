@@ -101,7 +101,7 @@
                 </button>
 
 
-                <button id="userButton" class="btn bi-person-circle" style="font-size: 2em;"></button>
+                <button type="button" id="userButton" class="btn bi-person-circle" style="font-size: 2em;"></button>
                 <div id="userMenu" class="user-menu">
                     <ul>
                         <li><a th:href="@{/viewProfile}">Hồ sơ</a></li>
@@ -1063,18 +1063,21 @@
 
     window.onload = setDefaultDates;
 
-    function formatCurrency(amount) {
-        if (typeof Intl.NumberFormat === 'function') {
-            const formattedAmount = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                minimumFractionDigits: 0  // Set the number of decimal places
-            }).format(amount);
-
-            return formattedAmount;
-        } else {
-            return amount.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+    function formatCurrency(number) {
+        if (isNaN(number)) {
+            return 'Invalid number';
         }
+
+        // Convert the number to a string and split it into integer and decimal parts
+        const parts = number.toString().split('.');
+
+        // Format the integer part with commas
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Join the parts and append 'VND'
+        const formattedNumber = parts.join('.') + ' VND';
+
+        return formattedNumber;
     }
 
     function getFormatDateTime(date, includeYear = true) {

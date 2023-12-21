@@ -68,13 +68,13 @@ public class TransactionsServiceImpl implements TransactionsService {
     @Override
     public Transactions findFirstTransactionOfHotelBooking(Long hotelBookingId) {
         Optional<Transactions> payTransaction =
-                transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId,
+                transactionsRepository.findByHotelBookingIdAndTransactionTypeId(hotelBookingId,
                         2L);
         if (payTransaction.isPresent()) {
             return payTransaction.get();
         } else {
             payTransaction =
-                    transactionsRepository.findByHotelBookingIdAndContent(hotelBookingId, 1L);
+                    transactionsRepository.findByHotelBookingIdAndTransactionTypeId(hotelBookingId, 1L);
             return payTransaction.orElse(null);
         }
     }

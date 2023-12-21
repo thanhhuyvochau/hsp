@@ -135,7 +135,8 @@
 <body>
 
 <!--	<body data-bs-target=".navbar" data-bs-offset="100"></body>-->
-<form id="checkinForm" th:action="@{/receptionist/new-checkIn}" method="post" th:object="${saveCheckinDTO}" class="wrapper">
+<form id="checkinForm" th:action="@{/receptionist/new-checkIn}" method="post" th:object="${saveCheckinDTO}"
+      class="wrapper">
     <!-- Sidebar Holder -->
     <nav id="sidebar">
         <div class="sidebar-header border-bottom">
@@ -184,7 +185,7 @@
                 </button>
 
 
-                <button class=" btn bi-person-circle " style="font-size: 2em;"></button>
+                <button type="button" class=" btn bi-person-circle " style="font-size: 2em;"></button>
             </div>
         </nav>
         <main class="content px-3 py-2">
@@ -222,7 +223,8 @@
                                 <h6 class="fw-bold">Ghi chú: <a th:text="${viewCheckInDTO.getNote()}"></a></h6>
                             </div>
                             <div class="row mt-2 me-5">
-                                <h6 class="fw-bold">Phương thức đặt: <a th:text="${viewCheckInDTO.paymentTypeName}"></a></h6>
+                                <h6 class="fw-bold">Phương thức đặt: <a th:text="${viewCheckInDTO.paymentTypeName}"></a>
+                                </h6>
                             </div>
                         </div>
                     </div>
@@ -233,11 +235,13 @@
                 <div class="row mt-3 ms-1 me-3 border shadow">
                     <div class="col-lg-6 mt-3">
                         <p class="fw-bold">Ngày nhận phòng: <a th:text="${viewCheckInDTO.getCheckIn()}"></a></p>
-                        <p class="fw-bold">Ngày nhận phòng thực tế: <a th:text="${viewCheckInDTO.getCheckInBooking()}"></a>
+                        <p class="fw-bold">Ngày nhận phòng thực tế: <a
+                                th:text="${viewCheckInDTO.getCheckInBooking()}"></a>
                         </p>
                     </div>
                     <div class="col-lg-6 mt-3">
-                        <p class="fw-bold text-end">Ngày trả phòng đã đặt: <a th:text="${viewCheckInDTO.getCheckOut()}"></a>
+                        <p class="fw-bold text-end">Ngày trả phòng đã đặt: <a
+                                th:text="${viewCheckInDTO.getCheckOut()}"></a>
                         </p>
 
                     </div>
@@ -264,13 +268,19 @@
                                 <th scope="row" th:text="${iStat.index + 1}"></th>
                                 <td th:text="${bookDetail.getCategoryName()}"></td>
                                 <td th:text="${bookDetail.getRoomName()}"></td>
-                                <td><select onchange="handleChangeRoom(this)" th:data-booking-detail="${bookDetail.getBookingDetailId()}" class="form-select">
-                                    <option th:selected="${bookDetail.getRoomId() == room.getRoomId()}" th:value="${room.getRoomId()}" th:text="${room.getRoomName()}" th:each="room,iterStat  : ${bookDetail.getOptionRooms()}">101</option>
+                                <td><select onchange="handleChangeRoom(this)"
+                                            th:data-booking-detail="${bookDetail.getBookingDetailId()}"
+                                            class="form-select">
+                                    <option th:selected="${bookDetail.getRoomId() == room.getRoomId()}"
+                                            th:value="${room.getRoomId()}" th:text="${room.getRoomName()}"
+                                            th:each="room,iterStat  : ${bookDetail.getOptionRooms()}">101
+                                    </option>
                                 </select></td>
                                 <td>Bữa sáng</td>
                                 <td>Không</td>
-                                <td th:text="${#numbers.formatDecimal(bookDetail.getPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
-                                <td th:text="${#numbers.formatDecimal(bookDetail.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}"></td>
+                                <td
+                                        th:text="${#numbers.formatDecimal(bookDetail.getPrice(), 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+                                <td th:text="${#numbers.formatDecimal(bookDetail.getTotalPrice(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></td>
                                 <td></td>
                             </tr>
                             </tbody>
@@ -289,33 +299,39 @@
                                     <h6 class="fw-bold">Giá phòng:</h6>
                                 </div>
                                 <div class="col text-end"><a id="room-price"
-                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getTotalRoomPrice(), 0, 'COMMA', 0, 'POINT')}"></a></div>
+                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getTotalRoomPrice(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></a>
+                                </div>
                             </div>
                             <div class="row me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Thuế(10%):</h6>
                                 </div>
-                                <div class="col text-end"><a th:text="${#numbers.formatDecimal(viewCheckInDTO.getTaxPrice(), 0, 'COMMA', 0, 'POINT')} " id="tax-price"></a></div>
+                                <div class="col text-end"><a
+                                        th:text="${#numbers.formatDecimal(viewCheckInDTO.getTaxPrice(), 0, 'COMMA', 0, 'POINT')+ ' VND'} "
+                                        id="tax-price"></a></div>
                             </div>
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Tổng giá:</h6>
                                 </div>
-                                <div class="col text-end"><a id="total-price" th:text="${#numbers.formatDecimal(viewCheckInDTO.getTotalPriceOfBooking(), 0, 'COMMA', 0, 'POINT')}"></a></div>
+                                <div class="col text-end"><a id="total-price"
+                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getTotalPriceOfBooking(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></a>
+                                </div>
                             </div>
-<!--                            <div class="row mt-2 me-4">-->
-<!--                                <div class="col ms-4">-->
-<!--                                    <h6 class="fw-bold">Đặt cọc (50%):</h6>-->
-<!--                                </div>-->
-<!--                                <div class="col text-end"><a id="deposit-price"-->
-<!--                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getPrepay(), 0, 'COMMA', 0, 'POINT')}"></a></div>-->
-<!--                            </div>-->
+                            <!--                            <div class="row mt-2 me-4">-->
+                            <!--                                <div class="col ms-4">-->
+                            <!--                                    <h6 class="fw-bold">Đặt cọc (50%):</h6>-->
+                            <!--                                </div>-->
+                            <!--                                <div class="col text-end"><a id="deposit-price"-->
+                            <!--                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getPrepay(), 0, 'COMMA', 0, 'POINT')}"></a></div>-->
+                            <!--                            </div>-->
                             <div class="row mt-2 me-4">
                                 <div class="col ms-4">
                                     <h6 class="fw-bold">Đã thanh toán:</h6>
                                 </div>
                                 <div class="col text-end"><a id="prepay-price"
-                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getPrepay(), 0, 'COMMA', 0, 'POINT')}"></a></div>
+                                                             th:text="${#numbers.formatDecimal(viewCheckInDTO.getPrepay(), 0, 'COMMA', 0, 'POINT')+ ' VND'}"></a>
+                                </div>
                                 <input type="hidden" th:value="${viewCheckInDTO.getPrepay()}" id="prepay-price-hidden"/>
                             </div>
                         </div>
@@ -325,7 +341,8 @@
                     <div class="btn-end text-center">
                         <!-- Sử dụng lớp 'text-center' để căn giữa nút -->
                         <button type="button" class="btn btn-secondary"
-                                style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;"><a th:href="@{/receptionist/listRoomInUse}">Quay
+                                style="margin-right: 2rem; margin-top: 2rem; margin-bottom: 2rem;"><a
+                                th:href="@{/receptionist/listRoomInUse}">Quay
                             lại</a>
                         </button>
                         <button type="button" onclick="checkInConfirm()" class="btn btn-dark" style="margin-right: 2rem; margin-top:
@@ -337,12 +354,15 @@
         </main>
     </div>
     <input type="hidden" th:value="${saveCheckinDTO.getHotelBookingId()}" name="hotelBookingId" id="hotelBookingId">
-    <div  th:each="bookingDetail,iterStat  : ${saveCheckinDTO.getSaveCheckinDetailDTOS()}" class="booking-detail-input-container">
+    <div th:each="bookingDetail,iterStat  : ${saveCheckinDTO.getSaveCheckinDetailDTOS()}"
+         class="booking-detail-input-container">
 
-        <input class="roomInputId" th:id="'roomInputID-'+${bookingDetail.getBookingRoomId()}" th:value="${bookingDetail.getRoomID()}" type="hidden"
+        <input class="roomInputId" th:id="'roomInputID-'+${bookingDetail.getBookingRoomId()}"
+               th:value="${bookingDetail.getRoomID()}" type="hidden"
                th:field="*{saveCheckinDetailDTOS[__${iterStat.index}__].roomID}">
 
-        <input th:id="'bookingDetailID-'+${bookingDetail.getBookingRoomId()}"  th:value="${bookingDetail.getBookingRoomId()}" type="hidden"
+        <input th:id="'bookingDetailID-'+${bookingDetail.getBookingRoomId()}"
+               th:value="${bookingDetail.getBookingRoomId()}" type="hidden"
                th:field="*{saveCheckinDetailDTOS[__${iterStat.index}__].bookingRoomId}">
     </div>
 </form>
@@ -359,7 +379,7 @@
     let bookingData = [[${saveCheckinDTO}]]
     let errorMessage = [[${errorMessage}]]
     /*]]>*/
-    if (errorMessage){
+    if (errorMessage) {
         alert(errorMessage);
     }
     $(document).ready(function () {
@@ -396,30 +416,33 @@
             }
         });
     });
+
     function checkInConfirm() {
         let text = "Bạn có muốn đổi trạng thái đặt này thành 'đã check-in'";
         let $checkinForm = $("#checkinForm");
         if (confirm(text) === true) {
-            $checkinForm.trigger( "submit" );
+            $checkinForm.trigger("submit");
         }
     }
-    function handleChangeRoom(roomChangeElement){
+
+    function handleChangeRoom(roomChangeElement) {
         let roomId = roomChangeElement.value;
         let bookingDetailId = $(roomChangeElement).attr("data-booking-detail");
-        if (isDuplicateRoom(roomId)){
-            document.getElementById("roomInputID-"+bookingDetailId).value = roomId;
-        }else{
+        if (isDuplicateRoom(roomId)) {
+            document.getElementById("roomInputID-" + bookingDetailId).value = roomId;
+        } else {
             alert("Phòng này đã được chọn vui lòng chọn phòng khác");
-            roomChangeElement.value = document.getElementById("roomInputID-"+bookingDetailId).value;
+            roomChangeElement.value = document.getElementById("roomInputID-" + bookingDetailId).value;
         }
 
     }
-    function isDuplicateRoom(roomId){
+
+    function isDuplicateRoom(roomId) {
         let roomInputId = document.getElementsByClassName('roomInputId');
         console.log(roomInputId);
         for (let i = 0; i < roomInputId.length; i++) {
             let roomInput = roomInputId[i];
-            if (Number(roomInput.value) === Number(roomId)){
+            if (Number(roomInput.value) === Number(roomId)) {
                 return false;
             }
         }

@@ -9,9 +9,9 @@ import java.util.List;
 
 public class BookingValidator {
     public static boolean isValidToCheckIn(Instant checkIn) {
-        Instant currentDay = Instant.now().truncatedTo(ChronoUnit.DAYS);
-        Instant checkInTruncated = checkIn.truncatedTo(ChronoUnit.DAYS);
-        return currentDay.equals(checkInTruncated);
+        Instant currentDay = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Instant checkInTruncated = checkIn.truncatedTo(ChronoUnit.MINUTES);
+        return !currentDay.isBefore(checkInTruncated);
     }
 
     public static boolean isExistNotReadyRoom(List<Room> allBookedRooms) {
