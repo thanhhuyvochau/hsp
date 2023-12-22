@@ -22,5 +22,4 @@ public class SearchingResultRoomDTO {
     private String image;
     private String bed;
     private int bookedNumber = 0;
-
 }

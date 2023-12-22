@@ -13,14 +13,17 @@ package fu.hbs.service.impl;
 
 import fu.hbs.constant.TransactionMessage;
 import fu.hbs.dto.VnpayDTO.ViewPaymentDTO;
+import fu.hbs.entities.EarlyCheckoutRefunds;
 import fu.hbs.entities.PaymentType;
 import fu.hbs.entities.Transactions;
+import fu.hbs.repository.EarlyCheckoutRefundsRepository;
 import fu.hbs.repository.PaymentTypeRepository;
 import fu.hbs.repository.TransactionsRepository;
 import fu.hbs.service.dao.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +35,19 @@ public class TransactionsServiceImpl implements TransactionsService {
     TransactionsRepository transactionsRepository;
     @Autowired
     PaymentTypeRepository paymentTypeRepository;
+    @Autowired
+    EarlyCheckoutRefundsRepository earlyCheckoutRefundsRepository;
 
     @Override
     public Transactions save(Transactions vnpayTransactions) {
-        return transactionsRepository.save(vnpayTransactions);
+        Transactions transactions = transactionsRepository.save(vnpayTransactions);
+        if (vnpayTransactions.getTransactionTypeId() == 3L) {
+            EarlyCheckoutRefunds earlyCheckoutRefunds = makeEarlyCheckout(transactions);
+            earlyCheckoutRefundsRepository.save(earlyCheckoutRefunds);
+        }
+        return transactions;
     }
+
 
     @Override
     public List<ViewPaymentDTO> findByCreateDateAndPaymentId(LocalDate createDate, Long paymentId) {
@@ -77,5 +88,15 @@ public class TransactionsServiceImpl implements TransactionsService {
                     transactionsRepository.findByHotelBookingIdAndTransactionTypeId(hotelBookingId, 1L);
             return payTransaction.orElse(null);
         }
+    }
+
+    public static EarlyCheckoutRefunds makeEarlyCheckout(Transactions transactions) {
+        EarlyCheckoutRefunds earlyCheckoutRefunds = new EarlyCheckoutRefunds();
+        earlyCheckoutRefunds.setRefundedAmount(transactions.getAmount().abs());
+        earlyCheckoutRefunds.setStatus(true);
+        earlyCheckoutRefunds.setTransactionId(transactions.getTransactionId());
+        earlyCheckoutRefunds.setReason("");
+        earlyCheckoutRefunds.setRefundDate(Instant.now());
+        return earlyCheckoutRefunds;
     }
 }

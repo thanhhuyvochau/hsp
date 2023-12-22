@@ -288,6 +288,8 @@ public class ReceptionistBookingController {
             if (hotelBooking.getStatusId() == 2) {
                 hotelBooking.setStatusId(3L);
                 transaction.setTransactionTypeId(2L);
+            } else {
+                transaction.setTransactionTypeId(1L);
             }
 
             transactionsService.save(transaction);

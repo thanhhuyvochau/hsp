@@ -49,7 +49,22 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
+    <style>
 
+        /* Custom CSS for tooltip */
+        .tooltip-arrow,
+        .red-tooltip + .tooltip > .tooltip-inner {
+            background-color: #f00;
+        }
+
+        {
+            background-color: white
+        ;
+            color: black
+        ;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -559,6 +574,7 @@
     }
 
     $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
         $("#checkIn").change(() => {
             let checkinDate = new Date($("#checkIn").val());
             let currentDate = new Date();
@@ -777,8 +793,26 @@
                     row.append("<td>" + room.bed + "</td>");
                     row.append("<td>" + room.square + "</td>");
                     row.append("<td>" + room.numberPerson + "</td>");
-                    row.append("<td>" + formatCurrency(room.price) + "</td>");
 
+                    const $price = $("<td></td>");
+                    $price.css("min-width", "170px");
+                    $price.text(formatCurrency(room.price) + "  ");
+                    const toolTipsString = 'Ngày thường: ' +
+                        formatCurrency(Number(room.price) * 1) +
+                        ' VND' +
+                        ' Cuối tuần: ' +
+                        formatCurrency(Number(room.price) * 1.5) +
+                        ' VND' +
+                        ' ; Ngày lễ: ' +
+                        formatCurrency(Number(room.price) * 3) +
+                        ' VND';
+
+                    const $toolTips =
+                        $("<i class=\"bi bi-exclamation-circle-fill\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + toolTipsString + "\"></i>\n");
+
+
+                    $price.append($toolTips);
+                    row.append($price);
                     const buttonColumn = $("<td></td>");
                     const addButton = $("<button type='button'></button>")
                         .addClass("btn button btn-dark")
@@ -980,6 +1014,9 @@
         if (!nameRegex.test(nameInput.value)) {
             nameError.innerText = "Nhập tên chỉ chứa chữ cái viết hoa, thường và khoảng trắng";
             return false;
+        } else if (nameInput.value.length > 50) {
+            nameError.innerText = "Tên không được vượt quá 50 ký tự";
+            return false;
         } else {
             nameError.innerText = "";
             return true;
@@ -995,6 +1032,9 @@
 
         if (!emailRegex.test(emailInput.value)) {
             emailError.innerText = "Nhập một địa chỉ email hợp lệ";
+            return false;
+        } else if (emailInput.value.length > 50) {
+            emailError.innerText = "Email không được vượt quá 50 ký tự";
             return false;
         } else {
             emailError.innerText = "";
@@ -1027,6 +1067,9 @@
 
         if (!addressReg.test(address.value)) {
             addressError.innerText = "Không được để trống địa chỉ";
+            return false;
+        } else if (address.value.length > 50) {
+            addressError.innerText = "Địa chỉ không được vượt quá 50 ký tự";
             return false;
         } else {
             addressError.innerText = "";
