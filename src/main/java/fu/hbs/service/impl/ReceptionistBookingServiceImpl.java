@@ -311,6 +311,8 @@ public class ReceptionistBookingServiceImpl implements ReceptionistBookingServic
             newHotelBookingService.setServiceId(roomService.getServiceId());
             newHotelBookingService.setCreateDate(Instant.now());
             newHotelBookingService.setRoomId(1L); // Mặc định là 1L trước về sau sẽ xóa
+            newHotelBookingService.setQuantity(hotelBookingService.getQuantity());
+            newHotelBookingService.setTotalPrice(roomService.getServicePrice().multiply(BigDecimal.valueOf(hotelBookingService.getQuantity())));
             hotelBookingServiceList.add(newHotelBookingService);
         }
         return servicePrice;

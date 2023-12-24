@@ -16,6 +16,7 @@ package fu.hbs.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @NoArgsConstructor
@@ -34,5 +35,9 @@ public class HotelBookingService {
     private Long roomId;
     private Long serviceId;
     private Instant createDate;
+    @Column(name = "quantity")
+    private int quantity;
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
 
 }
