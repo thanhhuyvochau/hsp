@@ -48,22 +48,100 @@
 
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'>
     <style>
-
-        /* Custom CSS for tooltip */
-        .tooltip-arrow,
-        .red-tooltip + .tooltip > .tooltip-inner {
-            background-color: #f00;
+        .toast-custom {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            border-radius: 12px;
+            background: #fff;
+            padding: 20px 35px 20px 25px;
+            box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transform: translateX(calc(100% + 30px));
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
         }
 
-        {
-            background-color: white
-        ;
-            color: black
-        ;
+        .toast-custom.active {
+            transform: translateX(0%);
         }
 
+        .toast-custom .toast-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .toast-content .check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 35px;
+            min-width: 35px;
+            background-color: #e71919;
+            color: #fff;
+            font-size: 20px;
+            border-radius: 50%;
+        }
+
+        .toast-content .message {
+            display: flex;
+            flex-direction: column;
+            margin: 0 20px;
+        }
+
+        .message .text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666666;
+        }
+
+        .message .text.text-1 {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .toast-custom .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            padding: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .toast-custom .close:hover {
+            opacity: 1;
+        }
+
+        .toast-custom .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+
+        }
+
+        .toast-custom .progress:before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background-color: red;
+        }
+
+        .progress.active:before {
+            animation: progress 5s linear forwards;
+        }
+
+        @keyframes progress {
+            100% {
+                right: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -562,6 +640,21 @@
     </div>
 
 </div>
+<div class="toast-custom">
+
+    <div class="toast-content">
+        <i class="fa-duotone fa-x check" style="color: white"></i>
+
+        <div class="message">
+            <span class="text text-1 " id="toast-title">Success</span>
+            <span class="text text-2 " id="toast-detail">Your changes has been saved</span>
+        </div>
+    </div>
+    <i class="fa-solid fa-xmark close"></i>
+
+    <!-- Remove 'active' class, this is just to show in Codepen thumbnail -->
+    <div class="progress active"></div>
+</div>
 </body>
 
 
@@ -581,7 +674,7 @@
 
             if (checkinDate < currentDate) {
                 document.getElementById("checkIn").valueAsDate = currentDate;
-                alert('Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.');
+                triggerToast("Thất bại", "Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.'")
             }
         })
         $("#checkOut").change(() => {
@@ -591,8 +684,7 @@
             if (checkoutDate <= checkinDate) {
                 checkinDate.setDate(checkoutDate.getDate() + 1);
                 document.getElementById("checkOut").valueAsDate = checkinDate;
-                alert('Ngày trả phòng phải lớn hơn ngày nhận phòng ít nhất 1 ngày.' +
-                    '');
+                triggerToast("Thất bại", "Ngày trả phòng phải lớn hơn ngày nhận phòng ít nhất 1 ngày.")
                 return false;
             }
         })
@@ -675,11 +767,11 @@
                     if (selectedRoom.quantity <= 0) {
                         selectedRoom.quantity = oldValue;
                         this.value = oldValue;
-                        alert("Vui lòng nhập một số lớn hơn 0!");
+                        triggerToast("Thất bại", "Vui lòng nhập một số lớn hơn 0!")
                     } else if (selectedRoom.numberAvailable < selectedRoom.quantity) {
                         selectedRoom.quantity = oldValue;
                         this.value = oldValue;
-                        alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                        triggerToast("Thất bại", "Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
 
                     } else {
                         updateLastConfirmBooking();
@@ -762,6 +854,7 @@
         updateTableView("[]"); // Default state of first load
         function updateTableView(response) {
             // Assuming the response is a JSON object with room details
+
             rooms = JSON.parse(response);
             console.log(rooms)
             // Select the table body
@@ -826,7 +919,7 @@
                                 selectedRooms.push({...room, "quantity": 1});
                             } else {
                                 if (existRoom.quantity == room.numberAvailable) {
-                                    alert("Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!")
+                                    triggerToast("Thất bại", "Đã đạt số lượng phòng có sẵn tối đa không thể thêm nữa!");
                                 } else {
                                     existRoom.quantity = existRoom.quantity + 1;
                                 }
@@ -927,13 +1020,13 @@
             console.log("Current:" + currentDate);
 
             if (checkinDate < currentDate) {
-                alert('Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.');
+                triggerToast("Thất bại", "Ngày nhận phòng phải là hôm nay hoặc một ngày trong tương lai.")
                 return false;
             }
 
             // Check if check-out date is valid
             if (checkoutDate <= checkinDate) {
-                alert('Ngày trả phòng phải ít nhất là một ngày sau ngày nhận phòng.');
+                triggerToast("Thất bại", "Ngày trả phòng phải ít nhất là một ngày sau ngày nhận phòng.")
                 return false;
             }
             return true;
@@ -974,7 +1067,7 @@
                 let tab = new bootstrap.Tab(document.getElementById('profile-tab'));
                 tab.show();
             } else {
-                alert("Bạn phải chọn phòng trước khi điền thông tin khách hàng")
+                triggerToast("Thất bại", "Bạn phải chọn phòng trước khi điền thông tin khách hàng")
             }
         });
         document.getElementById('btnBack').addEventListener('click', function () {
@@ -990,7 +1083,7 @@
                 var tab = new bootstrap.Tab(document.getElementById('confirm-tab'));
                 tab.show();
             } else {
-                alert("Điền đúng thông tin khách hàng trước khi xác nhận thanh toán")
+                triggerToast("Thất bại", "Điền đúng thông tin khách hàng trước khi xác nhận thanh toán")
             }
 
         });
@@ -1091,7 +1184,7 @@
             console.log(document.getElementById('myTabContent'));
             document.getElementById('myTabContent').submit();
         } else {
-            alert("Cần chỉnh sửa lại thông tin chính xác trớc khi đặt phòng");
+            triggerToast("Thất bại", "Cần chỉnh sửa lại thông tin chính xác trớc khi đặt phòng")
         }
     })
 
@@ -1202,6 +1295,41 @@
     }
 
     handleChangePaymentType();
+
+    /**Toast Function*/
+    let timer1, timer2;
+    const button = document.querySelector("button");
+    const toast = document.querySelector(".toast-custom");
+    const closeIcon = document.querySelector(".close");
+    const progress = document.querySelector(".progress");
+    const $title = document.querySelector("#toast-title");
+    const $detail = document.querySelector("#toast-detail");
+
+    function triggerToast(title, detail) {
+        $title.textContent = title;
+        $detail.textContent = detail;
+        toast.classList.add("active");
+        progress.classList.add("active");
+
+        timer1 = setTimeout(() => {
+            toast.classList.remove("active");
+        }, 3000); //1s = 1000 milliseconds
+
+        timer2 = setTimeout(() => {
+            progress.classList.remove("active");
+        }, 3000);
+    }
+
+    closeIcon.addEventListener("click", () => {
+        toast.classList.remove("active");
+
+        setTimeout(() => {
+            progress.classList.remove("active");
+        }, 300);
+
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+    });
 </script>
 
 
